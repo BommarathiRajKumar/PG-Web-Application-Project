@@ -1,0 +1,53 @@
+.mainDiv{
+    height: 100%;
+    width: 100%;
+}
+
+header{
+    position: sticky;
+    top: 12px;
+    background-color: aqua;
+    width: 100%;
+    height: 20%;
+    border: black solid 1px;
+}
+
+label{
+    position: absolute;
+    color: black;
+    top: 10px;
+    right: 3px;
+    font-weight: bold;
+}
+
+a{
+    position: absolute;
+    background-color: limegreen;
+    color: black;
+    right: 15px;
+    height: 23px;
+    text-align: center;
+    width: 60px;
+    text-decoration: none;
+    font-weight: bold;
+    border: 1px solid black;
+    border-radius: 3px;
+}
+a:hover{
+    background-color: green;
+}
+
+.content{
+    background-color: lightgreen;
+    float: left;
+    width: 100%;
+    height: 78%;
+}
+
+footer{
+    background-color: black;
+    width: 100%;
+    height: 10%;
+    float: right;
+    border: solid black 1px;
+}
