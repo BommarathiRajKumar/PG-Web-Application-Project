@@ -6,15 +6,12 @@
 			<attribute name="module" value="true"/>
 		</attributes>
 	</classpathentry>
-	<classpathentry kind="con" path="org.eclipse.jst.server.core.container/org.eclipse.jst.server.tomcat.runtimeTarget/apache-tomcat-9.0.71">
-		<attributes>
-			<attribute name="owner.project.facets" value="jst.web"/>
-		</attributes>
-	</classpathentry>
 	<classpathentry kind="con" path="org.eclipse.jst.j2ee.internal.web.container"/>
 	<classpathentry kind="con" path="org.eclipse.jst.j2ee.internal.module.container"/>
 	<classpathentry kind="lib" path="C:/mysql-connector-j-8.0.33/mysql-connector-j-8.0.33/mysql-connector-j-8.0.33.jar"/>
-	<classpathentry kind="lib" path="C:/Users/Rajkumar/Downloads/comm-2.0.jar/comm-2.0.jar"/>
-	<classpathentry kind="lib" path="C:/Users/Rajkumar/Downloads/http-2.2.1.jar/http-2.2.1.jar"/>
+	<classpathentry kind="lib" path="C:/Program Files/Apache Software Foundation/Tomcat 9.0_Tomcat9.0/lib/annotations-api.jar"/>
+	<classpathentry kind="lib" path="C:/Program Files/Apache Software Foundation/Tomcat 9.0_Tomcat9.0/lib/servlet-api.jar"/>
+	<classpathentry kind="lib" path="C:/Users/Rajkumar/Downloads/json-20230618.jar"/>
+	<classpathentry kind="lib" path="C:/Users/Rajkumar/eclipse-workspace/BackEnd/WebContent/WEB-INF/lib/mysql-connector-j-8.0.33.jar"/>
 	<classpathentry kind="output" path="build/classes"/>
 </classpath>
