@@ -84,7 +84,7 @@ const Login = () => {
 
     if(mob != null && pass!== null) {
         alert("your browser know your username and pasword we are redirecting you to your profile page.")
-        window.location.href = '/profile';
+        navigate('/profile');
     }
     
     return( 

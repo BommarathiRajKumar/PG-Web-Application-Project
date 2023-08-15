@@ -26,7 +26,6 @@ public class OtpValidAndSignup extends HttpServlet {
 	
 	protected void doPost(HttpServletRequest req, HttpServletResponse res){
 		try {
-			
 			res.setHeader("Access-Control-Allow-Origin", "http://localhost:3000");
 			res.setHeader("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS");
 			res.setHeader("Access-Control-Allow-Headers", "Content-Type, Authorization");

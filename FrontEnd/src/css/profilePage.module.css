@@ -1,14 +1,48 @@
 .mainDiv{
+    position: static;
+    top: 0;
+    left: 0;
+    right: 0;
     height: 100vh;
     width: 100vw;
 }
 
 .profileContainer {
-    text-align: center;
-    border-style: hidden;
+    height: 100%;
     width: 100%;
-    background-color: lightslategray;
+
+    position: static;
+    overflow: hidden;
 }
+  
+header {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    background-color: aqua;
+
+    
+    position: static;
+    overflow: hidden;
+}
+  
+main {
+    background-color: lightgray;
+    height: 100%;
+    width: 100%;
+
+    
+    position: static;
+    overflow: hidden;
+}
+
+.displayedHostel{
+    position: relative;
+    left: 7%;
+    top: 10px;
+    overflow: auto;
+}
+
 .profilePhoto {
     border-radius: 50%;
     width: 80px; 
@@ -37,13 +71,6 @@
 }
 
 
-.test{
-    position: absolute;
-    top: 10%;
-    width: 100%;
-    height: 100%;
-    background-color: red;
-}
 
 .noData{
     position: absolute;

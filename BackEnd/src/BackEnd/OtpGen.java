@@ -23,6 +23,7 @@ public class OtpGen extends HttpServlet {
 	
 	protected void doPost(HttpServletRequest req, HttpServletResponse res) throws IOException, ServletException {
 		try {
+		
 			
 			res.setHeader("Access-Control-Allow-Origin", "http://localhost:3000");
 			res.setHeader("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS");

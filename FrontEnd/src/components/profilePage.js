@@ -1,16 +1,13 @@
-import {useEffect, useState} from 'react';
+import {useState} from 'react';
 import profilePageCss from '../css/profilePage.module.css';
 import axios from 'axios';
-import { useNavigate } from 'react-router-dom';
-import DisplayHostels from './displayHostels.js';
+import DisplayHostelsProfilePage from './displayHostelsProfilePage.js';
 import noDataImage from '../images/noData.jpg';
 import { Oval } from 'react-loader-spinner';
 
 
 const Profile = ()=>{
-    const [isLoading, setIsLoading] = useState(true);
     const [fetch, setFetch] = useState(true);
-    const navigate = useNavigate();
     const [hostelType, setHostelType] = useState('');
     const [wifi, setWifi] = useState('');
     const [laundry, setLaundry] = useState('');
@@ -71,7 +68,8 @@ const Profile = ()=>{
     const sendHostelDeatils = e => { 
         const formData = new FormData()
         
-        formData.append("mobileNumber",mob)
+        formData.append("mobileNumber",userData.profileDetails.mobileNumber)
+        formData.append("ownerName",userData.profileDetails.ownerName)
         formData.append('hostelName',hostelDetails.hostelName)
         formData.append('hostelType',hostelType)
         formData.append('oneShareCost',hostelDetails.oneShareCost)
@@ -118,7 +116,6 @@ const Profile = ()=>{
                 if(response.status===200){
                     setUserData(response.data);
                     setTotalHostelsCount(Object.keys(response.data.hostelDetails).length)
-                    setIsLoading(false)
                     setFetch(false)
                 }
             }
@@ -131,7 +128,7 @@ const Profile = ()=>{
 
     return(
         <div className={profilePageCss.mainDiv}>
-            {isLoading ? 
+            {!(userData) ? 
                 <div className={profilePageCss.loaderContainer}>
                     <div  className={profilePageCss.loader}>
                         <Oval  color="#00BFFF" height={60} width={60} />
@@ -142,26 +139,33 @@ const Profile = ()=>{
             :
             <div>
                 {addHostelControl?
-                    <div>
-                        <div className={profilePageCss.profileContainer}>
-                            {userData && (
-                                <img
-                                    className={profilePageCss.profilePhoto}
-                                    src={`data:image/jpeg;base64,${userData.profileDetails.ownerImage}`} // Display the ownerImage using data URL
-                                    alt="profile"
-                                />
-                            )}
-                            {userData&&<div>{userData.profileDetails.mobileNumber}</div>}
-                            <button onClick={addHostelControlHandlerFalse} className={profilePageCss.addHstl}>Add New Hostle?</button>
-                            <button onClick={logOut}>Log out</button>
-                        </div>
-                        <br/>
+                    <div className={profilePageCss.profileContainer}>
+                        <header>
+                            {userData && 
+                                <div style={{display: 'flex', flexDirection: 'column',alignItems: 'center'}}>
+                                    <img
+                                        className={profilePageCss.profilePhoto}
+                                        src={`data:image/jpeg;base64,${userData.profileDetails.ownerImage}`} // Display the ownerImage using data URL
+                                        alt="profile"
+                                    />
+                                    <div>{userData.profileDetails.ownerName}</div>
+                                    <div>{userData.profileDetails.mobileNumber}</div>
+                                    <button style={{width:'100%', height:'15%'}} onClick={addHostelControlHandlerFalse} className={profilePageCss.addHstl}>Add New Hostle?</button>
+                                    <button style={{width:'100%', height:'15%'}} onClick={logOut}>Log out</button>
+                                </div>
+                            }
+                        </header>
+                        
                         {totalHostelsCount>0 ?
-                            <div style={{position:'absolute', left:'10%'}}>
-                                {Object.keys(userData.hostelDetails).map((key) => (
-                                    <DisplayHostels key={key} data={userData.hostelDetails[key]}/>
-                                ))}
-                            </div>
+                            <main>
+                                <div className={profilePageCss.displayedHostel}>
+                                    <div>&nbsp;&nbsp;Your Total Hostels:</div><br/>
+                                    {Object.keys(userData.hostelDetails).map((key) => (
+                                        <DisplayHostelsProfilePage key={key} data={userData.hostelDetails[key]}/>
+                                    ))}
+                                </div>
+                            </main>
+                        
                         :
                             <div className={profilePageCss.noData}>
                                 <img src={noDataImage}/><br/>

@@ -35,27 +35,28 @@ public class uploadHostel extends HttpServlet {
     			DriverManager.registerDriver(d);
     			Connection con = DriverManager.getConnection(url,userName,pass);
     			
-    			String query = "insert into hostelsDetails(mobileNumber, hostelName, hostelType,  oneShareCost, twoShareCost, threeShareCost, fourShareCost, fiveShareCost, wifi, laundry, hotWater, imageOne, imageTwo, imageThree, stateName, cityName, areaName, landMark) values(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
+    			String query = "insert into hostelsDetails(mobileNumber,ownerName, hostelName, hostelType,  oneShareCost, twoShareCost, threeShareCost, fourShareCost, fiveShareCost, wifi, laundry, hotWater, imageOne, imageTwo, imageThree, stateName, cityName, areaName, landMark) values(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
     		    
     			PreparedStatement pStm = con.prepareStatement(query);
     		    pStm.setString(1,req.getParameter("mobileNumber"));
-    		    pStm.setString(2,req.getParameter("hostelName"));
-    		    pStm.setString(3,req.getParameter("hostelType"));
-    		    pStm.setString(4,req.getParameter("oneShareCost"));
-    		    pStm.setString(5,req.getParameter("twoShareCost"));
-    		    pStm.setString(6,req.getParameter("threeShareCost"));
-    		    pStm.setString(7,req.getParameter("fourShareCost"));
-    		    pStm.setString(8,req.getParameter("fiveShareCost"));
-    		    pStm.setString(9,req.getParameter("wifi"));
-    		    pStm.setString(10,req.getParameter("laundry"));
-    		    pStm.setString(11,req.getParameter("hotWater"));
-    		    pStm.setBlob(12,req.getPart("imageOne").getInputStream());
-    		    pStm.setBlob(13,req.getPart("imageTwo").getInputStream());
-    		    pStm.setBlob(14,req.getPart("imageThree").getInputStream());
-                pStm.setString(15, req.getParameter("stateName"));
-                pStm.setString(16, req.getParameter("cityName"));
-                pStm.setString(17, req.getParameter("areaName"));
-                pStm.setString(18, req.getParameter("landMark"));
+    		    pStm.setString(2,req.getParameter("ownerName"));
+    		    pStm.setString(3,req.getParameter("hostelName"));
+    		    pStm.setString(4,req.getParameter("hostelType"));
+    		    pStm.setString(5,req.getParameter("oneShareCost"));
+    		    pStm.setString(6,req.getParameter("twoShareCost"));
+    		    pStm.setString(7,req.getParameter("threeShareCost"));
+    		    pStm.setString(8,req.getParameter("fourShareCost"));
+    		    pStm.setString(9,req.getParameter("fiveShareCost"));
+    		    pStm.setString(10,req.getParameter("wifi"));
+    		    pStm.setString(11,req.getParameter("laundry"));
+    		    pStm.setString(12,req.getParameter("hotWater"));
+    		    pStm.setBlob(13,req.getPart("imageOne").getInputStream());
+    		    pStm.setBlob(14,req.getPart("imageTwo").getInputStream());
+    		    pStm.setBlob(15,req.getPart("imageThree").getInputStream());
+                pStm.setString(16, req.getParameter("stateName"));
+                pStm.setString(17, req.getParameter("cityName"));
+                pStm.setString(18, req.getParameter("areaName"));
+                pStm.setString(19, req.getParameter("landMark"));
                 
                 pStm.executeUpdate();
 

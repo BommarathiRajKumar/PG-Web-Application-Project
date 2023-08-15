@@ -1,20 +1,13 @@
 import React from 'react';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faArrowLeft, faArrowRight } from '@fortawesome/free-solid-svg-icons';
 
-class Test extends React.Component {
-  render() {
+
+function Test() {
     return (
-      <div>
-        <button>
-          <FontAwesomeIcon icon={faArrowLeft} />
-        </button>
-        <button>
-          <FontAwesomeIcon icon={faArrowRight} />
-        </button>
-      </div>
+        <div style={{ position: 'relative'}}>
+            <div style={{backgroundColor: '#f0f0f0', padding: '20px'}}>Main Content</div>
+            <div style={{position: 'absolute', top: '0', left: '0', backgroundColor: 'black', color: 'white', padding: '10px'}}>Overlay Content</div>
+        </div>
     );
-  }
 }
 
 export default Test;

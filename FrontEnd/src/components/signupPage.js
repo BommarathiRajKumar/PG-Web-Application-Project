@@ -98,6 +98,7 @@ const Signup = () => {
                     }
                 }else{
                     setServerErr(true);
+                    console.log(err)
                 }
             })
         }
