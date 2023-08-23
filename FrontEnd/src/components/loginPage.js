@@ -1,7 +1,9 @@
-import { useState} from "react";
+import { useEffect, useState} from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import loginPageCss from "../css/loginPage.module.css";
+import ServerError from "../components/serverErrorPage"
+import ConnectionRefuse from "../components/connectionRefusePage";
 
     //if you want to run any fun after return then use useEffect(Hook) fun/method
     //useEffect fun/method will excute directly after the completeion of return to browser this is called life cycle.
@@ -14,96 +16,101 @@ const Login = () => {
         mobileNumber: '',
         password: ''
     })
-    const[mob,setMob] = useState(localStorage.getItem('mobile'))
-    const[pass,setPass] = useState(localStorage.getItem('password'))
+    const updateHandler = e => {
+        setCredentails({...credentials,[e.target.name]:e.target.value})
+    }
     //const [token, setToken] = useState(localStorage.getItem('token'))
     //useState ReactHook this RactHook's always use in fun level components only don't use in class level components.
    //To use useState Hook we want to use(or)assign one var&one fun. var is for to assign the value which is given by us and fun is for to change the value of first var.
     const[credentialsErr, setCredentialsErr] = useState();
-    const[userNotFound, setUserNotFound] =useState(false);
+    const[connectionRefused, setconnectionRefused] =useState(false);
     const [serverErr, setServerErr] = useState(false);
     const {mobileNumber, password} = credentials;
-    const updateHandler = e => {
-        setCredentails({...credentials,[e.target.name]:e.target.value})
-    }
+
+
+
     const userCredentialsSubmitHandler = e => {
         e.preventDefault();
         //By using the preventDefault() we can stop the reloding of form(or)this will prevent all the default activies.
 
-        if(mobileNumber.length > 10 || mobileNumber.length < 10 || mobileNumber==="" || password.length < 8 || password.length > 15 || isNaN(mobileNumber)){
+        if(credentials.mobileNumber.length > 10 || credentials.mobileNumber.length < 10 || credentials.mobileNumber==="" || credentials.password.length < 8 || isNaN(mobileNumber)){
             setCredentialsErr(true)
-            setServerErr(false)
-            setUserNotFound(false)
-
         }else{
-            axios.post("http://localhost:8080/PG/login?mobileNumber="+credentials.mobileNumber+"&password="+credentials.password).then(
+            axios.post("http://localhost:9090/BackEnd/login?", credentials, {
+                headers: {
+                    "Content-Type": "application/json", // Set the Content-Type header to JSON
+                },
+            }).then(
                 //By using axios we can make an request to backend like an API call.
                 function (response) {
                     if(response){
                         if(response.status === 200){
                             //setToken(response.data.token)
                             //localStorage.setItem('token',response.data.token)
-                            setServerErr(false)
-                            setCredentialsErr(false)
-                            setUserNotFound(false)
                             localStorage.setItem('mobile',credentials.mobileNumber)
                             localStorage.setItem('password',credentials.password)
-                            setMob(credentials.mobileNumber)
-                            setPass(credentials.password)
-                            credentials.password='';
-                            credentials.mobileNumber='';
                             navigate('/profile');
                         }else{
                             setServerErr(true)
                         }
-                    }else{
-                        setServerErr(true);
                     }
                 }
             ).catch((err) => {
                 if(err.response){
-                    if(err.response.status === 401) {
-                        setCredentialsErr(true)
-                        setUserNotFound(false)
-                        setServerErr(false)
-                    }else if(err.response.status===404) {
-                        setUserNotFound(true)
-                        setServerErr(false)
-                        setCredentialsErr(false)
-                    }else if(err.response.status === 500) {
+                    if(err.response.status==500){
                         setServerErr(true)
-                        setUserNotFound(false)
-                        setCredentialsErr(false)
+                    }else if(err.response.status===401){
+                        setCredentialsErr(true)
+                    }else{
+                        setServerErr(true)
                     }
                 }else{
-                    setServerErr(true);
-                }  
+                    setconnectionRefused(true)
+                }
+            }).finally(()=>{
+                credentials.password=null;
+                credentials.mobileNumber=null;
             })
         }
     }
 
-    if(mob != null && pass!== null) {
-        alert("your browser know your username and pasword we are redirecting you to your profile page.")
+   useEffect(()=>{
+    if(localStorage.getItem('mobile') != null && localStorage.getItem('password')!== null) {
+        alert("your browser know your credentials we are redirecting tp profile")
         navigate('/profile');
     }
+
+   },[]) 
     
     return( 
-        <div>
-            <form onSubmit={userCredentialsSubmitHandler} autoComplete="of">
-                <h1>Well Come Back.</h1>
-                
-                <div>
-                    {credentialsErr ?<div className={loginPageCss.error}>Invalid Credentails Please check the <br/> Mobile Number and password</div>:null}
-                    {serverErr ?<div className={loginPageCss.error}>Internall Server Error <br/>please try again by refreshing the page.</div>:null}
-                    {userNotFound ?<div className={loginPageCss.error}>Sorry user not found.</div>:null}<br/>
-                </div>
+        <div className={loginPageCss.mainDiv}>
+            <div className={loginPageCss.mainContainer}>
+                {serverErr || connectionRefused ?
+                    <div>
+                        {serverErr && <ServerError/>}
+                        {connectionRefused && <ConnectionRefuse />}
+                    </div>
+                :
+                    <form className={loginPageCss.form} onSubmit={userCredentialsSubmitHandler} autoComplete="of">
+                        
+                        <div style={{position:'absolute',height:'100%', width:'100%'}}>
+                            <h1>Well Come Back.</h1>
+                            
+                            <div>
+                                {credentialsErr ?<div className={loginPageCss.error}>Invalid Credentails Please check the <br/>Mobile Number and password.</div>:null}
+                            </div>
 
-                <div>Mobile Number</div><input type="text" name="mobileNumber" value={mobileNumber} onChange={updateHandler} /><br/><br/>
-                <div className={loginPageCss.inLine}> Password</div><input type="password" name="password" value={password} onChange={updateHandler}/><br/><br/>
-                <button className={loginPageCss.button}>Login</button><br/><br/><br/>   
-                <div>-------------New Building Owner?-------------</div><br/><br/>
-                <a href="http://localhost:3000/signup">Create an account</a>
-            </form>
+                            <div>Mobile Number</div><input type="text" name="mobileNumber" value={mobileNumber} onChange={updateHandler} /><br/><br/>
+                            <div className={loginPageCss.inLine}> Password</div><input type="password" name="password" value={password} onChange={updateHandler}/><br/><br/>
+                            <button className={loginPageCss.button}>Login</button><br/><br/><br/>   
+                            <div style={{width:'80%', display:'flex',flexDirection:'column',alignItems:'center'}}>
+                                <div>--------------New Building Owner?-----------</div><br/><br/>
+                            </div>
+                            <a href="http://localhost:3000/signup">Create an account</a>
+                        </div>
+                    </form>
+                }
+            </div>
         </div>
     )
 }

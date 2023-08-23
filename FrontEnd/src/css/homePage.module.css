@@ -4,10 +4,42 @@ body {
     height: 100vh;
     width: 100vw;
 }
-
 .mainDiv {
-    height: 100vh;
-    width: 100vw;
+    position: absolute;
+    height: 100%;
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.mainContainer {
+    position: fixed;
+    height: 100%;
+    width: 100%;
+}
+
+@media screen and (min-width: 1024px) {
+    .mainContainer {
+        width: 30%;
+    }
+}
+
+.header {
+    position: relative;
+    top: 0;
+    left: 0;    
+    background-color: #7ec7c3;
+    width: 100%;
+}
+
+.main { 
+    position: sticky;
+    top:'20%';
+    overflow: auto;
+    border: black solid 1px;
+    background-color: #E2D1F9;
+    height: 100%;
 }
 
 .pgButton {
@@ -18,37 +50,17 @@ body {
     overflow: hidden;
 }
 
-.header {
-    position: fixed;
-    top: 0;
-    left: 0;
-    
-    background-color: aqua;
-    width: 100%;
-}
-.main {
-    position: fixed;
-    width: 100%;
-    overflow: auto;
-    border: black solid 1px;
-    background-color: lightgray;
-}
-
-.content{
-    background-color: lightgreen;
-    width: 100%;
+.Containerloader {
     height: 100%;
-    position: fixed;
-    overflow: scroll; 
-    top: 20%;
-    left: 0;
-    right:0 
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
 }
-
-.noData{
-    position: absolute;
-    top: 40%;
-    left: 23%;
-    color: #B2BEB5;
+.loader{
+    display: flex; 
+    flex-direction: column;
+    align-items: center;
+    text-align: center
 }
 

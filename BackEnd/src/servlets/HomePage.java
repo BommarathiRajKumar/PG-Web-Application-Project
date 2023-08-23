@@ -1,4 +1,4 @@
-package BackEnd;
+package servlets;
 
 import javax.servlet.annotation.MultipartConfig;
 import javax.servlet.annotation.WebServlet;
@@ -14,9 +14,9 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 
-@WebServlet("/search")
+@WebServlet("/home")
 @MultipartConfig
-public class Search extends HttpServlet {
+public class HomePage extends HttpServlet {
 	private static final long serialVersionUID = 1L;
 	
 	protected void doPost(HttpServletRequest req, HttpServletResponse res) {
@@ -25,6 +25,7 @@ public class Search extends HttpServlet {
 	        res.setHeader("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS");
 	        res.setHeader("Access-Control-Allow-Headers", "Content-Type, Authorization");
 	        res.setHeader("Access-Control-Allow-Credentials", "true");
+	        
 			
 			String url="jdbc:mysql://localhost:3306/pg";
 			String userName="root";
@@ -38,6 +39,7 @@ public class Search extends HttpServlet {
 			String cityName = req.getParameter("cityName");
 			String areaName = req.getParameter("areaName");
 			
+			
 			Driver d=new Driver();
 			DriverManager.registerDriver(d);
 			Connection con=DriverManager.getConnection(url,userName,password);
@@ -45,7 +47,7 @@ public class Search extends HttpServlet {
 			String query = "select * from hostelsDetails limit 50";
 			PreparedStatement pStm = con.prepareStatement(query);
 			
-			if(state.equals("two")) {
+			if(state.equals("userSearch")) {
 				query = "select * from hostelsDetails where hostelType = ? and "+share+"Cost <= ? and stateName = ? and cityName = ? and areaName = ?";
 				pStm = con.prepareStatement(query);
 				pStm.setString(1, hostelType);
@@ -59,12 +61,12 @@ public class Search extends HttpServlet {
 				boolean flag=false;
 				int count=0;
 				while(i==0 && count<=5) {
-					if(flag) {
+					if(flag && state.equals("two")) {
 						int update = Integer.valueOf(price);
 						update+=500;
 						pStm.setInt(2, update);
 					}
-					if(count>=5) {
+					if(count>=5 && state.equals("two")) {
 						query = "select * from hostelsDetails where hostelType = ? and stateName = ? and cityName = ? and areaName = ?";
 						pStm = con.prepareStatement(query);
 						pStm.setString(1, hostelType);
@@ -120,10 +122,13 @@ public class Search extends HttpServlet {
 				}
 				
 		  
-			    res.setContentType("application/json");
-			    res.getWriter().println(hostelsDetails.toString());
-			    
-				res.setStatus(HttpServletResponse.SC_OK);
+				if(i!=0) {
+					res.setContentType("application/json");
+				    res.getWriter().println(hostelsDetails.toString());
+				    res.setStatus(HttpServletResponse.SC_OK);
+				}else {
+					res.setStatus(HttpServletResponse.SC_NO_CONTENT); 
+				}
 			
 		}catch(Exception err) {
 			System.out.println(err);

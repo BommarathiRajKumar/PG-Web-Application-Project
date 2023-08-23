@@ -1,4 +1,4 @@
-package BackEnd;
+package servlets;
 
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
@@ -57,23 +57,23 @@ public class FilterWord extends HttpServlet {
 
 			ResultSet DataResultSet = pStm.executeQuery();
 			
-				JSONObject dataBaseData = new JSONObject();
+				JSONObject namesFromDataBase = new JSONObject();
 				int i=0;
 	            while (DataResultSet.next()) {
-	            	dataBaseData.put("state"+(++i),DataResultSet.getString(type));
+	            	namesFromDataBase.put("state"+(++i),DataResultSet.getString(type));
 	            }
 	            JSONObject responseObj = new JSONObject();
-	            responseObj.put("dataFromBackEnd", dataBaseData);
+	            responseObj.put("namesFromBackEnd", namesFromDataBase);
 	  
 
 				res.setContentType("application/json");
 				res.getWriter().println(responseObj.toString());
-				res.setStatus(HttpServletResponse.SC_OK);
-			    
-				res.setStatus(HttpServletResponse.SC_OK);
+				
+				if(i!=0)res.setStatus(HttpServletResponse.SC_OK);
+				else res.setStatus(HttpServletResponse.SC_NOT_FOUND);
 			
 		}catch(Exception err) {
-			System.out.println(err);
+			System.out.print(err);
 			res.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
 		}
 	}

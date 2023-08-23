@@ -3,22 +3,24 @@
     width: 100%;
     height: 100%;
 }
+
+
 .hostelConatiner{
-    width: 83%;
-    height: 90%;
+    width: 92%;
+    height: 100%;
     margin-bottom: 15px;
     background-color: #d1ecf1;
     border: 3px solid black;
     border-radius: 10px;
 }
 .imagesContainer{
-    width: 50%;
+    width: 60%;
     height: 50%;
 }
 .Image{
     position: relative;
-    left: 20%;
-    width: 180px;
+    left: 10%;
+    width: 80%;
     height: 250px;
     border: 3px solid black;
     border-radius: 10px;
@@ -34,6 +36,8 @@
     cursor: pointer;
     background-color: #2980b9;
 }
+
+
 
 table {
     width: 100%; 
@@ -56,7 +60,7 @@ th {
 td {
     text-align: left;
     padding: 6px;
-    overflow: scroll;
+    overflow: auto;
     white-space: nowrap; 
     border-radius: 5px;
     background-color: #eafaea;
