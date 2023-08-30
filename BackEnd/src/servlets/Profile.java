@@ -1,114 +1,116 @@
-package servlets;
+ package servlets;
 
 import java.sql.Connection;
-import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 
-import javax.servlet.annotation.MultipartConfig;
 import javax.servlet.annotation.WebServlet;
+import javax.servlet.annotation.MultipartConfig;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.json.JSONObject;
 
-import com.mysql.jdbc.Driver;
+
+import dataBase.MysqlDataBaseConnection;
 
 @MultipartConfig
 @WebServlet("/profile")
 public class Profile extends HttpServlet{
 	private static final long serialVersionUID = 1L;
 
-	protected void service(HttpServletRequest req, HttpServletResponse res){
-		res.setHeader("Access-Control-Allow-Origin", "http://localhost:3000");
-        res.setHeader("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS");
-        res.setHeader("Access-Control-Allow-Headers", "Content-Type, Authorization");
-        res.setHeader("Access-Control-Allow-Credentials", "true");
+	protected void doPost(HttpServletRequest req, HttpServletResponse res){
+		
 		try {
-			String url="jdbc:mysql://localhost:3306/pg";
-			String userName="root";
-			String Password="123456789";
-			
-			Driver d=new Driver();
-			DriverManager.registerDriver(d);
-			Connection con=DriverManager.getConnection(url,userName,Password);
+			Connection con=MysqlDataBaseConnection.getMysqlConnection();
+			PreparedStatement pStmt=null;
+			ResultSet resultSet=null;
 			
 			String state = req.getParameter("state");
+			
+			System.out.println(state);
 			
 			if(state.equals("profileLoad")) {
 				String mob=req.getParameter("mobile");
 				String pass=req.getParameter("password");
 				
 				if(mob.length()==10 && pass!="") {
-					PreparedStatement pStmt=con.prepareStatement("select * from users where mobileNumber = ? and password = ?");
+					pStmt=con.prepareStatement("select * from users where mobileNumber = ? and password = ?");
 					pStmt.setString(1, mob);
 					pStmt.setString(2, pass);
-					ResultSet profileResultSet= pStmt.executeQuery();
+					resultSet= pStmt.executeQuery();
 					
 					
-					if (profileResultSet.next()) {
+					if (resultSet.next()) {
 						JSONObject userDetails = new JSONObject();
 						JSONObject profileDetails = new JSONObject();
 						JSONObject hostelsDetails = new JSONObject();
 						           
-						profileDetails.put("mobileNumber", profileResultSet.getString("mobileNumber"));
-						profileDetails.put("ownerName", profileResultSet.getString("ownerName"));
+						profileDetails.put("mobileNumber", resultSet.getString("mobileNumber"));
+						profileDetails.put("ownerName", resultSet.getString("ownerName"));
 						
-					    byte[] ownerImageBytes = profileResultSet.getBytes("ownerImage");
+					    byte[] ownerImageBytes = resultSet.getBytes("ownerImage");
 	                    if (ownerImageBytes != null) {
 	                        String ownerImageBase64 = java.util.Base64.getEncoder().encodeToString(ownerImageBytes);
 	                        profileDetails.put("ownerImage", ownerImageBase64);
 	                    }
 	                    userDetails.put("profileDetails",profileDetails);
 	                    
-	                   PreparedStatement pStmt1=con.prepareStatement("select * from hostelsDetails where mobileNumber=?");
-	                   pStmt1.setString(1, mob);
-	                   ResultSet hostelsDetailsResultSet= pStmt1.executeQuery();
-	                   
-	                   mob="";
-	                   pass="";
+	                   pStmt=con.prepareStatement("select * from hostelsDetails where mobileNumber=?");
+	                   pStmt.setString(1, mob);
+	                   resultSet= pStmt.executeQuery();
 	                   
 	                    int i=0;
-	                    while (hostelsDetailsResultSet.next()) {
+	                    while (resultSet.next()) {
 	                    	JSONObject singleHostelDetails = new JSONObject();
 	               
-	                    	singleHostelDetails.put("mobileNumber", hostelsDetailsResultSet.getString("mobileNumber"));
-			            	singleHostelDetails.put("ownerName", hostelsDetailsResultSet.getString("ownerName"));
-	                    	singleHostelDetails.put("hostelName", hostelsDetailsResultSet.getString("hostelName"));
-	                    	singleHostelDetails.put("hostelType", hostelsDetailsResultSet.getString("hostelType"));
-	                    	singleHostelDetails.put("oneShareCost", hostelsDetailsResultSet.getString("oneShareCost"));
-	                    	singleHostelDetails.put("twoShareCost", hostelsDetailsResultSet.getString("twoShareCost"));
-	                    	singleHostelDetails.put("threeShareCost", hostelsDetailsResultSet.getString("threeShareCost"));
-	                    	singleHostelDetails.put("fourShareCost", hostelsDetailsResultSet.getString("fourShareCost"));
-	                    	singleHostelDetails.put("fiveShareCost", hostelsDetailsResultSet.getString("fiveShareCost"));
-	                    	singleHostelDetails.put("wifi", hostelsDetailsResultSet.getString("wifi"));
-	                    	singleHostelDetails.put("laundry", hostelsDetailsResultSet.getString("laundry"));
-	                    	singleHostelDetails.put("hotWater", hostelsDetailsResultSet.getString("hotWater"));
-	                    	singleHostelDetails.put("uniqueSerialNumber", hostelsDetailsResultSet.getString("uniqueSerialNumber"));
+	                    	singleHostelDetails.put("mobileNumber", resultSet.getString("mobileNumber"));
+			            	singleHostelDetails.put("ownerName", resultSet.getString("ownerName"));
+	                    	singleHostelDetails.put("hostelName", resultSet.getString("hostelName"));
+	                    	singleHostelDetails.put("hostelType", resultSet.getString("hostelType"));
+	                    	singleHostelDetails.put("oneShareApplicable", resultSet.getString("oneShareApplicable"));
+	                    	singleHostelDetails.put("oneShareCost", resultSet.getString("oneShareCost"));
+	                    	singleHostelDetails.put("oneShareRoomsAvailable", resultSet.getString("oneShareRoomsAvailable"));
+	                    	singleHostelDetails.put("twoShareApplicable", resultSet.getString("twoShareApplicable"));
+	                    	singleHostelDetails.put("twoShareCost", resultSet.getString("twoShareCost"));
+	                    	singleHostelDetails.put("twoShareRoomsAvailable", resultSet.getString("twoShareRoomsAvailable"));
+	                    	singleHostelDetails.put("threeShareApplicable", resultSet.getString("threeShareApplicable"));
+	                    	singleHostelDetails.put("threeShareCost", resultSet.getString("threeShareCost"));
+	                    	singleHostelDetails.put("threeShareRoomsAvailable", resultSet.getString("threeShareRoomsAvailable"));
+	                    	singleHostelDetails.put("fourShareApplicable", resultSet.getString("fourShareApplicable"));
+	                    	singleHostelDetails.put("fourShareCost", resultSet.getString("fourShareCost"));
+	                    	singleHostelDetails.put("fourShareRoomsAvailable", resultSet.getString("fourShareRoomsAvailable"));
+	                    	singleHostelDetails.put("fiveShareApplicable", resultSet.getString("fiveShareApplicable"));
+	                    	singleHostelDetails.put("fiveShareCost", resultSet.getString("fiveShareCost"));
+	                    	singleHostelDetails.put("fiveShareRoomsAvailable", resultSet.getString("fiveShareRoomsAvailable"));
+	                    	singleHostelDetails.put("wifi", resultSet.getString("wifi"));
+	                    	singleHostelDetails.put("laundry", resultSet.getString("laundry"));
+	                    	singleHostelDetails.put("hotWater", resultSet.getString("hotWater"));
+	                    	singleHostelDetails.put("uniqueSerialNumber", resultSet.getString("uniqueSerialNumber"));
 	                    	
-	                    	byte[] imageOne = hostelsDetailsResultSet.getBytes("imageOne");
+	                    	byte[] imageOne = resultSet.getBytes("imageOne");
 	                        if (imageOne != null) {
 	                            String imageOne64 = java.util.Base64.getEncoder().encodeToString(imageOne);
 	                            singleHostelDetails.put("imageOne", imageOne64);
 	                        }
 	                        
-	                        byte[] imageTwo = hostelsDetailsResultSet.getBytes("imageTwo");
+	                        byte[] imageTwo = resultSet.getBytes("imageTwo");
 	                        if (imageTwo != null) {
 	                            String imageTwo64 = java.util.Base64.getEncoder().encodeToString(imageTwo);
 	                            singleHostelDetails.put("imageTwo", imageTwo64);
 	                        }
 	                        
-	                        byte[] imageThree = hostelsDetailsResultSet.getBytes("imageThree");
+	                        byte[] imageThree = resultSet.getBytes("imageThree");
 	                        if (imageThree != null) {
 	                            String imageThree64 = java.util.Base64.getEncoder().encodeToString(imageThree);
 	                            singleHostelDetails.put("imageThree", imageThree64);
 	                        }
 	                   
-	                    	singleHostelDetails.put("stateName", hostelsDetailsResultSet.getString("stateName"));
-	                    	singleHostelDetails.put("cityName", hostelsDetailsResultSet.getString("cityName"));
-	                    	singleHostelDetails.put("areaName", hostelsDetailsResultSet.getString("areaName"));
-	                    	singleHostelDetails.put("landMark", hostelsDetailsResultSet.getString("landMark"));
+	                    	singleHostelDetails.put("stateName", resultSet.getString("stateName"));
+	                    	singleHostelDetails.put("cityName", resultSet.getString("cityName"));
+	                    	singleHostelDetails.put("areaName", resultSet.getString("areaName"));
+	                    	singleHostelDetails.put("landMark", resultSet.getString("landMark"));
 	                    	
 	                        hostelsDetails.put(("hostel"+String.valueOf(++i)),singleHostelDetails);   
 	                        
@@ -126,37 +128,55 @@ public class Profile extends HttpServlet{
 	                }	
 				}else {
 					res.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-				}	
+				}
+				resultSet.close();
 			}else if(state.equals("uploadHostel")) {
-				String query = "insert into hostelsDetails(mobileNumber,ownerName, hostelName, hostelType,  oneShareCost, twoShareCost, threeShareCost, fourShareCost, fiveShareCost, wifi, laundry, hotWater, imageOne, imageTwo, imageThree, stateName, cityName, areaName, landMark) values(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
-    		    
-    			PreparedStatement pStm = con.prepareStatement(query);
-    		    pStm.setString(1,req.getParameter("mobileNumber"));
-    		    pStm.setString(2,req.getParameter("ownerName"));
-    		    pStm.setString(3,req.getParameter("hostelName"));
-    		    pStm.setString(4,req.getParameter("hostelType"));
-    		    pStm.setString(5,req.getParameter("oneShareCost"));
-    		    pStm.setString(6,req.getParameter("twoShareCost"));
-    		    pStm.setString(7,req.getParameter("threeShareCost"));
-    		    pStm.setString(8,req.getParameter("fourShareCost"));
-    		    pStm.setString(9,req.getParameter("fiveShareCost"));
-    		    pStm.setString(10,req.getParameter("wifi"));
-    		    pStm.setString(11,req.getParameter("laundry"));
-    		    pStm.setString(12,req.getParameter("hotWater"));
-    		    pStm.setBlob(13,req.getPart("imageOne").getInputStream());
-    		    pStm.setBlob(14,req.getPart("imageTwo").getInputStream());
-    		    pStm.setBlob(15,req.getPart("imageThree").getInputStream());
-                pStm.setString(16, req.getParameter("stateName"));
-                pStm.setString(17, req.getParameter("cityName"));
-                pStm.setString(18, req.getParameter("areaName"));
-                pStm.setString(19, req.getParameter("landMark"));
+    			pStmt = con.prepareStatement(
+    					"insert into hostelsDetails(mobileNumber,ownerName, hostelName, hostelType, oneShareApplicable, oneShareCost, "
+    					+ "oneShareRoomsAvailable, twoShareApplicable, twoShareCost, twoShareRoomsAvailable, threeShareApplicable, threeShareCost, "
+    					+ "threeShareRoomsAvailable,fourShareApplicable, fourShareCost, fourShareRoomsAvailable, fiveShareApplicable, fiveShareCost, "
+    					+ "fiveShareRoomsAvailable, wifi, laundry, hotWater,imageOne, imageTwo, imageThree, stateName, cityName, areaName, landMark) "
+    					+ "values(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)");
+    			
+    		    pStmt.setString(1,req.getParameter("mobileNumber"));
+    		    pStmt.setString(2,req.getParameter("ownerName"));
+    		    pStmt.setString(3,req.getParameter("hostelName"));
+    		    pStmt.setString(4,req.getParameter("hostelType"));
+    		    pStmt.setString(5, req.getParameter("oneShareApplicable"));
+    		    pStmt.setString(6,req.getParameter("oneShareCost"));
+    		    pStmt.setString(7, req.getParameter("oneShareRoomsAvailable"));
+    		    pStmt.setString(8, req.getParameter("twoShareApplicable"));
+    		    pStmt.setString(9,req.getParameter("twoShareCost"));
+    		    pStmt.setString(10, req.getParameter("twoShareRoomsAvailable"));
+    		    pStmt.setString(11, req.getParameter("threeShareApplicable"));
+    		    pStmt.setString(12,req.getParameter("threeShareCost"));
+    		    pStmt.setString(13, req.getParameter("threeShareRoomsAvailable"));
+    		    pStmt.setString(14, req.getParameter("fourShareApplicable"));
+    		    pStmt.setString(15,req.getParameter("fourShareCost"));
+    		    pStmt.setString(16, req.getParameter("fourShareRoomsAvailable"));
+    		    pStmt.setString(17, req.getParameter("fiveShareApplicable"));
+    		    pStmt.setString(18,req.getParameter("fiveShareCost"));
+    		    pStmt.setString(19, req.getParameter("fiveShareRoomsAvailable"));
+    		    pStmt.setString(20,req.getParameter("wifi"));
+    		    pStmt.setString(21,req.getParameter("laundry"));
+    		    pStmt.setString(22,req.getParameter("hotWater"));
+    		    pStmt.setBlob(23,req.getPart("imageOne").getInputStream());
+    		    pStmt.setBlob(24,req.getPart("imageTwo").getInputStream());
+    		    pStmt.setBlob(25,req.getPart("imageThree").getInputStream());
+                pStmt.setString(26, req.getParameter("stateName"));
+                pStmt.setString(27, req.getParameter("cityName"));
+                pStmt.setString(28, req.getParameter("areaName"));
+                pStmt.setString(29, req.getParameter("landMark"));
                 
-                pStm.executeUpdate();
+                pStmt.executeUpdate();
 
                 res.setStatus(HttpServletResponse.SC_OK);
+    			
 			}
+			pStmt.close();
+			con.close();
 		}catch(Exception err) {
-			System.out.println(err);
+			err.printStackTrace();
 			res.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
 		}	
 	}

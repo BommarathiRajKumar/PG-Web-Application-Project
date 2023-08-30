@@ -65,3 +65,13 @@ td {
     border-radius: 5px;
     background-color: #eafaea;
 }
+span{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.lightBlack{
+    color: rgba(0, 0, 0, 0.3);
+}
+

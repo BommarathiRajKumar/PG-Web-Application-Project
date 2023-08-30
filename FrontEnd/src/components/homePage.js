@@ -12,9 +12,6 @@ const Home = () =>{
     const navigate = useNavigate();
 
     const [loading, setLoading] = useState();
-    const[stateNamesLoading,setStateNamesLoading] = useState()
-    const[cityNamesLoading,setCityNamesLoading] = useState()
-    const[areaNamesLoading,setAreaNamesLoading] = useState()
     const [loginDisplay, setLoginDisplay] = useState(false);
     const [connectionRefuseError, setConnectionRefuseError]=useState(false);
     const [serverError, setServerError]=useState(false);
@@ -27,7 +24,7 @@ const Home = () =>{
         setNoDataFound(false);
         setConnectionRefuseError(false);
 
-        axios.post("http://localhost:9090/BackEnd/home?state=one")
+        axios.post("https://www.bestpgs.in/BackEnd/home?state=one")
             .then(res => {
                 if (res.status === 200) {
                     setTotalHostelsDetails(res.data);
@@ -85,31 +82,32 @@ const Home = () =>{
     const  noResultJson = {
         key: '-- No Result --'
     };
+    
+    const[stateNamesLoading,setStateNamesLoading] = useState(false)
     const [stateNames, setStateNames] = useState('');
-    const [userSelectedStateName, setUserSelectedStateName] = useState();
+    const [userSelectedStateName, setUserSelectedStateName] = useState(null);
     const [showStatesList, setShowStatesList] = useState(false);
-    const Handler_setShowStatesList = () => {
-        setShowStatesList(!showStatesList)
-        if(showCitysList)setShowCitysList(!showCitysList)
-        if(showAreasList)setShowAreasList(!showAreasList)
-    }
+    
     const handleStateSelect = (stateName)=>{
         setUserSelectedStateName(stateName)
-        setShowStatesList(true)
-        setStateNames()
         setShowStatesList(false)
     }
+
     const stateInputChangeHandler = (event) => {
-        setStateNamesLoading(true);
+        setStateNamesLoading(true)
+        setUserSelectedStateName(event.target.value)
+        setShowStatesList(true)
+        setShowCitysList(false)
+        setShowAreasList(false)
+
+        setConnectionRefuseError(false);
+        setServerError(false);
         const letters = event.target.value;
         
-
         if (letters) {
-            axios.post("http://localhost:9090/BackEnd/filterWord?type=stateName&word="+letters)
+            axios.post("https://www.bestpgs.in/BackEnd/filterWord?type=stateName&word="+letters)
                 .then(res => {
                     if (res.status === 200) {
-                        setConnectionRefuseError(false);
-                        setServerError(false);
                         setStateNames(res.data.namesFromBackEnd);
                     } else {
                         alert("Please do refresh and try after some time.");
@@ -119,10 +117,12 @@ const Home = () =>{
                     if (err.response) {
                         if (err.response.status === 404) {
                             setStateNames(noResultJson);
+                            alert("working")
                         }else if(err.response.status === 500) {
                             setServerError(true);
                         }
-                    } else {
+                    } 
+                    else {
                         setConnectionRefuseError(true);
                     }
                 })
@@ -130,37 +130,41 @@ const Home = () =>{
                     setStateNamesLoading(false);
                 }
             );
-        } else {
-            setStateNames();
+        }else{
+            setStateNames(noResultJson);
+            setShowStatesList(false)
+
         }
     }
 
+    
+    const[cityNamesLoading,setCityNamesLoading] = useState(false)
     const [cityNames, setCityNames] = useState('');
-    const [userSelectedCityName, setUserSelectedCityName] = useState();
+    const [userSelectedCityName, setUserSelectedCityName] = useState(null);
     const [showCitysList, setShowCitysList] = useState(false);
-    const Handler_setShowCitysList = () => {
-        setShowCitysList(!showCitysList)
-        if(showStatesList)setShowCitysList(!showStatesList)
-        if(showAreasList)setShowAreasList(!showAreasList)
-    }
-    const handleCitySelect = (stateName)=>{
-        setUserSelectedCityName(stateName)
-        setShowCitysList(true)
-        setCityNames()
+   
+    const handleCitySelect = (cityName)=>{
+        setUserSelectedCityName(cityName)
         setShowCitysList(false)
     }
     const cityInputChangeHandler = (event) => {
         setCityNamesLoading(true);
+        setUserSelectedCityName(event.target.value)
+        setShowStatesList(false)
+        setShowCitysList(true)
+        setShowAreasList(false)
+
+        setConnectionRefuseError(false);
+        setServerError(false);
         const letters = event.target.value;
         
 
         if (letters) {
-            axios.post("http://localhost:9090/BackEnd/filterWord?type=cityName&stateName="+userSelectedStateName+"&word="+letters)
+            axios.post("https://www.bestpgs.in/BackEnd/filterWord?type=cityName&stateName="+userSelectedStateName+"&word="+letters)
                 .then(res => {
                     if (res.status === 200) {
-                        setConnectionRefuseError(false);
-                        setServerError(false);
                         setCityNames(res.data.namesFromBackEnd);
+                        
                     } else {
                         alert("Please do refresh and try after some time.");
                     }
@@ -168,6 +172,7 @@ const Home = () =>{
                 .catch(err => {
                     if (err.response) {
                         if (err.response.status === 404) {
+                            setCityNames(noResultJson)
                         }else if(err.response.status === 500) {
                             setServerError(true);
                         }
@@ -179,35 +184,38 @@ const Home = () =>{
                     setCityNamesLoading(false);
                 }
             );
-        } else {
-            setCityNames();
+        }else{
+            setCityNames(noResultJson)
+            setShowCitysList(false)
+
         }
     }
 
+    
+    const[areaNamesLoading,setAreaNamesLoading] = useState(false)
     const [areaNames, setAreaNames] = useState('');
-    const [userSelectedAreaName, setUserSelectedAreaName] = useState();
+    const [userSelectedAreaName, setUserSelectedAreaName] = useState(null);
     const [showAreasList, setShowAreasList] = useState(false);
-    const Handler_setShowAreasList = () => {
-        setShowAreasList(!showAreasList)
-        if(showStatesList)setShowCitysList(!showStatesList)
-        if(showCitysList)setShowAreasList(!showCitysList)
-    }
-    const handleAreaSelect = (stateName)=>{
-        setUserSelectedAreaName(stateName)
-        setShowAreasList(true)
-        setAreaNames()
+    
+    const handleAreaSelect = (areaName)=>{
+        setUserSelectedAreaName(areaName)
         setShowAreasList(false)
     }
     const areaInputChangeHandler = (event) => {
         setAreaNamesLoading(true);
+        setUserSelectedAreaName(event.target.value)
+        setShowStatesList(false)
+        setShowCitysList(false)
+        setShowAreasList(true)
+
+        setConnectionRefuseError(false);
+        setServerError(false);
         const letters = event.target.value;
 
         if (letters) {
-            axios.post("http://localhost:9090/BackEnd/filterWord?type=areaName&stateName="+userSelectedStateName+"&cityName="+userSelectedCityName+"&word="+letters)
+            axios.post("https://www.bestpgs.in/BackEnd/filterWord?type=areaName&stateName="+userSelectedStateName+"&cityName="+userSelectedCityName+"&word="+letters)
                 .then(res => {
                     if (res.status === 200) {
-                        setConnectionRefuseError(false);
-                        setServerError(false);
                         setAreaNames(res.data.namesFromBackEnd);
                     } else {
                         alert("Please do refresh and try after some time.");
@@ -228,8 +236,10 @@ const Home = () =>{
                     setAreaNamesLoading(false);
                 }
             );
-        } else {
-            setAreaNames();
+        }else{
+            setAreaNames(noResultJson);
+            setShowAreasList(false);
+
         }
     }
 
@@ -239,47 +249,49 @@ const Home = () =>{
 
     const HandlerSearch = (e) => {
         e.preventDefault();
-        const formData = new FormData()
-
-        formData.append('state','userSearch')
-        formData.append("hostelType", userSelectedHostelType)
-        formData.append('share', userSelectedRoomType)
-        formData.append('price', userSelectedPrice)
-        formData.append('stateName', userSelectedStateName)
-        formData.append('cityName', userSelectedCityName)
-        formData.append('areaName', userSelectedAreaName)
 
         if(userSelectedHostelType==null){
-            setErrToPrint("Please select the hostelType")
+            setErrToPrint("Please select the hostelType.")
             setFormErr(true);
         }else if(userSelectedRoomType==null){
-            setErrToPrint("Please select the RoomType")
+            setErrToPrint("Please select the RoomType.")
             setFormErr(true);
         }else if(userSelectedPrice==null || isNaN(userSelectedPrice)){
-            setErrToPrint("Please enter the Proper price")
+            setErrToPrint("Please enter the Proper Rs/month.")
             setFormErr(true);
            
-        }else if(userSelectedStateName==null || userSelectedStateName=="-- No Result --"){
-            setErrToPrint("Please select the state name")
+        }else if(userSelectedStateName===null || userSelectedStateName==="-- No Result --"){
+            setErrToPrint("Please select the state name.")
             setFormErr(true);    
-        }else if(userSelectedCityName==null || userSelectedCityName=="-- No Result --"){
-            setErrToPrint("Please select the city name")
+        }else if(userSelectedCityName===null || userSelectedCityName==="-- No Result --"){
+            setErrToPrint("Please select the city name.")
             setFormErr(true);     
-        }else if(userSelectedAreaName==null || userSelectedAreaName=="-- No Result --"){
-            setErrToPrint("Please select the Area name")
+        }else if(userSelectedAreaName===null || userSelectedAreaName==="-- No Result --"){
+            setErrToPrint("Please select the Area name.")
             setFormErr(true); 
         }else{
+            const formData = new FormData()
+
+            formData.append('state','userSearch')
+            formData.append("hostelType", userSelectedHostelType)
+            formData.append('share', userSelectedRoomType)
+            formData.append('price', userSelectedPrice)
+            formData.append('stateName', userSelectedStateName)
+            formData.append('cityName', userSelectedCityName)
+            formData.append('areaName', userSelectedAreaName)
+            
             setErrToPrint('')
-            setFormErr(false);
-            setHeaderHeight(18) 
+            setFormErr(false)
+            setHeaderHeight(18)
             setLoading(true);
 
-            axios.post("http://localhost:9090/BackEnd/home?", formData)
+            setConnectionRefuseError(false);
+            setServerError(false);
+            setNoDataFound(false);
+
+            axios.post("https://www.bestpgs.in/BackEnd/home?", formData)
                 .then(res => {
                     if (res.status === 200) {
-                        setConnectionRefuseError(false);
-                        setServerError(false);
-                        setNoDataFound(false);
                         setTotalHostelsDetails(res.data);
                     } else if(res.status===204){
                         setNoDataFound(true);
@@ -335,7 +347,7 @@ const Home = () =>{
             <div className={homePageCss.mainContainer}>               
                 <header style={{ height: `${headerHeight}%` }} className={homePageCss.header}>
                     <button style={{height:`${buttonHeight}%`}} className={homePageCss.pgButton} onClick={() => setLoginDisplay(true)}>PG owner?</button>
-                    <strong style={{color:'black',fontFamily:'sans-serif',position:'absolute', left:'1%', top:'1%'}}>Use Filters To home Your PG.</strong>
+                    <strong style={{color:'black',fontFamily:'sans-serif',position:'absolute', left:'1%', top:'1%'}}>Filters to find desired hostel.</strong>
                     
                     <div style={{position:'absolute', left:'1%',top:`${hostelTypeTop}%`, width:'100%'}}>
                             <div style={{ position: 'relative', width: '55%'}}>
@@ -396,77 +408,51 @@ const Home = () =>{
                         {!showHostelTypeList && !showRoomsList &&
                             <div>
                                 <label>Enter &#8377;/month: </label>
-                                <input style={{width: '24%' }} type="text" onChange={(e)=>HandlerSetUserSelectedPrice(e.target.value)} /><br/><br/>
+                                <input style={{width: '24%' }} type="text" value={userSelectedPrice} onChange={(e)=>HandlerSetUserSelectedPrice(e.target.value)} /><br/><br/>
                             </div>
                         }
                     </div>
 
-                    {headerHeight==18?
+                    {headerHeight===18?
                         <div>
                             {!showHostelTypeList && !showRoomsList &&
                                 <div style={{color:'blue',position:'absolute', left:'1%',top:'85%', cursor:'pointer'}} onClick={()=>setHeaderHeight(30)}>more filters</div>
                             }
                         </div>
                     :
-                    <div>
-                        <div style={{position:'absolute', left:'1%',top:'48%', width:'100%'}}>
-                            {!showHostelTypeList && !showRoomsList &&
-                                <div style={{ position: 'relative', width: '55%' }}>
-                                    <div style={{cursor: 'pointer',padding: '0px',border: '1px solid black',display: 'flex',alignItems: 'center',justifyContent: 'space-between',}}onClick={Handler_setShowStatesList}>
-                                        <div style={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
-                                            State Name: {userSelectedStateName || 'Not selected'}
-                                        </div>
-                                        <div>{showStatesList  ? '▲' : '▼'}</div>
-                                    </div>
-                                    {showStatesList&&
-                                        <div style={{ display: 'flex', alignItems: 'center' }}>
-                                            <span style={{ marginRight: '5%', marginTop:'5%'}}>search:</span>
-                                            <input style={{margi2nTop:'5%'}} type="text" onChange={stateInputChangeHandler} />
-                                        </div>
-                                    }
-                                </div>
-                            }
-                        </div>
-                        {stateNames && showStatesList&&
-                            <div style={{position:'absolute',left:'57%',top:'18%',width:'43%',height:'100%'}}>
-                                {stateNamesLoading?
-                                    <div style={{position:'relative', left:'31%', top:'25%'}}>
-                                        <Oval  color="#00BFFF" height={40} width={40} />
-                                        loading...
-                                    </div>
-                                :
-                                        <ul style={{position:'relative',marginTop:'0',border:'3px solid black',backgroundColor:'white', width:'67%',height:'78%', listStyleType: 'disc',overflow:'auto'}}>
-                                            <li style={{position:'relative',left:'-20px',color:'red',marginBottom:'5%',marginTop:'5%'}}>Select Your State Name:</li>                                
-                                            {Object.keys(stateNames).map((key) => (
-                                                <li key={stateNames[key]} onClick={() => handleStateSelect(stateNames[key])} style={{position:'relative',left:'-20px',color:'black', cursor: 'pointer'}}>
-                                                    {stateNames[key]}
-                                                </li>
-                                            ))}
-                                        </ul>
-                                
-                                }
+                        <div>
+                        {!showHostelTypeList && !showRoomsList &&
+                        <div>
+                            <div style={{position:'absolute',marginTop:'4%', left:'1%',top:'40%', width:'100%'}}>
+                                <label style={{ marginTop:'5%'}}>State Name:</label>
+                                <input value={userSelectedStateName} placeholder={'Not selected'} style={{width:'30%'}} type="text" onClick={stateInputChangeHandler} onChange={stateInputChangeHandler} />
                             </div>
-                        }
-
-                        <div style={{position:'absolute', left:'1%',top:'61%', width:'100%', overflow:'auto'}}>
-                            {!showHostelTypeList && !showRoomsList && !showStatesList &&
-                                <div style={{ position: 'relative', width: '55%' }}>
-                                    <div style={{cursor: 'pointer',padding: '0px',border: '1px solid black',display: 'flex',alignItems: 'center',justifyContent: 'space-between',}}onClick={Handler_setShowCitysList}>
-                                        <div style={{overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
-                                            City Name: {userSelectedCityName || 'Not selected'}
+                            {showStatesList&&
+                                <div style={{position:'absolute',left:'57%',top:'18%',width:'43%',height:'100%'}}>
+                                    {stateNamesLoading?
+                                        <div style={{position:'relative', left:'31%', top:'25%'}}>
+                                            <Oval  color="#00BFFF" height={40} width={40} />
+                                            loading...
                                         </div>
-                                        <div>{showCitysList  ? '▲' : '▼'}</div>
-                                    </div>
-                                    {showCitysList&&
-                                        <div style={{ display: 'flex', alignItems: 'center' }}>
-                                            <span style={{ marginRight: '5%', marginTop:'5%'}}>search:</span>
-                                            <input style={{marginTop:'5%'}} type="text" onChange={cityInputChangeHandler} />
-                                        </div>
+                                    :
+                                            <ul style={{position:'relative',marginTop:'0',border:'3px solid black',backgroundColor:'white', width:'67%',height:'78%', listStyleType: 'disc',overflow:'auto'}}>
+                                                <li style={{position:'relative',left:'-20px',color:'red',marginBottom:'5%',marginTop:'5%'}}>Select State Name:</li>                                
+                                                {Object.keys(stateNames).map((key) => (
+                                                    <li key={stateNames[key]} onClick={() => handleStateSelect(stateNames[key])} style={{position:'relative',left:'-20px',color:'black', cursor: 'pointer'}}>
+                                                        {stateNames[key]}
+                                                    </li>
+                                                ))}
+                                            </ul>
+                                    
                                     }
                                 </div>
                             }
-                        </div>
-                            {cityNames && showCitysList&&
+
+                            <div style={{position:'absolute',marginTop:'4%', left:'1%',top:'53%', width:'100%'}}>
+                                <label style={{ marginTop:'5%'}}>City Name:</label>
+                                <input value={userSelectedCityName} placeholder={'Not selected'} style={{width:'30%'}} type="text" onClick={cityInputChangeHandler} onChange={cityInputChangeHandler} />
+                            </div>
+                            {showCitysList&&
                                 <div style={{position:'absolute',left:'57%',top:'18%',width:'43%',height:'100%'}}>
                                     {cityNamesLoading?
                                         <div style={{position:'relative', left:'31%', top:'25%'}}>
@@ -474,112 +460,105 @@ const Home = () =>{
                                             loading...
                                         </div>
                                     :
-                                    <ul style={{position:'relative',marginTop:'0',border:'3px solid black',backgroundColor:'white', width:'67%',height:'78%', listStyleType: 'disc',overflow:'auto'}}>
-                                        <li style={{color:'red',position:'relative',left:'-20px',color:'red',marginBottom:'5%',marginTop:'5%'}}>Select Your City Name:</li><br/>
-                                            {Object.keys(cityNames).map((key) => (
-                                                <li key={cityNames[key]} onClick={() => handleCitySelect(cityNames[key])} style={{position:'relative',left:'-20px',color:'black', cursor: 'pointer'}}>
-                                                    {cityNames[key]}
-                                                </li>
-                                            ))}
-                                        </ul>
+                                            <ul style={{position:'relative',marginTop:'0',border:'3px solid black',backgroundColor:'white', width:'67%',height:'78%', listStyleType: 'disc',overflow:'auto'}}>
+                                                <li style={{position:'relative',left:'-20px',color:'red',marginBottom:'5%',marginTop:'5%'}}>Select city Name:</li>                                
+                                                {Object.keys(cityNames).map((key) => (
+                                                    <li key={cityNames[key]} onClick={() => handleCitySelect(cityNames[key])} style={{position:'relative',left:'-20px',color:'black', cursor: 'pointer'}}>
+                                                        {cityNames[key]}
+                                                    </li>
+                                                ))}
+                                            </ul>
+                                    
                                     }
                                 </div>
                             }
 
-                        <div style={{position:'absolute', left:'1%',top:'73%', width:'100%', overflow:'auto'}}>
-                            {!showHostelTypeList && !showRoomsList && !showStatesList && !showCitysList &&
-                                <div style={{ position: 'relative', width: '55%' }}>
-                                    <div style={{cursor: 'pointer',padding: '0px',border: '1px solid black',display: 'flex',alignItems: 'center',justifyContent: 'space-between',}}onClick={Handler_setShowAreasList}>
-                                            <div style={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
-                                                Area Name: {userSelectedAreaName || 'Not selected'}
-                                            </div>
-                                            <div>{showAreasList  ? '▲' : '▼'}</div>
-                                        </div>
-                                        {showAreasList&&
-                                            <div style={{ display: 'flex', alignItems: 'center' }}>
-                                                <span style={{ marginRight: '5%', marginTop:'5%'}}>search:</span>
-                                                <input style={{marginTop:'5%'}} type="text" onChange={areaInputChangeHandler} />
-                                            </div>  
-                                        }
-                                </div>
-                            }
-                        </div>
-                            {areaNames && showAreasList&&
-                                 <div style={{position:'absolute',left:'57%',top:'18%',width:'43%',height:'100%'}}>
+                            <div style={{position:'absolute',marginTop:'4%', left:'1%',top:'63%', width:'100%'}}>
+                                <label style={{ marginTop:'5%'}}>Area Name:</label>
+                                <input value={userSelectedAreaName} placeholder={'Not selected'} style={{width:'30%'}} type="text" onClick={areaInputChangeHandler} onChange={areaInputChangeHandler} />
+                            </div>
+                            {showAreasList&&
+                                <div style={{position:'absolute',left:'57%',top:'18%',width:'43%',height:'100%'}}>
                                     {areaNamesLoading?
                                         <div style={{position:'relative', left:'31%', top:'25%'}}>
                                             <Oval  color="#00BFFF" height={40} width={40} />
                                             loading...
                                         </div>
                                     :
-                                    <ul style={{position:'relative',marginTop:'0',border:'3px solid black',backgroundColor:'white', width:'67%',height:'78%', listStyleType: 'disc',overflow:'auto'}}>
-                                        <li style={{color:'red',position:'relative',left:'-20px',color:'red',marginBottom:'5%',marginTop:'5%'}}>Select Your Area Name:</li><br/>
-                                            {Object.keys(areaNames).map((key) => (
-                                                <li key={areaNames[key]} onClick={() => handleAreaSelect(areaNames[key])} style={{position:'relative',left:'-20px',color:'black', cursor: 'pointer'}}>
-                                                    {areaNames[key]}
-                                                </li>
-                                            ))}
-                                        </ul>
+                                            <ul style={{position:'relative',marginTop:'0',border:'3px solid black',backgroundColor:'white', width:'67%',height:'78%', listStyleType: 'disc',overflow:'auto'}}>
+                                                <li style={{position:'relative',left:'-20px',color:'red',marginBottom:'5%',marginTop:'5%'}}>Select Area Name:</li>                                
+                                                {Object.keys(areaNames).map((key) => (
+                                                    <li key={areaNames[key]} onClick={() => handleAreaSelect(areaNames[key])} style={{position:'relative',left:'-20px',color:'black', cursor: 'pointer'}}>
+                                                        {areaNames[key]}
+                                                    </li>
+                                                ))}
+                                            </ul>
+                                    
                                     }
                                 </div>
                             }
-                            
-                        <div style={{position:'absolute', left:'1%',top:'86%', width:'100%', overflow:'auto'}}>
-                            {!showHostelTypeList && !showRoomsList && !showStatesList && !showCitysList && !showAreasList &&
-                                <button style={{width: '20%'}} onClick={HandlerSearch}>search</button>
-                            }
-                        </div>
+                                
+                            <div style={{position:'absolute', left:'1%',top:'86%', width:'100%', overflow:'auto'}}>
+                                <button style={{backgroundColor:'#25D366', width: '20%'}} onClick={HandlerSearch}>search</button>
+                            </div>
 
-                        <div style={{position:'absolute', left:'25%',top:'90%', width:'100%', overflow:'auto'}}>
-                            {formErr && !showHostelTypeList && !showRoomsList && !showStatesList && !showCitysList && !showAreasList &&
-                                <div  style={{color: 'red'}}>{errToPrint}</div>
-                            }
-                        </div> 
-                    </div>}              
+                            <div style={{position:'absolute', left:'25%',top:'90%', width:'100%', overflow:'auto'}}>
+                                {formErr && !showStatesList && !showCitysList && !showAreasList && <div  style={{color: 'red'}}>{errToPrint}</div>}
+                            </div> 
+                        </div>
+                        }
+                        </div>
+                    }              
                 </header>
                 <main style={{height:`${mainHeight}%`}} className={homePageCss.main}>
-                    {loading?
-                        <div  className={homePageCss.Containerloader}>
-                            <div className={homePageCss.loader}>
-                                <Oval color="#00BFFF" height={60} width={60} />
-                                <div style={{marginTop:'8%'}}>
-                                    Please wait, Data is loading...
-                                </div>
-                            </div>
+                    { serverError || connectionRefuseError ?
+                        <div style={{height:'100%', width:'100%'}}>
+                            {serverError ? <ServerError/>:<ConnectionRefuse />}
                         </div>
-                    
                     :
-                        <div style={{width:'100%',height:'100%'}}>
-                            {noDataFound?
-                                <div style={{width:'100%',height:'100%',display:'flex',justifyContent:'center',alignItems:'center'}}>
-                                    <div style={{display:'flex', flexDirection:'column', alignItems:'center'}}>
-                                        <img src={noDataImage}/><br/>
-                                        <div style={{color:'#B2BEB5'}}>Please do Change Filters Options.</div>
+                        <div style={{height:'100%', width:'100%'}}>
+                            {loading?
+                                <div  className={homePageCss.Containerloader}>
+                                    <div className={homePageCss.loader}>
+                                        <Oval color="#00BFFF" height={60} width={60} />
+                                        <div style={{marginTop:'8%'}}>
+                                            Please wait, Data is loading...
+                                        </div>
                                     </div>
                                 </div>
+                            
                             :
-                                <div>
-                                    {totalHostelsDetails&&
-                                        <div style={{position: 'absolute', top: '3%', left: '6%', right:'0',overflow: 'auto'}}>
-                                            <div>&nbsp;&nbsp;Hostels:</div><br/>
-                                                {Object.keys(totalHostelsDetails).map((key) => (
-                                                    <DisplayHostelsPage key={key} data={totalHostelsDetails[key]}/> 
-                                            ))}
+                                <div style={{width:'100%',height:'100%'}}>
+                                    {noDataFound?
+                                        <div style={{backgroundColor:'white',width:'100%',height:'100%',display:'flex',justifyContent:'center',alignItems:'center'}}>
+                                            <div style={{display:'flex', flexDirection:'column', alignItems:'center'}}>
+                                                <img src={noDataImage} alt="noDataImg"/><br/>
+                                                <div style={{color:'#B2BEB5'}}>Please do Change Filters Options.</div>
+                                            </div>
+                                        </div>
+                                    :
+                                        <div>
+                                            {totalHostelsDetails&&
+                                                <div style={{position: 'absolute', top: '3%', left: '6%', right:'0',overflow: 'auto'}}>
+                                                    <div>&nbsp;&nbsp;Hostels:</div><br/>
+                                                        {Object.keys(totalHostelsDetails).map((key) => (
+                                                            <DisplayHostelsPage key={key} data={totalHostelsDetails[key]}/> 
+                                                    ))}
+                                                </div>
+                                            }
                                         </div>
                                     }
-                                </div>
+                                </div> 
                             }
-                            {connectionRefuseError && <ConnectionRefuse/>}
-                            {serverError && <ServerError/>}
-                        </div> 
+                        </div>
                     }
                         
                 </main>    
                 {loginDisplay&&
                     <div style={{ backgroundColor: '#317773', border: '3px solid black', borderRadius: '10px' ,width: '50%', height: '20%', position: 'absolute', left: '25%', top: '45%'}}>
                         <label style={{ width: '20%', color: 'red', position: 'absolute', top: '4%', left: '88%' }} onClick={()=>setLoginDisplay(!loginDisplay)}>X</label>
-                        <button style={{ width: '50%', height: '25%', position: 'absolute', top: '20%', left: '24%' }} onClick={()=>navigate('/login')}>Login</button>
-                        <button style={{ width: '50%', height: '25%', position: 'absolute', top: '55%', left: '24%' }} onClick={()=>navigate('/signup')}>Signup</button>
+                        <button style={{backgroundColor:'#25D366', width: '50%', height: '25%', position: 'absolute', top: '20%', left: '24%' }} onClick={()=>navigate('/login')}>Login</button>
+                        <button style={{backgroundColor:'#25D366', width: '50%', height: '25%', position: 'absolute', top: '55%', left: '24%' }} onClick={()=>navigate('/signup')}>Signup</button>
                         <br/>
                     </div>
                 }

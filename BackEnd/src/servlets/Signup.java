@@ -8,79 +8,64 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.annotation.MultipartConfig;
 import javax.servlet.annotation.WebServlet;
 
-import javax.servlet.ServletException;
-import java.io.IOException;
 
-import com.mysql.jdbc.Driver;
-import java.sql.DriverManager;
+import dataBase.MysqlDataBaseConnection;
+
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
-import java.io.PrintWriter;
 
 @MultipartConfig
 @WebServlet("/signup")
 public class Signup extends HttpServlet {
 	private static final long serialVersionUID = 1L;
 	
-	String url = "jdbc:mysql://localhost:3306/pg";
-	String userName = "root";
-	String pass = "123456789";
-	
-	
-	protected void doPost(HttpServletRequest req, HttpServletResponse res) throws IOException, ServletException {
-		try {	
-			res.setHeader("Access-Control-Allow-Origin", "http://localhost:3000");
-			res.setHeader("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS");
-			res.setHeader("Access-Control-Allow-Headers", "Content-Type, Authorization");
-			res.setHeader("Access-Control-Allow-Credentials", "true");
+	protected void doPost(HttpServletRequest req, HttpServletResponse res) {
+		try {
 			
-			Driver d=new Driver();
-			DriverManager.registerDriver(d);
-			Connection con = DriverManager.getConnection(url,userName,pass);
+			Connection con = MysqlDataBaseConnection.getMysqlConnection();
+			PreparedStatement pStm=null;
+			ResultSet resultSet=null;
 			
 			String state = req.getParameter("state");
+			String mobileNumber=req.getParameter("mobileNumber");
 			
 
 			
 			if(state.equals("validateMobile")) {
-
-				String mobileNumber=req.getParameter("mobileNumber");
-				
+	
 				String query = "select count(*) from users where mobileNumber = ?";
-			    PreparedStatement pStm = con.prepareStatement(query);
+			    pStm = con.prepareStatement(query);
 			    pStm.setString(1, mobileNumber);
-			    ResultSet resultSet= pStm.executeQuery();
+			    resultSet= pStm.executeQuery();
 			    resultSet.next();
 			    
 			    if(resultSet.getInt(1)==0) {
-			    		deleteOtpFromDataBase(mobileNumber);
 				    	int otp=generateOtp();
+				    	deleteOtpFromDataBase(mobileNumber);
 				        insertOtpAndMobileNumberIntoDataBase(mobileNumber, otp);
-					    PrintWriter out = res.getWriter();
-						out.println(otp);
+					    res.getWriter().println(otp);
 						res.setStatus(HttpServletResponse.SC_CREATED);
 			    }else {
 			    	res.setStatus(HttpServletResponse.SC_CONFLICT);
 			    }
+			    
 			}else if(state.equals("validateOtp")) {
-				String mobileNumber=req.getParameter("mobileNumber");
-				int userOtp=Integer.parseInt(req.getParameter("otp"));
 				
-			    PreparedStatement pstm = con.prepareStatement("select otp from otpTable where mobileNumber=?");
-			    pstm.setString(1, mobileNumber);
-			    ResultSet resultSet= pstm.executeQuery();
+				int userOtp=Integer.parseInt(req.getParameter("otp"));
+			    pStm = con.prepareStatement("select otp from otpTable where mobileNumber=?");
+			    pStm.setString(1, mobileNumber);
+			    resultSet= pStm.executeQuery();
 			    
 			    if(resultSet.next()) {
 				    if(resultSet.getInt("otp")==userOtp) {
-				    	pstm=con.prepareStatement("insert into users (mobileNumber,password,ownerName, ownerImage) values(?,?,?,?)");
-				    	pstm.setString(1, mobileNumber);
-				    	pstm.setString(2, req.getParameter("password"));
-				    	pstm.setString(3, req.getParameter("ownerName"));
-				    	pstm.setBlob(4,req.getPart("ownerImage").getInputStream());
-				    	pstm.executeUpdate();
+				    	pStm=con.prepareStatement("insert into users (mobileNumber,password,ownerName, ownerImage) values(?,?,?,?)");
+				    	pStm.setString(1, mobileNumber);
+				    	pStm.setString(2, req.getParameter("password"));
+				    	pStm.setString(3, req.getParameter("ownerName"));
+				    	pStm.setBlob(4,req.getPart("ownerImage").getInputStream());
+				    	pStm.executeUpdate();
 				    	res.setStatus(HttpServletResponse.SC_CREATED);
-				    	
 				    	deleteOtpFromDataBase(mobileNumber);
 				    }else {
 				    	res.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
@@ -90,41 +75,37 @@ public class Signup extends HttpServlet {
 			    }
 				
 			}
+			resultSet.close();
+			pStm.close();
+			con.close();
 		}catch(Exception err) {
-				try {
-					deleteOtpFromDataBase(req.getParameter("mobileNumber"));
-				} catch (Exception e) {
-					res.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
-				}
+	    	try{deleteOtpFromDataBase(req.getParameter("mobileNumber"));}catch(Exception er) {er.printStackTrace();}
 			res.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
-		}	
+		}
 	}
 	
 	
-	private void deleteOtpFromDataBase(String mobileNumber) throws Exception {
-		
-			String url = "jdbc:mysql://localhost:3306/pg";
-			String userName = "root";
-			String pass = "123456789";
-			Driver d=new Driver();
-			DriverManager.registerDriver(d);
-			Connection con = DriverManager.getConnection(url,userName,pass);
-			
+	private void deleteOtpFromDataBase(String mobileNumber)throws Exception {
+			Connection con = MysqlDataBaseConnection.getMysqlConnection();
 			PreparedStatement pStmt=con.prepareStatement("delete from otpTable where mobileNumber=?");
 			pStmt.setString(1, mobileNumber);
 			pStmt.executeUpdate();
+			
+			pStmt.close();
+			con.close();
 	}
 	
 	
 	private void insertOtpAndMobileNumberIntoDataBase(String mobileNumber, int otp) throws Exception{
-			Driver d=new Driver();
-			DriverManager.registerDriver(d);
-			Connection con = DriverManager.getConnection(url,userName,pass);
 			
+			Connection con = MysqlDataBaseConnection.getMysqlConnection();
 			PreparedStatement pStmt=con.prepareStatement("insert into otpTable (mobileNumber,otp) values(?,?)");
 	    	pStmt.setString(1, mobileNumber);
 	    	pStmt.setInt(2, otp);
 	    	pStmt.executeUpdate();
+	    	
+	    	pStmt.close();
+	    	con.close();
 	}
 	
 	//here this function will generate otp and retun otp.

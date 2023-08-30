@@ -56,22 +56,18 @@ input{
 }
 
 button{
-    background-color: rgb(47, 189, 47);
+    background-color:'#25D366';
     font-size: 15px;
     font-weight: bold;
     border-radius: 6px;
     cursor: pointer;
     height: 6%; 
     width: 82%;
-}
-button:hover{
-    background-color: green;
-    font-weight: bolder;
-    border: 2px solid black;
-    border-radius: 12px;
-    box-shadow: 4px 4px 4px black;
-}
 
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
 
 .error{
     margin-bottom: 3%;

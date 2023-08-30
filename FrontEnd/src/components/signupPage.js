@@ -4,9 +4,11 @@ import axios from "axios";
 import signupPageCss from "../css/signupPage.module.css";
 import ServerError from "../components/serverErrorPage";
 import ConnectionRefuse from "../components/connectionRefusePage";
+import { Oval } from 'react-loader-spinner';
 
 const Signup = () => {
     const navigate = useNavigate();
+    const[loading,setLoading]=useState()
     const [showFormError, setShowFormError] = useState(false);
     const [formError, setFormError] = useState(false);
     const [serverErr, setServerErr] = useState(false);
@@ -54,8 +56,9 @@ const Signup = () => {
             setFormError("password and confirm password didnt matched.")
         }else{
             setShowFormError(false)
+            setLoading(true)
             
-            axios.post("http://localhost:9090/BackEnd/signup?state=validateMobile&mobileNumber="+userDetails.mobileNumber).then(
+            axios.post("https://www.bestpgs.in/BackEnd/signup?state=validateMobile&mobileNumber="+userDetails.mobileNumber).then(
                 (res) => {
                     if(res.status === 201){
                         setOtpReq(true);
@@ -74,7 +77,7 @@ const Signup = () => {
                     }else{
                         setConnectionErr(true);
                     }
-                })
+                }).finally(()=>{setLoading(false)})
             
         }
     }
@@ -82,13 +85,13 @@ const Signup = () => {
     const otpValidateAndSignupHandler = e => {
         e.preventDefault();
 
-        if(userDetails.otp.length!=6){
+        if(userDetails.otp.length!==6){
             setFormError("Invalid Otp");
             setShowFormError(true)
         }else{
             setShowFormError(false)
+            setLoading(true)
 
-            
             const formData = new FormData();
             formData.append('state',"validateOtp")
             formData.append('mobileNumber',userDetails.mobileNumber)
@@ -98,7 +101,7 @@ const Signup = () => {
             formData.append('ownerImage',ownerImage)
 
 
-            axios.post("http://localhost:9090/BackEnd/signup?", formData).then(
+            axios.post("https://www.bestpgs.in/BackEnd/signup?", formData).then(
                 function(response){
                     if(response){
                         if(response.status === 201){
@@ -127,7 +130,7 @@ const Signup = () => {
                 }else{
                     setConnectionErr(true);
                 }
-            })
+            }).finally(()=>{setLoading(false)})
         }
     }
     return(
@@ -145,8 +148,8 @@ const Signup = () => {
                         <form onSubmit={otpValidateAndSignupHandler} autoComplete="of">
                             <div>Please Enter the (6-Digit OTP) recevied by<br/>your mobile number.</div><br/>
                             {showFormError ? <div className={signupPageCss.error}>{formError}</div>:null}
-                            <input type="text" placeholder="OTP" name="otp" value={otp} onChange={userDetailsUpdateHandler}/><br/><br/>
-                            <button className={signupPageCss.buttonValidate}>Validate</button>
+                            <input style={{display:'flex',justifyContent:'center',textAlign:'center',fontSize:'15px'}} type="text" placeholder="OTP" name="otp" value={otp} onChange={userDetailsUpdateHandler}/><br/><br/>
+                            <button className={signupPageCss.buttonValidate} disabled={loading}>{loading?<Oval color="black" height={30} width={30}/>:<span>Validate</span>}</button>
                         </form>
                     : 
                         <form onSubmit={userDeatilsSubmitAndOtpGenHandler} autoComplete="of"> 
@@ -164,7 +167,7 @@ const Signup = () => {
                             <div>ConfirmPassword</div>
                             <input type="password" className={signupPageCss.input} name="confirmPassword" value={confirmPassword} onChange={userDetailsUpdateHandler}/><br/><br/>
                             <br/>
-                            <button>Submit</button>     
+                            <button style={{backgroundColor:'#25D366'}} disabled={loading}>{loading?<Oval color="black" height={30} width={30}/>:<span>Submit</span>}</button>     
                         </form>
                     }
                 </div>
