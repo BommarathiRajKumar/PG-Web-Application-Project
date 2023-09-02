@@ -4,99 +4,91 @@ body {
     height: 100vh;
     width: 100vw;
 }
-.mainDiv {
-    position: absolute;
-    height: 100%;
-    width: 100%;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-}
 
-.mainContainer {
+.mainDiv {
+    background-color: rgb(52, 48, 48);
     position: fixed;
     height: 100%;
     width: 100%;
-}
 
-@media screen and (min-width: 600px) {
-    .mainContainer{
-        width: 30%;
-    }
-
-}
-
-.header {
-    position: relative;
-    top: 0%; 
-    width: 100%;
-    height: 24%;
-    background-color: #317773;
-
-
-    display: flex;
-    justify-content: baseline;
-    align-items: center;
-}
-
-.main {
-    position: relative;
-    top:0%;
-    overflow: auto;
-    height: 77%;
-    border: black solid 1px;
-    background-color: #E2D1F9;
-    
-}
-
-.pgButton {
-    position: absolute;
-    top: 2%;
-    right: 1%;
-    width: 27%;
-    overflow: hidden;
-}
-
-.loaderContainer{
-    width: 100%;
-    height: 100%;
     display: flex;
     justify-content: center;
     align-items: center;
+}
 
+.mainContainer{
+    background-color: white;
+    height: 100%;
+    width: 100%;
+}
+
+@media screen and (min-width: 1024px) {
+    .mainContainer{
+        width:30%;
+    }
     
 }
 
-.loader{
-    display: flex; 
+
+header{
+    background-color: #317773;
+    height: 25%;
+    width: 100%;
+
+    display: flex;
     flex-direction: column;
+    justify-content: center;
     align-items: center;
-    text-align: center
 }
 
 .profilePhoto{
-    width: 18%;
-    height: 35%;
+    width: 50px;
+    height: 100px;
     border: 1px solid black;
     border-radius: 50%;
     margin-top: 2%;
     margin-bottom: 2%;
 }
 
+.headerButtons{
+    background-color:#25D366;
+    font-size:75%;
+    width:30%;
+    height:35px; 
+    border-radius: 5px;
+    margin-top:1%;
+    margin-bottom:1%;
+    cursor: pointer;
+    font-size: 12px;
+    
+    box-shadow: 1px 1px 1px black;
+}
+.headerButtons:hover{
+    background-color: green;
+    box-shadow: 3px 3px 3px black;
+    font-size: 13px;
+
+}
+
+
+
 .addNewHostelFormDiv{
-    background-color: white;
-    height: 97%;
-    width: 99%;
+    background-color: #317773;
+    height: 100%;
+    width: 100%;
 }
 .addNewHostelForm{
     position: relative;
     top: 0.3%;
     left: 0.5%;
     background-color:#EEA47F;
-    width: 99%;
+    width: 98%;
+    height: 98.8%;
     overflow: auto;
     border: 3px solid black;
-    border-radius: 5px;
+    border-radius: 8px;
+
+    
 
 }
 
@@ -121,4 +113,23 @@ body {
     display: flex;
     justify-content: flex-start;;
     align-items: center;
+}
+.formButtons{
+    background-color:#25D366;
+    font-size:75%;
+    width:30%;
+    height:30px; 
+    border-radius: 5px;
+    margin-top:1%;
+    margin-bottom:1%;
+    cursor: pointer;
+    font-size: 12px;
+    
+    box-shadow: 1px 1px 1px black;
+}
+.formButtons:hover{
+    background-color: green;
+    box-shadow: 3px 3px 3px black;
+    font-size: 13px;
+
 }

@@ -5,6 +5,7 @@ import loginPageCss from "../css/loginPage.module.css";
 import ServerError from "../components/serverErrorPage"
 import ConnectionRefuse from "../components/connectionRefusePage";
 import { Oval } from 'react-loader-spinner';
+import {apiUrl} from './url.js'
 
     //if you want to run any fun after return then use useEffect(Hook) fun/method
     //useEffect fun/method will excute directly after the completeion of return to browser this is called life cycle.
@@ -39,7 +40,7 @@ const Login = () => {
             setCredentialsErr(true)
         }else{
             setLoading(true);
-            axios.post("http://localhost:8080/BackEnd/login?", credentials, {
+            axios.post(apiUrl+"login?", credentials, {
                 headers: {
                     "Content-Type": "application/json", // Set the Content-Type header to JSON
                 },
@@ -88,39 +89,35 @@ const Login = () => {
     return( 
         <div className={loginPageCss.mainDiv}>
             <div className={loginPageCss.mainContainer}>
+
                 {serverErr || connectionRefused ?
-                    <div>
-                        {serverErr && <ServerError/>}
-                        {connectionRefused && <ConnectionRefuse />}
+                    <div style={{height:'100%',width:'100%'}}>
+                        {serverErr ? <ServerError/>:<ConnectionRefuse />}
                     </div>
                 :
-                    <form className={loginPageCss.form} onSubmit={userCredentialsSubmitHandler} autoComplete="of">
+                    <form onSubmit={userCredentialsSubmitHandler} autoComplete="of">
+        
+                        <h3>Well Come Back To Best PG's.</h3>
+                        {credentialsErr &&<div className={loginPageCss.error}>Invalid Credentails Please check the <br/>Mobile Number and password.</div>}
                         
-                        <div style={{position:'absolute',height:'100%', width:'100%'}}>
-                            <h2>Well Come Back To Best PG's.</h2><br/>
-                            
-                            <div>
-                                {credentialsErr ?<div className={loginPageCss.error}>Invalid Credentails Please check the <br/>Mobile Number and password.</div>:null}
-                            </div>
-
-                            <div>Mobile Number</div><input type="text" name="mobileNumber" value={mobileNumber} onChange={updateHandler} /><br/><br/>
-                            <div className={loginPageCss.inLine}> Password</div><input type="password" name="password" value={password} onChange={updateHandler}/><br/><br/>
-                            <button style={{backgroundColor:'#25D366'}} disabled={loading}>{loading ? <Oval color="black" height={30} width={30}/>:<span>Login</span>}</button><br/><br/><br/>
-
-                            
-                            
-
-                            <div style={{width:'80%', display:'flex',flexDirection:'column',alignItems:'center'}}>
-                                <div>--------------New Building Owner?-----------</div><br/><br/>
-                            </div>
-                            <button disabled={loading} onClick={()=>navigate('/signup')} className={loginPageCss.a}>Create an account</button>
-                        </div>
+                        <div style={{marginTop:'3%'}} >Mobile Number</div>
+                        <input type="text" name="mobileNumber" value={mobileNumber} onChange={updateHandler} />
+                        
+                        <div style={{marginTop:'5%'}} > Password</div>
+                        <input type="password" name="password" value={password} onChange={updateHandler}/><br/>
+                        
+                        <button className={loginPageCss.loginBut}   disabled={loading}>{loading ? <Oval color="black" height={30} width={30}/>:<span>Login</span>}</button>
+                        
+                        <div style={{marginLeft:'8%'}}>---------------  New User?  ---------------</div>
+                
+                        <button  className={loginPageCss.createActBut} disabled={loading} onClick={()=>navigate('/signup')}>Create an Account</button>
+                        
+                        <button className={loginPageCss.homeBut} onClick={()=>navigate('/')}>Home</button>
                     </form>
                 }
             </div>
         </div>
     )
 }
-
 
 export default Login;

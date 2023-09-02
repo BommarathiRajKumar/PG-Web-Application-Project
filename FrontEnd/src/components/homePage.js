@@ -7,6 +7,7 @@ import homePageCss from "../css/homePage.module.css"
 import { Oval } from 'react-loader-spinner';
 import ConnectionRefuse from '../components/connectionRefusePage'
 import ServerError from '../components/serverErrorPage'
+import {apiUrl} from './url.js'
 
 const Home = () =>{
     const navigate = useNavigate();
@@ -24,7 +25,7 @@ const Home = () =>{
         setNoDataFound(false);
         setConnectionRefuseError(false);
 
-        axios.post("https://www.bestpgs.in/BackEnd/home?state=one")
+        axios.post(apiUrl+"home?state=one")
             .then(res => {
                 if (res.status === 200) {
                     setTotalHostelsDetails(res.data);
@@ -58,6 +59,7 @@ const Home = () =>{
     const handleHostelTypeSelect = (data) =>{
         setUserSelectedHostelType(data)
         setShowHostelTypeList(!showHostelTypeList)
+        setFormErr(false);
     }
 
 
@@ -65,22 +67,40 @@ const Home = () =>{
     const [showRoomsList, setShowRoomsList] = useState(false);
     const Handler_setShowRoomsList = () => {
         setShowRoomsList(!showRoomsList)
-        setHeaderHeight(30)
+        if(!showRoomsList){ 
+            setHeaderHeight(35)
+            setContentDivHeight(65)
+        }else{
+            setHeaderHeight(20)
+            setContentDivHeight(80)
+        }
+        if(height){
+            setHeaderHeight(35)
+            setContentDivHeight(65)
+
+        }
     } 
     const HandlerSetUserSelectedRoomType = (data) => {
         setUserSelectedRoomType(data);
         setShowRoomsList(!showRoomsList);
+        setFormErr(false);
+        if(!height){
+        setHeaderHeight(20)
+        setContentDivHeight(80);
+        }
+
     };
 
 
     const [userSelectedPrice, setUserSelectedPrice] = useState();
     const HandlerSetUserSelectedPrice = (price) =>{
         setUserSelectedPrice(price);
+        setFormErr(false);
     }
 
 
     const  noResultJson = {
-        key: '-- No Result --'
+        key: 'No Result'
     };
     
     const[stateNamesLoading,setStateNamesLoading] = useState(false)
@@ -91,6 +111,7 @@ const Home = () =>{
     const handleStateSelect = (stateName)=>{
         setUserSelectedStateName(stateName)
         setShowStatesList(false)
+        setFormErr(false);
     }
 
     const stateInputChangeHandler = (event) => {
@@ -105,7 +126,7 @@ const Home = () =>{
         const letters = event.target.value;
         
         if (letters) {
-            axios.post("https://www.bestpgs.in/BackEnd/filterWord?type=stateName&word="+letters)
+            axios.post(apiUrl+"filterWord?type=stateName&word="+letters)
                 .then(res => {
                     if (res.status === 200) {
                         setStateNames(res.data.namesFromBackEnd);
@@ -146,6 +167,7 @@ const Home = () =>{
     const handleCitySelect = (cityName)=>{
         setUserSelectedCityName(cityName)
         setShowCitysList(false)
+        setFormErr(false);
     }
     const cityInputChangeHandler = (event) => {
         setCityNamesLoading(true);
@@ -160,7 +182,7 @@ const Home = () =>{
         
 
         if (letters) {
-            axios.post("https://www.bestpgs.in/BackEnd/filterWord?type=cityName&stateName="+userSelectedStateName+"&word="+letters)
+            axios.post(apiUrl+"filterWord?type=cityName&stateName="+userSelectedStateName+"&word="+letters)
                 .then(res => {
                     if (res.status === 200) {
                         setCityNames(res.data.namesFromBackEnd);
@@ -200,6 +222,7 @@ const Home = () =>{
     const handleAreaSelect = (areaName)=>{
         setUserSelectedAreaName(areaName)
         setShowAreasList(false)
+        setFormErr(false);
     }
     const areaInputChangeHandler = (event) => {
         setAreaNamesLoading(true);
@@ -213,7 +236,7 @@ const Home = () =>{
         const letters = event.target.value;
 
         if (letters) {
-            axios.post("https://www.bestpgs.in/BackEnd/filterWord?type=areaName&stateName="+userSelectedStateName+"&cityName="+userSelectedCityName+"&word="+letters)
+            axios.post(apiUrl+"filterWord?type=areaName&stateName="+userSelectedStateName+"&cityName="+userSelectedCityName+"&word="+letters)
                 .then(res => {
                     if (res.status === 200) {
                         setAreaNames(res.data.namesFromBackEnd);
@@ -249,6 +272,9 @@ const Home = () =>{
 
     const HandlerSearch = (e) => {
         e.preventDefault();
+        setShowStatesList(false)
+        setShowCitysList(false)
+        setShowAreasList(false)
 
         if(userSelectedHostelType==null){
             setErrToPrint("Please select the hostelType.")
@@ -260,17 +286,17 @@ const Home = () =>{
             setErrToPrint("Please enter the Proper Rs/month.")
             setFormErr(true);
            
-        }else if(userSelectedStateName===null || userSelectedStateName==="-- No Result --"){
+        }else if(userSelectedStateName===null){
             setErrToPrint("Please select the state name.")
             setFormErr(true);    
-        }else if(userSelectedCityName===null || userSelectedCityName==="-- No Result --"){
+        }else if(userSelectedCityName===null){
             setErrToPrint("Please select the city name.")
             setFormErr(true);     
-        }else if(userSelectedAreaName===null || userSelectedAreaName==="-- No Result --"){
+        }else if(userSelectedAreaName===null){
             setErrToPrint("Please select the Area name.")
             setFormErr(true); 
         }else{
-            const formData = new FormData()
+            const formData = new FormData();
 
             formData.append('state','userSearch')
             formData.append("hostelType", userSelectedHostelType)
@@ -279,6 +305,8 @@ const Home = () =>{
             formData.append('stateName', userSelectedStateName)
             formData.append('cityName', userSelectedCityName)
             formData.append('areaName', userSelectedAreaName)
+
+            HandlerToSetDefaultGeight();
             
             setErrToPrint('')
             setFormErr(false)
@@ -289,7 +317,7 @@ const Home = () =>{
             setServerError(false);
             setNoDataFound(false);
 
-            axios.post("https://www.bestpgs.in/BackEnd/home?", formData)
+            axios.post(apiUrl+"home?", formData)
                 .then(res => {
                     if (res.status === 200) {
                         setTotalHostelsDetails(res.data);
@@ -317,253 +345,291 @@ const Home = () =>{
 
     }
 
-    const [headerHeight, setHeaderHeight]=useState(18);
-    const[buttonHeight,setButtonHeight]=useState();
-    const[hostelTypeTop, setHostelTypeTop] = useState();
-    const[roomTypeTop, setRoomTypeTop]=useState();
-    const[amountTop, setAmountTop]=useState()
-    const[mainHeight, setMainHeight]=useState()
+    const [headerHeight, setHeaderHeight]=useState(20);
+    const[contentDivHeight,setContentDivHeight]=useState(80);
+    const[height,setHeight]=useState(false)
+    const setHeights =()=>{
+        setHeaderHeight(35);
+        setContentDivHeight(65)
+        setHeight(true);
+    }
 
-    useEffect(() => {
-        if (headerHeight === 30) {
-            setButtonHeight(12);
-            setHostelTypeTop(12);
-            setRoomTypeTop(23);
-            setAmountTop(35);
-            setMainHeight(70);
-        } else {
-            setButtonHeight(20);
-            setHostelTypeTop(20); 
-            setRoomTypeTop(45);
-            setAmountTop(68);
-            setMainHeight(82);
+    const HandlerToSetDefaultGeight=()=>{
+        if(!formErr){
+            setHeaderHeight(20);
+            setContentDivHeight(80)
         }
-    }, [headerHeight]);
+
+    }
+
+    const cancelHandler=()=>{
+        setUserSelectedHostelType();
+        setUserSelectedRoomType();
+        setUserSelectedPrice('');
+        setUserSelectedStateName();
+        setUserSelectedCityName();
+        setUserSelectedAreaName();
+        setHeaderHeight(20);
+        setContentDivHeight(80)
+        setShowStatesList(false)
+        setShowCitysList(false)
+        setShowAreasList(false)
+
+    }
+
     
 
     return(
-        
         <div className={homePageCss.mainDiv}>
-            <div className={homePageCss.mainContainer}>               
-                <header style={{ height: `${headerHeight}%` }} className={homePageCss.header}>
-                    <button style={{height:`${buttonHeight}%`}} className={homePageCss.pgButton} onClick={() => setLoginDisplay(true)}>PG owner?</button>
-                    <strong style={{color:'black',fontFamily:'sans-serif',position:'absolute', left:'1%', top:'1%'}}>Filters to find desired hostel.</strong>
-                    
-                    <div style={{position:'absolute', left:'1%',top:`${hostelTypeTop}%`, width:'100%'}}>
-                            <div style={{ position: 'relative', width: '55%'}}>
-                                <div style={{cursor: 'pointer',padding: '0px',border: '1px solid black',display: 'flex',alignItems: 'center',justifyContent: 'space-between',}}onClick={Handler_setShowHostelTypeList}>
-                                    <div style={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
-                                    Hostel Type: {userSelectedHostelType || 'Not Selected'}
+            <div className={homePageCss.mainContainer}>
+                <header style={{ position:'relative',backgroundColor: '#3177877', height: `${headerHeight}%`, width: '100%',overflow:'auto'}}>
+                    <table style={{position:'relative',width:'100%',height:'100%'}}>
+                        <thead>
+                            <tr>
+                                <th style={{textAlign: 'left',color:'black'}}>Use Filters to find desired hostel.</th>
+                                <th style={{textAlign: 'right'}}><button className={homePageCss.pgAndSearchButton} onClick={() => setLoginDisplay(true)}>PG owner</button></th>
+                            </tr>
+                        </thead>
+
+                        <tbody >
+                            <tr>
+                                <td  style={{width:'65%'}}>
+                                    <div style={{cursor: 'pointer',border: '1px solid black',display: 'flex',justifyContent: 'space-between'}}onClick={Handler_setShowHostelTypeList}>
+                                        <div>Hostel Type: {userSelectedHostelType || 'Not Selected'}</div>
+                                        <div>{showHostelTypeList ? '▲' : '▼'}</div>
                                     </div>
-                                    <div>{showHostelTypeList ? '▲' : '▼'}</div>
-                                </div>
-                                    
-                                {showHostelTypeList&&
-                                    <ul style={{ width:'88%', height:'60px', listStyleType: 'disc', padding: '0 15px'}}>
-                                        <li onClick={() => handleHostelTypeSelect('Girls Hostel')} style={{ cursor: 'pointer', background: userSelectedHostelType === 'Girls Hostel' ? 'grey' : 'none' }}>
-                                            Girls Hostel.
-                                        </li>
-                                        <li onClick={() => handleHostelTypeSelect('Boys Hostel')} style={{ cursor: 'pointer', background: userSelectedHostelType === 'Boys Hostel' ? 'grey' : 'none' }}>
-                                            Boys Hostel.
-                                        </li>
-                                    </ul>
+                                    {showHostelTypeList&&
+                                        <ul style={{padding: '0 15px'}}>
+                                            <li onClick={() => handleHostelTypeSelect('Girls Hostel')} style={{ cursor: 'pointer', background: userSelectedHostelType === 'Girls Hostel' ? 'grey' : 'none' }}>
+                                                Girls Hostel.
+                                            </li>
+                                            <li onClick={() => handleHostelTypeSelect('Boys Hostel')} style={{ cursor: 'pointer', background: userSelectedHostelType === 'Boys Hostel' ? 'grey' : 'none' }}>
+                                                Boys Hostel.
+                                            </li>
+                                        </ul>
+                                    }  
+                                </td>
+                                {showStatesList || showCitysList || showAreasList ?
+                                    <td rowspan="7" className={homePageCss.scaListShowTd}> 
+                                        {showStatesList && 
+                                            <div style={{ height: '100%', overflow: 'auto' }}>
+                                                {stateNamesLoading ? 
+                                                    <div style={{height:'100%',width:'100%', display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+                                                        <Oval color="#00BFFF" height={35} width={35} />
+                                                    </div>
+                                                : 
+                                                    <ul>
+                                                        <label style={{fontSize:'small', color: '#800000', position: 'relative', left: '-20px' }}>Select State Name:</label><br/><br/>
+                                                        {Object.keys(stateNames).map((key) => (
+                                                            <li className={homePageCss.scaListShowLi} key={stateNames[key]} onClick={() =>stateNames[key]!="No Result"&&handleStateSelect(stateNames[key])} >
+                                                                {stateNames[key]}
+                                                            </li>
+                                                        ))}
+                                                    </ul>
+                                                }
+                                            </div>
+                                        }
+                                        {showCitysList && 
+                                            <div style={{ height: '100%', overflow: 'auto' }}>
+                                                {cityNamesLoading ? 
+                                                    <div style={{height:'100%',width:'100%', display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+                                                        <Oval color="#00BFFF" height={35} width={35} />
+                                                    </div>
+                                                : 
+                                                    <ul>
+                                                        <label style={{fontSize:'small', color: '#800000', position: 'relative', left: '-20px' }}>Select City Name:</label><br/><br/>
+                                                        {Object.keys(cityNames).map((key) => (
+                                                            <li className={homePageCss.scaListShowLi} key={cityNames[key]} onClick={() => cityNames[key]!="No Result"&&handleCitySelect(cityNames[key])}>
+                                                                {cityNames[key]}
+                                                            </li>
+                                                        ))}
+                                                    </ul>
+                                                }
+                                            </div>
+                                        }
+                                        {showAreasList && 
+                                            <div style={{ height: '100%', overflow: 'auto' }}>
+                                                {areaNamesLoading ? 
+                                                    <div style={{height:'100%',width:'100%', display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+                                                        <Oval color="#00BFFF" height={35} width={35} />
+                                                    </div>
+                                                : 
+                                                    <ul>
+                                                        <label style={{fontSize:'small', color: '#800000', position: 'relative', left: '-20px' }}>Select Area Name:</label><br/><br/>
+                                                        {Object.keys(areaNames).map((key) => (
+                                                            <li className={homePageCss.scaListShowLi} key={areaNames[key]} onClick={() =>areaNames[key]!="No Result"&&handleAreaSelect(areaNames[key])}>
+                                                                {areaNames[key]}
+                                                            </li>
+                                                        ))}
+                                                    </ul>
+                                                }
+                                            </div>
+                                        }
+                                    </td>
+                                :
+                                    null
                                 }
-                            </div>
-                    </div>
+                            </tr>
 
-                    <div style={{position:'absolute', left:'1%',top:`${roomTypeTop}%`, width:'100%'}}>
-                        {!showHostelTypeList &&
-                            <div style={{ position: 'relative', width: '55%' }}>
-                                <div style={{cursor: 'pointer',padding: '0px',border: '1px solid black',display: 'flex',alignItems: 'center',justifyContent: 'space-between',}}onClick={Handler_setShowRoomsList}>
-                                    <div style={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
-                                    Room Type: {userSelectedRoomType || 'Not Selected'}
+                        {!showHostelTypeList && 
+                            <tr>
+                                <td>
+                                        <div>
+                                            <div style={{cursor: 'pointer',border: '1px solid black',display: 'flex',justifyContent: 'space-between'}}onClick={Handler_setShowRoomsList}>
+                                                <div>Room Type: {userSelectedRoomType || 'Not Selected'}</div>
+                                                <div>{showRoomsList ? '▲' : '▼'}</div>
+                                            </div>
+                                            {showRoomsList&&
+                                                <ul style={{padding: '0 15px'}}>
+                                                    <li onClick={() => HandlerSetUserSelectedRoomType('oneShare')} style={{ cursor: 'pointer', background: userSelectedRoomType === 'oneShare' ? 'grey' : 'none' }}>
+                                                        oneShare
+                                                    </li>
+                                                    <li onClick={() => HandlerSetUserSelectedRoomType('twoShare')} style={{ cursor: 'pointer', background: userSelectedRoomType === 'twoShare' ? 'grey' : 'none' }}>
+                                                        twoShare
+                                                    </li>
+                                                    <li onClick={() => HandlerSetUserSelectedRoomType('threeShare')} style={{ cursor: 'pointer', background: userSelectedRoomType === 'threeShare' ? 'grey' : 'none' }}>
+                                                        threeShare
+                                                    </li>
+                                                    <li onClick={() => HandlerSetUserSelectedRoomType('fourShare')} style={{ cursor: 'pointer', background: userSelectedRoomType === 'fourShare' ? 'grey' : 'none' }}>
+                                                        fourShare
+                                                    </li>
+                                                    <li onClick={() => HandlerSetUserSelectedRoomType('fiveShare')} style={{ cursor: 'pointer', background: userSelectedRoomType === 'fiveShare' ? 'grey' : 'none' }}>
+                                                        fiveShare
+                                                    </li>
+                                                </ul>
+                                            }
+                                        </div>
+                                    
+                                </td>
+                            </tr>
+                        }
+
+                        
+                        {!showHostelTypeList && !showRoomsList&&
+                            <tr>
+                                <td>
+                                        <div>Enter &#8377;/month:
+                                            <input className={homePageCss.ammountIn}  value={userSelectedPrice} placeholder={'Rs.'} type="text" onChange={(e)=>HandlerSetUserSelectedPrice(e.target.value)} />
+                                        </div>
+                                    
+                                </td>
+                            </tr>
+                        }
+
+
+                        {!showHostelTypeList && !showRoomsList&& headerHeight===20 &&
+                            <tr>
+                                <td>
+                                    <div style={{color:'darkblue',cursor:'pointer'}} onClick={setHeights}>More filters</div>
+                                </td>
+                            </tr>
+                        }
+
+                        {!showHostelTypeList && !showRoomsList&& headerHeight===35 &&
+                            <tr>
+                                <td>
+                                    
+                                        <div>
+                                            <label>State Name:</label>
+                                            <input className={homePageCss.filtersIn} value={userSelectedStateName} placeholder={'Not Selected'} type="text" onClick={stateInputChangeHandler} onChange={stateInputChangeHandler} />
+                                        </div>
+                                    
+                                </td>
+                            </tr>
+                        }
+
+                        {!showHostelTypeList && !showRoomsList&& headerHeight===35 &&
+                            <tr>
+                                <td>
+                
+                                    <div >
+                                        <label>City Name: </label>
+                                        <input className={homePageCss.filtersIn} value={userSelectedCityName} placeholder={'Not Selected'} type="text" onClick={cityInputChangeHandler} onChange={cityInputChangeHandler} />
                                     </div>
-                                    <div>{showRoomsList ? '▲' : '▼'}</div>
-                                </div>
-                                
-                                {showRoomsList&&
-                                    <ul style={{marginLeft:'5%', width:'88%', height:'60px', listStyleType: 'disc', padding: '0 15px', overflow:'auto' }}>
-                                        <li onClick={() => HandlerSetUserSelectedRoomType('oneShare')} style={{ cursor: 'pointer', background: userSelectedRoomType === 'oneShare' ? 'grey' : 'none' }}>
-                                            oneShare
-                                        </li>
-                                        <li onClick={() => HandlerSetUserSelectedRoomType('twoShare')} style={{ cursor: 'pointer', background: userSelectedRoomType === 'twoShare' ? 'grey' : 'none' }}>
-                                            twoShare
-                                        </li>
-                                        <li onClick={() => HandlerSetUserSelectedRoomType('threeShare')} style={{ cursor: 'pointer', background: userSelectedRoomType === 'threeShare' ? 'grey' : 'none' }}>
-                                            threeShare
-                                        </li>
-                                        <li onClick={() => HandlerSetUserSelectedRoomType('fourShare')} style={{ cursor: 'pointer', background: userSelectedRoomType === 'fourShare' ? 'grey' : 'none' }}>
-                                            fourShare
-                                        </li>
-                                        <li onClick={() => HandlerSetUserSelectedRoomType('fiveShare')} style={{ cursor: 'pointer', background: userSelectedRoomType === 'fiveShare' ? 'grey' : 'none' }}>
-                                            fiveShare
-                                        </li>
-                                    </ul>
-                                }
-                            </div>
-                        }
-                    </div>
-
-                    <div style={{position:'absolute', left:'1%',top:`${amountTop}%`, width:'100%'}}>
-                        {!showHostelTypeList && !showRoomsList &&
-                            <div>
-                                <label>Enter &#8377;/month: </label>
-                                <input style={{width: '24%' }} type="text" value={userSelectedPrice} onChange={(e)=>HandlerSetUserSelectedPrice(e.target.value)} /><br/><br/>
-                            </div>
-                        }
-                    </div>
-
-                    {headerHeight===18?
-                        <div>
-                            {!showHostelTypeList && !showRoomsList &&
-                                <div style={{color:'blue',position:'absolute', left:'1%',top:'85%', cursor:'pointer'}} onClick={()=>setHeaderHeight(30)}>more filters</div>
-                            }
-                        </div>
-                    :
-                        <div>
-                        {!showHostelTypeList && !showRoomsList &&
-                        <div>
-                            <div style={{position:'absolute',marginTop:'4%', left:'1%',top:'40%', width:'100%'}}>
-                                <label style={{ marginTop:'5%'}}>State Name:</label>
-                                <input value={userSelectedStateName} placeholder={'Not selected'} style={{width:'30%'}} type="text" onClick={stateInputChangeHandler} onChange={stateInputChangeHandler} />
-                            </div>
-                            {showStatesList&&
-                                <div style={{position:'absolute',left:'57%',top:'18%',width:'43%',height:'100%'}}>
-                                    {stateNamesLoading?
-                                        <div style={{position:'relative', left:'31%', top:'25%'}}>
-                                            <Oval  color="#00BFFF" height={40} width={40} />
-                                            loading...
-                                        </div>
-                                    :
-                                            <ul style={{position:'relative',marginTop:'0',border:'3px solid black',backgroundColor:'white', width:'67%',height:'78%', listStyleType: 'disc',overflow:'auto'}}>
-                                                <li style={{position:'relative',left:'-20px',color:'red',marginBottom:'5%',marginTop:'5%'}}>Select State Name:</li>                                
-                                                {Object.keys(stateNames).map((key) => (
-                                                    <li key={stateNames[key]} onClick={() => handleStateSelect(stateNames[key])} style={{position:'relative',left:'-20px',color:'black', cursor: 'pointer'}}>
-                                                        {stateNames[key]}
-                                                    </li>
-                                                ))}
-                                            </ul>
                                     
-                                    }
-                                </div>
-                            }
-
-                            <div style={{position:'absolute',marginTop:'4%', left:'1%',top:'53%', width:'100%'}}>
-                                <label style={{ marginTop:'5%'}}>City Name:</label>
-                                <input value={userSelectedCityName} placeholder={'Not selected'} style={{width:'30%'}} type="text" onClick={cityInputChangeHandler} onChange={cityInputChangeHandler} />
-                            </div>
-                            {showCitysList&&
-                                <div style={{position:'absolute',left:'57%',top:'18%',width:'43%',height:'100%'}}>
-                                    {cityNamesLoading?
-                                        <div style={{position:'relative', left:'31%', top:'25%'}}>
-                                            <Oval  color="#00BFFF" height={40} width={40} />
-                                            loading...
-                                        </div>
-                                    :
-                                            <ul style={{position:'relative',marginTop:'0',border:'3px solid black',backgroundColor:'white', width:'67%',height:'78%', listStyleType: 'disc',overflow:'auto'}}>
-                                                <li style={{position:'relative',left:'-20px',color:'red',marginBottom:'5%',marginTop:'5%'}}>Select city Name:</li>                                
-                                                {Object.keys(cityNames).map((key) => (
-                                                    <li key={cityNames[key]} onClick={() => handleCitySelect(cityNames[key])} style={{position:'relative',left:'-20px',color:'black', cursor: 'pointer'}}>
-                                                        {cityNames[key]}
-                                                    </li>
-                                                ))}
-                                            </ul>
-                                    
-                                    }
-                                </div>
-                            }
-
-                            <div style={{position:'absolute',marginTop:'4%', left:'1%',top:'63%', width:'100%'}}>
-                                <label style={{ marginTop:'5%'}}>Area Name:</label>
-                                <input value={userSelectedAreaName} placeholder={'Not selected'} style={{width:'30%'}} type="text" onClick={areaInputChangeHandler} onChange={areaInputChangeHandler} />
-                            </div>
-                            {showAreasList&&
-                                <div style={{position:'absolute',left:'57%',top:'18%',width:'43%',height:'100%'}}>
-                                    {areaNamesLoading?
-                                        <div style={{position:'relative', left:'31%', top:'25%'}}>
-                                            <Oval  color="#00BFFF" height={40} width={40} />
-                                            loading...
-                                        </div>
-                                    :
-                                            <ul style={{position:'relative',marginTop:'0',border:'3px solid black',backgroundColor:'white', width:'67%',height:'78%', listStyleType: 'disc',overflow:'auto'}}>
-                                                <li style={{position:'relative',left:'-20px',color:'red',marginBottom:'5%',marginTop:'5%'}}>Select Area Name:</li>                                
-                                                {Object.keys(areaNames).map((key) => (
-                                                    <li key={areaNames[key]} onClick={() => handleAreaSelect(areaNames[key])} style={{position:'relative',left:'-20px',color:'black', cursor: 'pointer'}}>
-                                                        {areaNames[key]}
-                                                    </li>
-                                                ))}
-                                            </ul>
-                                    
-                                    }
-                                </div>
-                            }
-                                
-                            <div style={{position:'absolute', left:'1%',top:'86%', width:'100%', overflow:'auto'}}>
-                                <button style={{backgroundColor:'#25D366', width: '20%'}} onClick={HandlerSearch}>search</button>
-                            </div>
-
-                            <div style={{position:'absolute', left:'25%',top:'90%', width:'100%', overflow:'auto'}}>
-                                {formErr && !showStatesList && !showCitysList && !showAreasList && <div  style={{color: 'red'}}>{errToPrint}</div>}
-                            </div> 
-                        </div>
+                                </td>
+                            </tr>
                         }
-                        </div>
-                    }              
+
+                        {!showHostelTypeList && !showRoomsList&& headerHeight===35 &&
+                            <tr>
+                                <td>
+                                    <div>
+                                        <label>Area Name:</label>
+                                        <input className={homePageCss.filtersIn} value={userSelectedAreaName} placeholder={'Not Selected'} type="text" onClick={areaInputChangeHandler} onChange={areaInputChangeHandler} />
+                                    </div>
+                                </td>
+                            </tr>
+                        }
+
+                        {!showHostelTypeList && !showRoomsList&& headerHeight===35 &&
+                            <tr>
+                                <td>
+                                    <button style={{marginBottom:'10px'}} className={homePageCss.pgAndSearchButton} onClick={HandlerSearch}>Search</button>
+                                    <button style={{marginBottom:'10px',marginLeft:'18px'}} className={homePageCss.cancelButton} onClick={cancelHandler}>Cancel</button>
+                                    {formErr && !showStatesList && !showCitysList && !showAreasList && <div  style={{color: '#8B0000'}}>{errToPrint}</div>}
+                                </td>
+                            </tr>
+                        }
+
+                        </tbody>
+                    </table>
+    
                 </header>
-                <main style={{height:`${mainHeight}%`}} className={homePageCss.main}>
+
+                <div style={{backgroundColor:'white',height: `${contentDivHeight}%`,width:'100%' }}>
                     { serverError || connectionRefuseError ?
-                        <div style={{height:'100%', width:'100%'}}>
+                        <div style={{width:'100%',height:'100%'}}>
                             {serverError ? <ServerError/>:<ConnectionRefuse />}
                         </div>
                     :
-                        <div style={{height:'100%', width:'100%'}}>
+                        <div style={{width:'100%',height:'100%'}}>
                             {loading?
-                                <div  className={homePageCss.Containerloader}>
-                                    <div className={homePageCss.loader}>
-                                        <Oval color="#00BFFF" height={60} width={60} />
-                                        <div style={{marginTop:'8%'}}>
-                                            Please wait, Data is loading...
-                                        </div>
+                                <div style={{width:'100%',height:'100%',display:'flex',flexDirection:'column',justifyContent:'center',alignItems:'center'}}>
+                                    <Oval color="#00BFFF" height={60} width={60} />
+                                    <div style={{marginTop:'8%'}}>
+                                        Please wait, Data is loading...
                                     </div>
                                 </div>
-                            
                             :
                                 <div style={{width:'100%',height:'100%'}}>
                                     {noDataFound?
-                                        <div style={{backgroundColor:'white',width:'100%',height:'100%',display:'flex',justifyContent:'center',alignItems:'center'}}>
-                                            <div style={{display:'flex', flexDirection:'column', alignItems:'center'}}>
-                                                <img src={noDataImage} alt="noDataImg"/><br/>
-                                                <div style={{color:'#B2BEB5'}}>Please do Change Filters Options.</div>
-                                            </div>
+                                        <div style={{width:'100%',height:'100%',display:'flex',flexDirection:'column',justifyContent:'center',alignItems:'center'}}>
+                                            <img src={noDataImage} alt="noDataImg"/>
+                                            <div style={{color:'#B2BEB5'}}>Please do Change Filters Options.</div>
                                         </div>
                                     :
-                                        <div>
+                                        <div style={{backgroundColor: ' #E2D1F9',width:'100%',height:'100%',overflow:'auto',display:'flex', justifyContent:'center',alignItems:'center'}}>
                                             {totalHostelsDetails&&
-                                                <div style={{position: 'absolute', top: '3%', left: '6%', right:'0',overflow: 'auto'}}>
-                                                    <div>&nbsp;&nbsp;Hostels:</div><br/>
-                                                        {Object.keys(totalHostelsDetails).map((key) => (
-                                                            <DisplayHostelsPage key={key} data={totalHostelsDetails[key]}/> 
+                                                
+                                                <div style={{width:'88%', height:'100%'}}>
+                                                    <div style={{marginTop:'10%',marginBottom:'10%'}}>Hostels:</div>
+                                                    {Object.keys(totalHostelsDetails).map((key) => (
+                                                        <DisplayHostelsPage style={{marginBottom:'40px'}} key={key} data={totalHostelsDetails[key]}/> 
                                                     ))}
+                                                    <br/>
                                                 </div>
+                                                
                                             }
                                         </div>
                                     }
-                                </div> 
+                                </div>
                             }
                         </div>
                     }
-                        
-                </main>    
-                {loginDisplay&&
-                    <div style={{ backgroundColor: '#317773', border: '3px solid black', borderRadius: '10px' ,width: '50%', height: '20%', position: 'absolute', left: '25%', top: '45%'}}>
-                        <label style={{ width: '20%', color: 'red', position: 'absolute', top: '4%', left: '88%' }} onClick={()=>setLoginDisplay(!loginDisplay)}>X</label>
-                        <button style={{backgroundColor:'#25D366', width: '50%', height: '25%', position: 'absolute', top: '20%', left: '24%' }} onClick={()=>navigate('/login')}>Login</button>
-                        <button style={{backgroundColor:'#25D366', width: '50%', height: '25%', position: 'absolute', top: '55%', left: '24%' }} onClick={()=>navigate('/signup')}>Signup</button>
-                        <br/>
-                    </div>
-                }
+                </div>
+                
             </div>
- 
+            {loginDisplay&&
+                <div style={{position:'absolute',width:'100%',height:'100%', display:'flex',justifyContent:'center',alignItems:'center'}}>
+                    <div  className={homePageCss.loginDisplay}>
+                        <label className={homePageCss.cross} onClick={()=>setLoginDisplay(!loginDisplay)}>X</label>
+                        
+                        <button className={homePageCss.loginAndSignupButton} onClick={() => navigate('/login')}>Login</button>
+                        <button className={homePageCss.loginAndSignupButton} onClick={() => navigate('/signup')}>Signup</button>
+                    </div> 
+                </div>
+                }
         </div>
     )
 }

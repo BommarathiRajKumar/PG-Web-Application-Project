@@ -5,12 +5,14 @@ import signupPageCss from "../css/signupPage.module.css";
 import ServerError from "../components/serverErrorPage";
 import ConnectionRefuse from "../components/connectionRefusePage";
 import { Oval } from 'react-loader-spinner';
+import {apiUrl} from './url.js'
 
 const Signup = () => {
     const navigate = useNavigate();
     const[loading,setLoading]=useState()
-    const [showFormError, setShowFormError] = useState(false);
-    const [formError, setFormError] = useState(false);
+    const [showSignupError, setShowSignupError] = useState(false);
+    const [signupError, setSignupError] = useState(false);
+    const [showOtpError, setShowOtpError] = useState(false);
     const [serverErr, setServerErr] = useState(false);
     const [connectionErr, setConnectionErr] = useState(false);
     var [otpReq, setOtpReq] = useState(false);
@@ -40,25 +42,25 @@ const Signup = () => {
     const userDeatilsSubmitAndOtpGenHandler = e => {
         e.preventDefault();
         if(ownerImage === ""){
-            setShowFormError(true)
-            setFormError("Please provide the owner image.")
+            setShowSignupError(true)
+            setSignupError("Please provide the owner image.")
         }else if( ownerName === ""){
-            setShowFormError(true)
-            setFormError("Please provide the owner Name.")
+            setShowSignupError(true)
+            setSignupError("Please provide the owner Name.")
         }else if( mobileNumber.length > 10 || mobileNumber.length < 10 || isNaN(mobileNumber)){
-            setShowFormError(true)
-            setFormError("Invalid mobile number enter only 10-digits.")
+            setShowSignupError(true)
+            setSignupError("Invalid mobile number enter only 10-digits.")
         }else if(password.length < 8){
-            setShowFormError(true)
-            setFormError("Invalid password Note: password should be more than 8 characters.")
+            setShowSignupError(true)
+            setSignupError("Invalid password Note: password should be more than 8 characters.")
         }else if(password !== confirmPassword){
-            setShowFormError(true)
-            setFormError("password and confirm password didnt matched.")
+            setShowSignupError(true)
+            setSignupError("password and confirm password didnt matched.")
         }else{
-            setShowFormError(false)
+            setShowSignupError(false)
             setLoading(true)
             
-            axios.post("https://www.bestpgs.in/BackEnd/signup?state=validateMobile&mobileNumber="+userDetails.mobileNumber).then(
+            axios.post(apiUrl+"signup?state=validateMobile&mobileNumber="+userDetails.mobileNumber).then(
                 (res) => {
                     if(res.status === 201){
                         setOtpReq(true);
@@ -69,8 +71,8 @@ const Signup = () => {
                 }).catch((err) => {
                     if(err.response){
                         if(err.response.status === 409){
-                            setShowFormError(true);
-                            setFormError("Provided number already register with us please provide another number.")  
+                            setShowSignupError(true);
+                            setSignupError("Provided number already register with us please provide another number.")  
                         }else{
                             setServerErr(true)  
                         }
@@ -86,11 +88,10 @@ const Signup = () => {
         e.preventDefault();
 
         if(userDetails.otp.length!==6){
-            setFormError("Invalid Otp");
-            setShowFormError(true)
+            setShowOtpError(true)
         }else{
-            setShowFormError(false)
             setLoading(true)
+            setShowOtpError(false)
 
             const formData = new FormData();
             formData.append('state',"validateOtp")
@@ -101,11 +102,11 @@ const Signup = () => {
             formData.append('ownerImage',ownerImage)
 
 
-            axios.post("https://www.bestpgs.in/BackEnd/signup?", formData).then(
+            axios.post(apiUrl+"signup?", formData).then(
                 function(response){
                     if(response){
                         if(response.status === 201){
-                            setShowFormError(false);
+                            setShowOtpError(false);
                             alert("user Created Successfully")
                             navigate('/login');
                         }else if(response.status===204){
@@ -120,8 +121,7 @@ const Signup = () => {
             ).catch((err) => {
                 if(err.response){
                     if(err.response.status === 401){
-                        setFormError("Invalid Error");
-                        setShowFormError(true);
+                        setShowOtpError(true);
                     }else if(err.response.status === 500){
                         setServerErr(true);
                     }else{
@@ -138,23 +138,22 @@ const Signup = () => {
             <div className={signupPageCss.mainContainer}>
 
             {serverErr || connectionErr ?
-                <div>
-                    {serverErr && <ServerError/>}
-                    {connectionErr && <ConnectionRefuse />}
+                <div style={{width:'100%',height:'100%'}}>
+                    {serverErr ? <ServerError/>:<ConnectionRefuse />}
                 </div>
             :
                 <div>
                     {otpReq ?
                         <form onSubmit={otpValidateAndSignupHandler} autoComplete="of">
                             <div>Please Enter the (6-Digit OTP) recevied by<br/>your mobile number.</div><br/>
-                            {showFormError ? <div className={signupPageCss.error}>{formError}</div>:null}
-                            <input style={{display:'flex',justifyContent:'center',textAlign:'center',fontSize:'15px'}} type="text" placeholder="OTP" name="otp" value={otp} onChange={userDetailsUpdateHandler}/><br/><br/>
+                            {showOtpError && <div className={signupPageCss.error}>Invalid Otp.</div>}
+                            <input style={{display:'flex',justifyContent:'center',textAlign:'center',fontSize:'15px'}} type="text" placeholder="OTP" name="otp" value={otp} onChange={userDetailsUpdateHandler}/>
                             <button className={signupPageCss.buttonValidate} disabled={loading}>{loading?<Oval color="black" height={30} width={30}/>:<span>Validate</span>}</button>
                         </form>
                     : 
                         <form onSubmit={userDeatilsSubmitAndOtpGenHandler} autoComplete="of"> 
                             <h1>New User Signup.</h1>
-                            <div>{showFormError ? <div className={signupPageCss.error}>{formError}</div>:null}</div>
+                            <div>{showSignupError && <div className={signupPageCss.error}>{signupError}</div>}</div>
                     
                             <div>Owner Image</div>
                             <input type='file' name='ownerImage' onChange={ownerImageSetHandler}/><br/><br/>
@@ -165,9 +164,11 @@ const Signup = () => {
                             <div>Password</div>
                             <input type="password" className={signupPageCss.input} name="password" value={password} onChange={userDetailsUpdateHandler}/><br/><br/>
                             <div>ConfirmPassword</div>
-                            <input type="password" className={signupPageCss.input} name="confirmPassword" value={confirmPassword} onChange={userDetailsUpdateHandler}/><br/><br/>
-                            <br/>
-                            <button style={{backgroundColor:'#25D366'}} disabled={loading}>{loading?<Oval color="black" height={30} width={30}/>:<span>Submit</span>}</button>     
+                            <input type="password" className={signupPageCss.input} name="confirmPassword" value={confirmPassword} onChange={userDetailsUpdateHandler}/>
+                            
+                            <button className={signupPageCss.submitBut} disabled={loading}>{loading?<Oval color="black" height={30} width={30}/>:<span>Submit</span>}</button>     
+                            
+                            <button className={signupPageCss.homeBut} onClick={()=>navigate('/')}>Home</button>
                         </form>
                     }
                 </div>

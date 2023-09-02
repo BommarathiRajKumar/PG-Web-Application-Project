@@ -1,70 +1,116 @@
-.mainDiv{
+body {
+    margin: 0;
+    padding: 0;
+    height: 100vh;
+    width: 100vw;
+}
+
+.mainDiv {
+    background-color:#39a7bb;
+    box-shadow: rgba(0, 0, 0, 5) 0px 5px 15px;
+    border-radius: 8px;
+
     display: flex;
-    width: 100%;
-    height: 100%;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
 }
 
 
-.hostelConatiner{
-    width: 92%;
-    height: 100%;
-    margin-bottom: 15px;
-    background-color: #d1ecf1;
-    border: 3px solid black;
-    border-radius: 10px;
+.Images{
+    width: 85%;
+    height: 200px;
+    border-radius: 8px;
+    border: 1px solid black;
+
+    margin-top: 5%;
+
+    box-shadow: rgba(0, 0, 0, 3) 0px 5px 15px;
 }
-.imagesContainer{
-    width: 60%;
-    height: 50%;
-}
-.Image{
-    position: relative;
-    left: 10%;
-    width: 80%;
-    height: 250px;
-    border: 3px solid black;
-    border-radius: 10px;
-}
+
 .changeImagesButtons{
-    text-align: center;
-    width: 10%;
-    height: 10%;
+    margin-top: 15%;
+    margin-bottom: 15%;
+    border-radius: 8px;
     cursor: pointer;
     background-color: aliceblue;
 }
 .changeImagesButtons:hover {
-    cursor: pointer;
     background-color: #2980b9;
 }
 
+.changeImagesButtons:hover{
+    box-shadow: rgba(0, 0, 0, 5) 0px 5px 15px;
 
-
-table {
-    width: 100%; 
-    height: 100%; 
-    table-layout: fixed;
-    border-radius: 5px;
 }
 
-th {
+.detailsContainer{
+    border-radius:8px;
+    width:90%;
+    margin-bottom:3.5%;
+    cursor: pointer;
+    padding: 3px;
+    border: 1px solid black;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    
+    box-shadow: rgba(0, 0, 0, 0.5) 0px 5px 15px;
+}
+
+.detailsButton{
+    width:100%;
+    border-radius: 6px;
+    display: flex;
+    justify-content: center;
+    background-color: #25D366; 
+    padding: 10px;
+
+    
+    box-shadow: rgba(0, 0, 0, 0.5) 0px 5px 15px;
+}
+
+.detailsButton:hover{
+    background-color: black;
+    color: white;
+
+    
+    box-shadow: rgb(119, 119, 119) 0px 5px 15px;
+}
+
+
+
+.table {
+    width: 100%;
+    table-layout: fixed;
+    padding: 6px;
+    
+
+    border-radius: 2px solid black;
+    
+}
+
+.th {
     background-color: #e0a173;
     border-radius: 5px;
     
 }
 
 .th1 {
-    background-color: #f0e6fa;
+    background-color: #cac7cd;
+    border-radius: 5px;
 
 }
 
-td {
+.td {
     text-align: left;
     padding: 6px;
     overflow: auto;
     white-space: nowrap; 
     border-radius: 5px;
-    background-color: #eafaea;
+    background-color:#e0e0e0;
 }
+
 span{
     display: flex;
     justify-content: center;
@@ -74,4 +120,3 @@ span{
 .lightBlack{
     color: rgba(0, 0, 0, 0.3);
 }
-
