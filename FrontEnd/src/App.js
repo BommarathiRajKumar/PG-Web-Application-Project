@@ -4,6 +4,7 @@ import Home from './components/homePage';
 import Login from './components/loginPage';
 import Signup from "./components/signupPage"
 import Profile from './components/profilePage';
+import ForgotPassword from './components/forgotPasswordPage';
 
 const App = () => {
   return (
@@ -13,6 +14,7 @@ const App = () => {
         <Route path="/login" Component={Login} />
         <Route path="/signup" Component={Signup} />
         <Route path="/profile" Component={Profile} />
+        <Route path="/forgotPassword" Component={ForgotPassword} />
       </Routes>
     </BrowserRouter>
   );

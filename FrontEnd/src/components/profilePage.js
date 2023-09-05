@@ -7,6 +7,7 @@ import { Oval } from 'react-loader-spinner';
 import ServerError from './serverErrorPage';
 import ConnectionRefuse from './connectionRefusePage'
 import {apiUrl} from './url.js'
+import   {AiFillPicture} from "react-icons/ai";
 
 const Profile = ()=>{
     const navigate= useNavigate();
@@ -20,8 +21,6 @@ const Profile = ()=>{
     const [serverErr, setServerErr] = useState(false);
     const [connectionRefuseErr, setConnectionRefuseErr] = useState(false);
     const [addHostelControl, setAddHostelControl] = useState(true)
-    const[mob,setMob] = useState(localStorage.getItem('mobile'))
-    const[pass,setPass] = useState(localStorage.getItem('password'))
     const [userData,setUserData] = useState();
     const [totalHostelsCount, setTotalHostelsCount] = useState()
     const [formErr, setFormErr]=useState(false)
@@ -269,62 +268,57 @@ const Profile = ()=>{
 
     const logOut = () => {
         setUserData('')
-        localStorage.removeItem('mobile')
-        localStorage.removeItem('password')
-        setMob(null)
-        setPass(null)
+        localStorage.removeItem('key1')
+        localStorage.removeItem('key2')
         navigate('/login')
     }
 
-    const HandlerToremoveConfidentialLocalData = () =>{
-        localStorage.removeItem('mobile')
-        localStorage.removeItem('password')
-        setMob(null)
-        setPass(null)
+    
+   useEffect(()=>{
+    if(localStorage.getItem('key1') === null || localStorage.getItem('key2') === null) {
+        logOut()
     }
+   },[]) 
+
 
     useEffect(()=>{
         setLoading(true);
         setServerErr(false);
         setConnectionRefuseErr(false);
 
-        const formData = new FormData();
+        let formData = new FormData();
         formData.append("state", "profileLoad")
-        formData.append("mobile", mob);
-        formData.append("password", pass);
+        formData.append("mobile", localStorage.getItem('key1'));
+        formData.append("password", localStorage.getItem('key2'));
 
         axios.post(apiUrl+"profile?", formData).then(
             response => {
                 if(response.status===200){
                     setUserData(response.data)
+                    setTotalHostelsCount(Object.keys(response.data.hostelsDetails).length)
                     setHostelDetails((prevHostelDetails) => ({
                         ...prevHostelDetails,
                         mobileNumber: response.data.profileDetails.mobileNumber,
                         ownerName: response.data.profileDetails.ownerName,
                     }))
-                    setTotalHostelsCount(Object.keys(response.data.hostelsDetails).length)
                 }else{
-                    HandlerToremoveConfidentialLocalData();
                     setServerErr(true)
-                    setUserData('')
                 }
             }
         ).catch((err)=>{
             if(err.response){
                 if(err.response.status===401){
+                    alert("your session expired do login again.")
                     logOut();
                 }else{
-                    HandlerToremoveConfidentialLocalData();
                     setServerErr(true)
-                    setUserData('')
                 }
             }else{
-                HandlerToremoveConfidentialLocalData();
                 setConnectionRefuseErr(true);
-                setUserData('')
             }
         }).finally(()=>{
             setLoading(false);
+            formData=null;
         })
     },[])
 
@@ -503,9 +497,18 @@ const Profile = ()=>{
                                     </div>
 
                                     <div style={{marginTop:'5%',marginBottom:'3%'}}>Please upload the sample images of hostel rooms.<label style={{color:'red'}}>*</label></div>
-                                    <input type='file' name='imageOne' onChange={hostelDetailsUpdateHandler}/><br/><br/>
-                                    <input type='file' name='imageTwo' onChange={hostelDetailsUpdateHandler}/><br/><br/>
-                                    <input type='file' name='imageThree' onChange={hostelDetailsUpdateHandler}/><br/><br/>
+
+                                    <input  id="imageOne" name='imageOne' type='file' style={{display:'none'}}  accept="image/*" onChange={hostelDetailsUpdateHandler}/>
+                                    <label for="imageOne"  className={profilePageCss.label}><AiFillPicture/>&nbsp;&nbsp;&nbsp;{hostelDetails.imageOne.name || "Choose Image One"}</label><br/>
+
+                                    
+                                    <input  id="imageTwo" name='imageTwo' type='file' style={{display:'none'}}  accept="image/*" onChange={hostelDetailsUpdateHandler}/>
+                                    <label for="imageTwo"  className={profilePageCss.label}><AiFillPicture/>&nbsp;&nbsp;&nbsp;{hostelDetails.imageTwo.name || "Choose Image Two"}</label><br/>
+
+                                    
+                                    <input  id="imageThree" name='imageThree' type='file' style={{display:'none'}}  accept="image/*" onChange={hostelDetailsUpdateHandler}/>
+                                    <label for="imageThree"  className={profilePageCss.label}><AiFillPicture/>&nbsp;&nbsp;&nbsp;{hostelDetails.imageThree.name || "Choose Image Three"}</label><br/>
+
 
                                     <div style={{marginTop:'5%',marginBottom:'2%'}}>Hostel Address:</div>
                                     <div>State Name.<label style={{color:'red'}}>*</label></div>
@@ -515,7 +518,7 @@ const Profile = ()=>{
                                     <div>Area Name.<label style={{color:'red'}}>*</label></div>
                                     <input style={{marginBottom:'3%'}} type='text' name="areaName" value={hostelDetails.areaName} onChange={hostelDetailsUpdateHandler}/>
                                     <div>Land Mark.<label style={{color:'red'}}>*</label></div>
-                                    <textarea style={{width: '71%', height: '10%', overflow: 'auto'}} type='text' name="landMark" value={hostelDetails.landMark} onChange={hostelDetailsUpdateHandler}/><br/><br/>
+                                    <textarea style={{width: '280px', height: '80px', overflow: 'auto',resize: 'none'}} type='text' name="landMark" value={hostelDetails.landMark} onChange={hostelDetailsUpdateHandler}/><br/><br/>
                                         
                                     <div style={{marginTop:'5%'}}>Hostel type.<label style={{color:'red'}}>*</label></div>
                                     <div className={profilePageCss.facilitiesDivs}>

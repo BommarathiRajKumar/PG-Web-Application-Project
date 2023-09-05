@@ -71,8 +71,8 @@ const Home = () =>{
             setHeaderHeight(35)
             setContentDivHeight(65)
         }else{
-            setHeaderHeight(20)
-            setContentDivHeight(80)
+            setHeaderHeight(23)
+            setContentDivHeight(77)
         }
         if(height){
             setHeaderHeight(35)
@@ -85,8 +85,8 @@ const Home = () =>{
         setShowRoomsList(!showRoomsList);
         setFormErr(false);
         if(!height){
-        setHeaderHeight(20)
-        setContentDivHeight(80);
+        setHeaderHeight(23)
+        setContentDivHeight(77);
         }
 
     };
@@ -306,11 +306,10 @@ const Home = () =>{
             formData.append('cityName', userSelectedCityName)
             formData.append('areaName', userSelectedAreaName)
 
-            HandlerToSetDefaultGeight();
+            HandlerToSetDefaultHeight();
             
             setErrToPrint('')
             setFormErr(false)
-            setHeaderHeight(18)
             setLoading(true);
 
             setConnectionRefuseError(false);
@@ -345,44 +344,44 @@ const Home = () =>{
 
     }
 
-    const [headerHeight, setHeaderHeight]=useState(20);
-    const[contentDivHeight,setContentDivHeight]=useState(80);
+    const [headerHeight, setHeaderHeight]=useState(23);
+    const[contentDivHeight,setContentDivHeight]=useState(77);
     const[height,setHeight]=useState(false)
-    const setHeights =()=>{
+    const setMoreFiltersHeights =()=>{
         setHeaderHeight(35);
         setContentDivHeight(65)
-        setHeight(true);
+        
+        setHeight(true)
+        
     }
 
-    const HandlerToSetDefaultGeight=()=>{
+    const HandlerToSetDefaultHeight=()=>{
         if(!formErr){
-            setHeaderHeight(20);
-            setContentDivHeight(80)
+            setHeaderHeight(23);
+            setContentDivHeight(77);
         }
 
     }
 
-    const cancelHandler=()=>{
+    const searchCancelHandler=()=>{
         setUserSelectedHostelType();
         setUserSelectedRoomType();
         setUserSelectedPrice('');
         setUserSelectedStateName();
         setUserSelectedCityName();
         setUserSelectedAreaName();
-        setHeaderHeight(20);
-        setContentDivHeight(80)
+        setHeaderHeight(23);
+        setContentDivHeight(77)
         setShowStatesList(false)
         setShowCitysList(false)
         setShowAreasList(false)
-
     }
 
-    
 
     return(
         <div className={homePageCss.mainDiv}>
             <div className={homePageCss.mainContainer}>
-                <header style={{ position:'relative',backgroundColor: '#3177877', height: `${headerHeight}%`, width: '100%',overflow:'auto'}}>
+                <header style={{backgroundColor: '#3177877', height: `${headerHeight}%`, width: '100%',overflow:'auto'}}>
                     <table style={{position:'relative',width:'100%',height:'100%'}}>
                         <thead>
                             <tr>
@@ -400,7 +399,7 @@ const Home = () =>{
                                     </div>
                                     {showHostelTypeList&&
                                         <ul style={{padding: '0 15px'}}>
-                                            <li onClick={() => handleHostelTypeSelect('Girls Hostel')} style={{ cursor: 'pointer', background: userSelectedHostelType === 'Girls Hostel' ? 'grey' : 'none' }}>
+                                            <li onClick={() => handleHostelTypeSelect('Girls Hostel')} style={{marginBottom:'3px', cursor: 'pointer', background: userSelectedHostelType === 'Girls Hostel' ? 'grey' : 'none' }}>
                                                 Girls Hostel.
                                             </li>
                                             <li onClick={() => handleHostelTypeSelect('Boys Hostel')} style={{ cursor: 'pointer', background: userSelectedHostelType === 'Boys Hostel' ? 'grey' : 'none' }}>
@@ -421,7 +420,7 @@ const Home = () =>{
                                                     <ul>
                                                         <label style={{fontSize:'small', color: '#800000', position: 'relative', left: '-20px' }}>Select State Name:</label><br/><br/>
                                                         {Object.keys(stateNames).map((key) => (
-                                                            <li className={homePageCss.scaListShowLi} key={stateNames[key]} onClick={() =>stateNames[key]!="No Result"&&handleStateSelect(stateNames[key])} >
+                                                            <li className={homePageCss.scaListShowLi} key={stateNames[key]} onClick={() =>stateNames[key]!=="No Result"&&handleStateSelect(stateNames[key])} >
                                                                 {stateNames[key]}
                                                             </li>
                                                         ))}
@@ -439,7 +438,7 @@ const Home = () =>{
                                                     <ul>
                                                         <label style={{fontSize:'small', color: '#800000', position: 'relative', left: '-20px' }}>Select City Name:</label><br/><br/>
                                                         {Object.keys(cityNames).map((key) => (
-                                                            <li className={homePageCss.scaListShowLi} key={cityNames[key]} onClick={() => cityNames[key]!="No Result"&&handleCitySelect(cityNames[key])}>
+                                                            <li className={homePageCss.scaListShowLi} key={cityNames[key]} onClick={() => cityNames[key]!=="No Result"&&handleCitySelect(cityNames[key])}>
                                                                 {cityNames[key]}
                                                             </li>
                                                         ))}
@@ -457,7 +456,7 @@ const Home = () =>{
                                                     <ul>
                                                         <label style={{fontSize:'small', color: '#800000', position: 'relative', left: '-20px' }}>Select Area Name:</label><br/><br/>
                                                         {Object.keys(areaNames).map((key) => (
-                                                            <li className={homePageCss.scaListShowLi} key={areaNames[key]} onClick={() =>areaNames[key]!="No Result"&&handleAreaSelect(areaNames[key])}>
+                                                            <li className={homePageCss.scaListShowLi} key={areaNames[key]} onClick={() =>areaNames[key]!=="No Result"&&handleAreaSelect(areaNames[key])}>
                                                                 {areaNames[key]}
                                                             </li>
                                                         ))}
@@ -475,25 +474,25 @@ const Home = () =>{
                             <tr>
                                 <td>
                                         <div>
-                                            <div style={{cursor: 'pointer',border: '1px solid black',display: 'flex',justifyContent: 'space-between'}}onClick={Handler_setShowRoomsList}>
+                                            <div style={{marginTop:'2px',cursor: 'pointer',border: '1px solid black',display: 'flex',justifyContent: 'space-between'}}onClick={Handler_setShowRoomsList}>
                                                 <div>Room Type: {userSelectedRoomType || 'Not Selected'}</div>
                                                 <div>{showRoomsList ? '▲' : '▼'}</div>
                                             </div>
                                             {showRoomsList&&
                                                 <ul style={{padding: '0 15px'}}>
-                                                    <li onClick={() => HandlerSetUserSelectedRoomType('oneShare')} style={{ cursor: 'pointer', background: userSelectedRoomType === 'oneShare' ? 'grey' : 'none' }}>
+                                                    <li onClick={() => HandlerSetUserSelectedRoomType('oneShare')} style={{marginBottom:'3px', cursor: 'pointer', background: userSelectedRoomType === 'oneShare' ? 'grey' : 'none' }}>
                                                         oneShare
                                                     </li>
-                                                    <li onClick={() => HandlerSetUserSelectedRoomType('twoShare')} style={{ cursor: 'pointer', background: userSelectedRoomType === 'twoShare' ? 'grey' : 'none' }}>
+                                                    <li onClick={() => HandlerSetUserSelectedRoomType('twoShare')} style={{marginBottom:'3px', cursor: 'pointer', background: userSelectedRoomType === 'twoShare' ? 'grey' : 'none' }}>
                                                         twoShare
                                                     </li>
-                                                    <li onClick={() => HandlerSetUserSelectedRoomType('threeShare')} style={{ cursor: 'pointer', background: userSelectedRoomType === 'threeShare' ? 'grey' : 'none' }}>
+                                                    <li onClick={() => HandlerSetUserSelectedRoomType('threeShare')} style={{marginBottom:'3px', cursor: 'pointer', background: userSelectedRoomType === 'threeShare' ? 'grey' : 'none' }}>
                                                         threeShare
                                                     </li>
-                                                    <li onClick={() => HandlerSetUserSelectedRoomType('fourShare')} style={{ cursor: 'pointer', background: userSelectedRoomType === 'fourShare' ? 'grey' : 'none' }}>
+                                                    <li onClick={() => HandlerSetUserSelectedRoomType('fourShare')} style={{marginBottom:'3px', cursor: 'pointer', background: userSelectedRoomType === 'fourShare' ? 'grey' : 'none' }}>
                                                         fourShare
                                                     </li>
-                                                    <li onClick={() => HandlerSetUserSelectedRoomType('fiveShare')} style={{ cursor: 'pointer', background: userSelectedRoomType === 'fiveShare' ? 'grey' : 'none' }}>
+                                                    <li onClick={() => HandlerSetUserSelectedRoomType('fiveShare')} style={{cursor: 'pointer', background: userSelectedRoomType === 'fiveShare' ? 'grey' : 'none' }}>
                                                         fiveShare
                                                     </li>
                                                 </ul>
@@ -517,10 +516,10 @@ const Home = () =>{
                         }
 
 
-                        {!showHostelTypeList && !showRoomsList&& headerHeight===20 &&
+                        {!showHostelTypeList && !showRoomsList&& headerHeight===23 &&
                             <tr>
                                 <td>
-                                    <div style={{color:'darkblue',cursor:'pointer'}} onClick={setHeights}>More filters</div>
+                                    <div style={{color:'darkblue',cursor:'pointer'}} onClick={setMoreFiltersHeights}>More filters</div>
                                 </td>
                             </tr>
                         }
@@ -543,8 +542,8 @@ const Home = () =>{
                                 <td>
                 
                                     <div >
-                                        <label>City Name: </label>
-                                        <input className={homePageCss.filtersIn} value={userSelectedCityName} placeholder={'Not Selected'} type="text" onClick={cityInputChangeHandler} onChange={cityInputChangeHandler} />
+                                        <label>City Name:</label>
+                                        <input style={{marginLeft:'6px'}} className={homePageCss.filtersIn} value={userSelectedCityName} placeholder={'Not Selected'} type="text" onClick={cityInputChangeHandler} onChange={cityInputChangeHandler} />
                                     </div>
                                     
                                 </td>
@@ -566,7 +565,7 @@ const Home = () =>{
                             <tr>
                                 <td>
                                     <button style={{marginBottom:'10px'}} className={homePageCss.pgAndSearchButton} onClick={HandlerSearch}>Search</button>
-                                    <button style={{marginBottom:'10px',marginLeft:'18px'}} className={homePageCss.cancelButton} onClick={cancelHandler}>Cancel</button>
+                                    <button style={{marginBottom:'10px',marginLeft:'18px'}} className={homePageCss.cancelButton} onClick={searchCancelHandler}>Cancel</button>
                                     {formErr && !showStatesList && !showCitysList && !showAreasList && <div  style={{color: '#8B0000'}}>{errToPrint}</div>}
                                 </td>
                             </tr>
@@ -578,6 +577,14 @@ const Home = () =>{
                 </header>
 
                 <div style={{backgroundColor:'white',height: `${contentDivHeight}%`,width:'100%' }}>
+                    {loginDisplay &&
+                        <div  className={homePageCss.loginDisplay} style={{ position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%, -50%)', zIndex: 999 }}>
+                            <label className={homePageCss.cross} onClick={()=>setLoginDisplay(!loginDisplay)}>X</label>
+                            
+                            <button className={homePageCss.loginAndSignupButton} onClick={() => navigate('/login')}>Login</button>
+                            <button style={{marginTop:'8px'}} className={homePageCss.loginAndSignupButton} onClick={() => navigate('/signup')}>Signup</button>
+                        </div>
+                    } 
                     { serverError || connectionRefuseError ?
                         <div style={{width:'100%',height:'100%'}}>
                             {serverError ? <ServerError/>:<ConnectionRefuse />}
@@ -594,7 +601,7 @@ const Home = () =>{
                             :
                                 <div style={{width:'100%',height:'100%'}}>
                                     {noDataFound?
-                                        <div style={{width:'100%',height:'100%',display:'flex',flexDirection:'column',justifyContent:'center',alignItems:'center'}}>
+                                        <div style={{height:'100%',display:'flex',flexDirection:'column', justifyContent:'center',alignItems:'center'}}>
                                             <img src={noDataImage} alt="noDataImg"/>
                                             <div style={{color:'#B2BEB5'}}>Please do Change Filters Options.</div>
                                         </div>
@@ -618,18 +625,11 @@ const Home = () =>{
                         </div>
                     }
                 </div>
+
+                
+                
                 
             </div>
-            {loginDisplay&&
-                <div style={{position:'absolute',width:'100%',height:'100%', display:'flex',justifyContent:'center',alignItems:'center'}}>
-                    <div  className={homePageCss.loginDisplay}>
-                        <label className={homePageCss.cross} onClick={()=>setLoginDisplay(!loginDisplay)}>X</label>
-                        
-                        <button className={homePageCss.loginAndSignupButton} onClick={() => navigate('/login')}>Login</button>
-                        <button className={homePageCss.loginAndSignupButton} onClick={() => navigate('/signup')}>Signup</button>
-                    </div> 
-                </div>
-                }
         </div>
     )
 }

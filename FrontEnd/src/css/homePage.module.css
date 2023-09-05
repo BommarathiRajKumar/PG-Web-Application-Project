@@ -18,8 +18,10 @@ body {
 
 .mainContainer{
     background-color: #317773;
+    background-color: black;
     height: 100%;
     width: 100%;
+
 }
 
 @media screen and (min-width: 1024px) {
@@ -95,12 +97,11 @@ body {
 }
 
 .loginDisplay{
-    position: relative;
     border-radius: 8px;
     background-color: #317773;
     box-shadow: rgba(0, 0, 0, 0.6) 0px 5px 15px;
-    height: 150px;
-    width: 200px;
+    height: 160px;
+    width: 210px;
 
     display: flex;
     flex-direction: column;
@@ -115,7 +116,7 @@ body {
 
 
 .cross{
-    font-size: 13px;
+    font-size: 15px;
     color: #9b122d;
     position: absolute;
     right: 12px;
@@ -123,22 +124,27 @@ body {
     cursor: pointer;
 }
 .cross:hover{
-    font-size: 15px;
+    font-size: 17px;
 }
 .loginAndSignupButton{
-    background-color: #25d366;
+    background-color: rgb(17, 16, 16);
     border-radius: 8px;
     height: 30px;
     width: 100px;
     cursor: pointer;
+    font-weight: 200;
+    color: white;
 
-    margin-bottom: 6px;
+    margin-bottom: 5px;
+
+    
+    box-shadow: rgba(0, 0, 0, 3) 5px 5px 15px;
 
 }
 .loginAndSignupButton:hover{
+    background-color:  black;
     font-weight: bold;
-    background-color: green;
-    box-shadow: 4px 4px 4px black;
+    box-shadow: rgba(0, 0, 0, 10) 5px 5px 15px;
 
 }
 

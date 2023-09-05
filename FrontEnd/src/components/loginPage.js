@@ -1,16 +1,18 @@
-import { useEffect, useState} from "react";
+import {useState, useEffect} from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import loginPageCss from "../css/loginPage.module.css";
 import ServerError from "../components/serverErrorPage"
 import ConnectionRefuse from "../components/connectionRefusePage";
 import { Oval } from 'react-loader-spinner';
-import {apiUrl} from './url.js'
+import {apiUrl} from './url.js';
+
 
     //if you want to run any fun after return then use useEffect(Hook) fun/method
     //useEffect fun/method will excute directly after the completeion of return to browser this is called life cycle.
     //useEffect return only once when we not give any dependency's
     //it will take two parameters one is function and second is dependency's.
+
 
 const Login = () => {
     const navigate = useNavigate();
@@ -19,6 +21,7 @@ const Login = () => {
         mobileNumber: '',
         password: ''
     })
+    const {mobileNumber, password} = credentials;
     const updateHandler = e => {
         setCredentails({...credentials,[e.target.name]:e.target.value})
     }
@@ -28,7 +31,13 @@ const Login = () => {
     const[credentialsErr, setCredentialsErr] = useState();
     const[connectionRefused, setconnectionRefused] =useState(false);
     const [serverErr, setServerErr] = useState(false);
-    const {mobileNumber, password} = credentials;
+    
+
+    useEffect(()=>{
+        if(localStorage.getItem('key1') !== null && localStorage.getItem('key2') !== null) {
+            navigate('/profile');
+        }
+    },[]) 
 
 
 
@@ -49,10 +58,9 @@ const Login = () => {
                 function (response) {
                     if(response){
                         if(response.status === 200){
-                            //setToken(response.data.token)
                             //localStorage.setItem('token',response.data.token)
-                            localStorage.setItem('mobile',credentials.mobileNumber)
-                            localStorage.setItem('password',credentials.password)
+                            localStorage.setItem('key1',credentials.mobileNumber)
+                            localStorage.setItem('key2',response.data)
                             navigate('/profile');
                         }else{
                             setServerErr(true)
@@ -79,12 +87,6 @@ const Login = () => {
         }
     }
 
-   useEffect(()=>{
-    if(localStorage.getItem('mobile') != null && localStorage.getItem('password')!== null) {
-        alert("your browser know your credentials we are redirecting tp profile")
-        navigate('/profile');
-    }
-   },[]) 
     
     return( 
         <div className={loginPageCss.mainDiv}>
@@ -103,9 +105,12 @@ const Login = () => {
                         <div style={{marginTop:'3%'}} >Mobile Number</div>
                         <input type="text" name="mobileNumber" value={mobileNumber} onChange={updateHandler} />
                         
-                        <div style={{marginTop:'5%'}} > Password</div>
+                        <div className={loginPageCss.passwordDiv}>
+                            <span>Password</span>
+                            <a style={{textDecoration:'none',color: '#9b122d', cursor: 'pointer'}} onClick={()=>{navigate('/forgotPassword')}}>Forgot Password?</a>
+                        </div>
+
                         <input type="password" name="password" value={password} onChange={updateHandler}/><br/>
-                        
                         <button className={loginPageCss.loginBut}   disabled={loading}>{loading ? <Oval color="black" height={30} width={30}/>:<span>Login</span>}</button>
                         
                         <div style={{marginLeft:'8%'}}>---------------  New User?  ---------------</div>

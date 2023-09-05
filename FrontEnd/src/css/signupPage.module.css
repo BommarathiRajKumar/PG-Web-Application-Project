@@ -27,39 +27,48 @@ body {
 
 }
 
-@media screen and (min-width: 1024px) {
-    .mainContainer{
-        width:30%;
-    }
-    
-}
+
 
 input{
     font-family:'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
     background-color: rgb(177, 216, 216);
     border-radius: 8px;
-    height: 25px;
+    height: 35px;
     width: 280px;
 }
 
+.label{
+    height: 40px;
+    width: 280px;
+    border-radius: 8px;
+    background-color: rgb(177, 216, 216);
+   
+    font-size: 20px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
 div{
-    font-weight: bold;
+    font-size: 15px;
 }
 
 .submitBut{
     background-color: #25d366;
     border-radius: 8px;
-    height: 35px;
+    height: 50px;
     width: 285px;
     cursor: pointer;
-    font-weight: bold;
+    font-size: 15px;
 
-    margin-top: 8%;
+    margin-top: 15%;
     margin-bottom: 10%;
 
     display: flex;
     align-items: center;
     justify-content: center;
+    
+    box-shadow: 4px 4px 4px black;
 }
 
 .submitBut:hover{
@@ -72,8 +81,8 @@ div{
 
 .homeBut{
     background-color:#317773;
-    font-weight:bold;
-    height: 35px;
+    font-size: 15px;
+    height: 50px;
     width: 285px;
     cursor: pointer;
 
@@ -112,4 +121,36 @@ div{
 .error{
     color: #9b122d;
     margin-bottom: 5%;
+    width: 280px;
+    height: 30px;
+}
+
+
+@media screen and (min-width: 1024px) {
+    .mainContainer{
+        width:30%;
+    }
+    input{
+        height: 22px;
+        width: 230px;
+    }
+    .label{
+        height: 30px;
+        width: 235px;
+        font-size: 13px;
+    }
+
+    div{
+        font-size: 13px;
+    }
+
+    .submitBut{
+        height: 35px;
+        width: 235px;
+    }
+    .homeBut{
+        height: 35px;
+        width: 235px;
+    }
+    
 }

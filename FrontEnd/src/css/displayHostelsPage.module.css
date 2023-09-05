@@ -6,7 +6,7 @@ body {
 }
 
 .mainDiv {
-    background-color:#39a7bb;
+    background-color:#53ad7a;
     box-shadow: rgba(0, 0, 0, 5) 0px 5px 15px;
     border-radius: 8px;
 
@@ -25,7 +25,7 @@ body {
 
     margin-top: 5%;
 
-    box-shadow: rgba(0, 0, 0, 3) 0px 5px 15px;
+    box-shadow: rgba(0, 0, 0, 1) 0px 5px 15px;
 }
 
 .changeImagesButtons{
@@ -34,15 +34,15 @@ body {
     border-radius: 8px;
     cursor: pointer;
     background-color: aliceblue;
+    font-weight: 200;
+    box-shadow: rgba(0, 0, 0, 0.5) 0px 5px 15px;
 }
 .changeImagesButtons:hover {
     background-color: #2980b9;
+    font-weight:900;
+    box-shadow: rgba(0, 0, 0, 5) 5px 5px 15px;
 }
 
-.changeImagesButtons:hover{
-    box-shadow: rgba(0, 0, 0, 5) 0px 5px 15px;
-
-}
 
 .detailsContainer{
     border-radius:8px;
@@ -55,7 +55,6 @@ body {
     align-items: center;
     justify-content: space-between;
     
-    box-shadow: rgba(0, 0, 0, 0.5) 0px 5px 15px;
 }
 
 .detailsButton{
@@ -63,19 +62,20 @@ body {
     border-radius: 6px;
     display: flex;
     justify-content: center;
-    background-color: #25D366; 
+    background-color: rgb(48, 46, 46); 
+    color: white;
     padding: 10px;
+    font-weight: 100;
+    
 
     
     box-shadow: rgba(0, 0, 0, 0.5) 0px 5px 15px;
 }
 
 .detailsButton:hover{
-    background-color: black;
-    color: white;
 
-    
-    box-shadow: rgb(119, 119, 119) 0px 5px 15px;
+    background-color: black;
+    font-weight: bolder;
 }
 
 

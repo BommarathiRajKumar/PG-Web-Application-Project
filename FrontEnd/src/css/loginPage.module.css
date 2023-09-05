@@ -20,6 +20,7 @@ body {
     background-color: #317773;
     height: 100%;
     width: 100%;
+    overflow: auto;
 
     display: flex;
     justify-content: center;
@@ -98,6 +99,7 @@ div{
     height: 35px;
     width: 285px;
     cursor: pointer;
+    border-radius: 8px;
 
     display: flex;
     align-items: center;
@@ -113,4 +115,33 @@ div{
 
 .error{
     color: #9b122d;
+}
+
+
+.passwordDiv{
+    position: relative;
+    display: flex; 
+    justify-content: space-between; 
+    align-items: center; 
+    margin-top: 5%;
+    width: 280px;
+}
+
+@media screen and (min-width: 1024px) {
+    .passwordDiv{
+        width: 235px;
+    }
+    .loginBut{
+
+        height: 35px;
+        width: 235px;
+    }
+    .homeBut{
+        height: 35px;
+        width: 235px;
+    }
+    .createActBut{
+        height: 35px;
+        width: 235px;
+    }
 }

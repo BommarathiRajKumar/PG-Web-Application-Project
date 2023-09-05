@@ -16,6 +16,7 @@ import org.json.JSONObject;
 
 
 import dataBase.MysqlDataBaseConnection;
+import hash.Hashing;
 
 @MultipartConfig
 @WebServlet("/login")
@@ -34,20 +35,23 @@ public class Login extends HttpServlet{
 	        }
 	        JSONObject json = new JSONObject(requestBody.toString());
 	        String userMobileNumber = json.optString("mobileNumber");
-	        String userPassword = json.optString("password");
 	        
 			Connection con=MysqlDataBaseConnection.getMysqlConnection();
-			PreparedStatement pStmt=con.prepareStatement("select password from users where mobileNumber=?");
+			PreparedStatement pStmt=con.prepareStatement("select password,salt from users where mobileNumber=?");
 			ResultSet resultSet=null;
 			
-			if(userMobileNumber.length()==10 && userPassword!="") {
+			if(userMobileNumber.length()==10 && json.optString("password")!="") {
 				pStmt.setString(1, userMobileNumber);
 				resultSet= pStmt.executeQuery();
 				
 				if(resultSet.next()){
-					if(userPassword.equals(resultSet.getString(1))) {
+					String hasedPassword=Hashing.bytesToHex(Hashing.hashPassword(Hashing.combineSaltAndPassword(json.optString("password"), resultSet.getBytes("salt"))));
+					if(hasedPassword.equals(resultSet.getString("password"))){
+						res.getWriter().write(hasedPassword);
 				    	res.setStatus(HttpServletResponse.SC_OK);
+						hasedPassword="";
 					}else {
+						hasedPassword="";
 						res.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
 					}
 				}else {
@@ -61,7 +65,9 @@ public class Login extends HttpServlet{
 			con.close();
 			
 		}catch(Exception err) {
+			err.printStackTrace();
 			res.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
-		}		}
+		}
+    }
 	
 }

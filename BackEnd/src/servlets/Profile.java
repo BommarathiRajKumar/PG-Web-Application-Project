@@ -29,7 +29,6 @@ public class Profile extends HttpServlet{
 			
 			String state = req.getParameter("state");
 			
-			System.out.println(state);
 			
 			if(state.equals("profileLoad")) {
 				String mob=req.getParameter("mobile");

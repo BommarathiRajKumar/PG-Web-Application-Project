@@ -10,6 +10,8 @@ import javax.servlet.annotation.WebServlet;
 
 
 import dataBase.MysqlDataBaseConnection;
+import hash.Hashing;
+
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -59,11 +61,16 @@ public class Signup extends HttpServlet {
 			    
 			    if(resultSet.next()) {
 				    if(resultSet.getInt("otp")==userOtp) {
-				    	pStm=con.prepareStatement("insert into users (mobileNumber,password,ownerName, ownerImage) values(?,?,?,?)");
+				    	byte[] salt =Hashing.generateSalt();
+				    	
+				    	pStm=con.prepareStatement("insert into users (mobileNumber,password,ownerName, ownerImage,salt) values(?,?,?,?,?)");
+				    	
 				    	pStm.setString(1, mobileNumber);
-				    	pStm.setString(2, req.getParameter("password"));
+				    	pStm.setString(2, Hashing.bytesToHex(Hashing.hashPassword(Hashing.combineSaltAndPassword(req.getParameter("password"), salt))));
 				    	pStm.setString(3, req.getParameter("ownerName"));
 				    	pStm.setBlob(4,req.getPart("ownerImage").getInputStream());
+				    	pStm.setBytes(5, salt);
+				    	
 				    	pStm.executeUpdate();
 				    	res.setStatus(HttpServletResponse.SC_CREATED);
 				    	deleteOtpFromDataBase(mobileNumber);
@@ -80,12 +87,14 @@ public class Signup extends HttpServlet {
 			con.close();
 		}catch(Exception err) {
 	    	try{deleteOtpFromDataBase(req.getParameter("mobileNumber"));}catch(Exception er) {er.printStackTrace();}
+			System.out.println(err);
+			err.printStackTrace();
 			res.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
 		}
 	}
 	
 	
-	private void deleteOtpFromDataBase(String mobileNumber)throws Exception {
+	public void deleteOtpFromDataBase(String mobileNumber)throws Exception {
 			Connection con = MysqlDataBaseConnection.getMysqlConnection();
 			PreparedStatement pStmt=con.prepareStatement("delete from otpTable where mobileNumber=?");
 			pStmt.setString(1, mobileNumber);
@@ -96,7 +105,7 @@ public class Signup extends HttpServlet {
 	}
 	
 	
-	private void insertOtpAndMobileNumberIntoDataBase(String mobileNumber, int otp) throws Exception{
+	public void insertOtpAndMobileNumberIntoDataBase(String mobileNumber, int otp) throws Exception{
 			
 			Connection con = MysqlDataBaseConnection.getMysqlConnection();
 			PreparedStatement pStmt=con.prepareStatement("insert into otpTable (mobileNumber,otp) values(?,?)");
@@ -109,7 +118,7 @@ public class Signup extends HttpServlet {
 	}
 	
 	//here this function will generate otp and retun otp.
-	private int generateOtp() throws Exception{
+	public int generateOtp() throws Exception{
         Random random = new Random();
         return 100000 + random.nextInt(900000);
     }

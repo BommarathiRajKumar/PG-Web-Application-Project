@@ -6,6 +6,7 @@ import ServerError from "../components/serverErrorPage";
 import ConnectionRefuse from "../components/connectionRefusePage";
 import { Oval } from 'react-loader-spinner';
 import {apiUrl} from './url.js'
+import   {AiFillPicture} from "react-icons/ai";
 
 const Signup = () => {
     const navigate = useNavigate();
@@ -41,10 +42,7 @@ const Signup = () => {
     //by this Handler we are submiting the updated details to backend and at same time we are doing form validation giving error mesg to particular error input giving by user.
     const userDeatilsSubmitAndOtpGenHandler = e => {
         e.preventDefault();
-        if(ownerImage === ""){
-            setShowSignupError(true)
-            setSignupError("Please provide the owner image.")
-        }else if( ownerName === ""){
+        if( ownerName === ""){
             setShowSignupError(true)
             setSignupError("Please provide the owner Name.")
         }else if( mobileNumber.length > 10 || mobileNumber.length < 10 || isNaN(mobileNumber)){
@@ -56,6 +54,9 @@ const Signup = () => {
         }else if(password !== confirmPassword){
             setShowSignupError(true)
             setSignupError("password and confirm password didnt matched.")
+        }else if(ownerImage === ""){
+            setShowSignupError(true)
+            setSignupError("Please provide the owner image.")
         }else{
             setShowSignupError(false)
             setLoading(true)
@@ -145,7 +146,7 @@ const Signup = () => {
                 <div>
                     {otpReq ?
                         <form onSubmit={otpValidateAndSignupHandler} autoComplete="of">
-                            <div>Please Enter the (6-Digit OTP) recevied by<br/>your mobile number.</div><br/>
+                            <div style={{height:'30px',width:'280px'}}>Please Enter the (6-Digit OTP) recevied by your mobile number.</div><br/>
                             {showOtpError && <div className={signupPageCss.error}>Invalid Otp.</div>}
                             <input style={{display:'flex',justifyContent:'center',textAlign:'center',fontSize:'15px'}} type="text" placeholder="OTP" name="otp" value={otp} onChange={userDetailsUpdateHandler}/>
                             <button className={signupPageCss.buttonValidate} disabled={loading}>{loading?<Oval color="black" height={30} width={30}/>:<span>Validate</span>}</button>
@@ -155,17 +156,16 @@ const Signup = () => {
                             <h1>New User Signup.</h1>
                             <div>{showSignupError && <div className={signupPageCss.error}>{signupError}</div>}</div>
                     
-                            <div>Owner Image</div>
-                            <input type='file' name='ownerImage' onChange={ownerImageSetHandler}/><br/><br/>
                             <div>Owner Name</div>
-                            <input type="text" className={signupPageCss.input} name="ownerName" value={ownerName} onChange={userDetailsUpdateHandler}/><br/><br/>
+                            <input type="text" name="ownerName" value={ownerName} onChange={userDetailsUpdateHandler}/><br/><br/>
                             <div>MobileNumber</div>
-                            <input type="text" className={signupPageCss.input} name="mobileNumber" value={mobileNumber} onChange={userDetailsUpdateHandler}/><br/><br/>
+                            <input type="text" name="mobileNumber" value={mobileNumber} onChange={userDetailsUpdateHandler}/><br/><br/>
                             <div>Password</div>
-                            <input type="password" className={signupPageCss.input} name="password" value={password} onChange={userDetailsUpdateHandler}/><br/><br/>
+                            <input type="password" name="password" value={password} onChange={userDetailsUpdateHandler}/><br/><br/>
                             <div>ConfirmPassword</div>
-                            <input type="password" className={signupPageCss.input} name="confirmPassword" value={confirmPassword} onChange={userDetailsUpdateHandler}/>
-                            
+                            <input type="password" name="confirmPassword" value={confirmPassword} onChange={userDetailsUpdateHandler}/><br/><br/>
+                            <input  id="imgInput" style={{display:'none'}} type='file' accept="image/*" name='ownerImage' onChange={ownerImageSetHandler}/>
+                            <label for="imgInput"  className={signupPageCss.label}><AiFillPicture/>&nbsp;&nbsp;&nbsp;{ownerImage.name || "Choose Owner Photo"}</label>
                             <button className={signupPageCss.submitBut} disabled={loading}>{loading?<Oval color="black" height={30} width={30}/>:<span>Submit</span>}</button>     
                             
                             <button className={signupPageCss.homeBut} onClick={()=>navigate('/')}>Home</button>

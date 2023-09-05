@@ -87,9 +87,6 @@ header{
     overflow: auto;
     border: 3px solid black;
     border-radius: 8px;
-
-    
-
 }
 
 .oneShareDiv{
@@ -132,4 +129,16 @@ header{
     box-shadow: 3px 3px 3px black;
     font-size: 13px;
 
+}
+
+.label{
+    height: 35px;
+    width: 280px;
+    border-radius: 8px;
+    background-color: rgb(177, 216, 216);
+   
+    font-size: 13px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
 }
