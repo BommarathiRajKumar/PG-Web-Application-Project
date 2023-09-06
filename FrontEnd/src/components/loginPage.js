@@ -34,7 +34,7 @@ const Login = () => {
     
 
     useEffect(()=>{
-        if(localStorage.getItem('key1') !== null && localStorage.getItem('key2') !== null) {
+        if(localStorage.getItem('token') !== null) {
             navigate('/profile');
         }
     },[]) 
@@ -59,8 +59,7 @@ const Login = () => {
                     if(response){
                         if(response.status === 200){
                             //localStorage.setItem('token',response.data.token)
-                            localStorage.setItem('key1',credentials.mobileNumber)
-                            localStorage.setItem('key2',response.data)
+                            localStorage.setItem('token',response.data)
                             navigate('/profile');
                         }else{
                             setServerErr(true)

@@ -17,6 +17,7 @@ import org.json.JSONObject;
 
 import dataBase.MysqlDataBaseConnection;
 import hash.Hashing;
+import jjwt.JWT;
 
 @MultipartConfig
 @WebServlet("/login")
@@ -45,13 +46,11 @@ public class Login extends HttpServlet{
 				resultSet= pStmt.executeQuery();
 				
 				if(resultSet.next()){
-					String hasedPassword=Hashing.bytesToHex(Hashing.hashPassword(Hashing.combineSaltAndPassword(json.optString("password"), resultSet.getBytes("salt"))));
-					if(hasedPassword.equals(resultSet.getString("password"))){
-						res.getWriter().write(hasedPassword);
-				    	res.setStatus(HttpServletResponse.SC_OK);
-						hasedPassword="";
+					String hashedPassword=Hashing.bytesToHex(Hashing.hashPassword(Hashing.combineSaltAndPassword(json.optString("password"), resultSet.getBytes("salt"))));
+					if(hashedPassword.equals(resultSet.getString("password"))){
+						res.getWriter().write(JWT.generateToken(hashedPassword ,userMobileNumber));
+						res.setStatus(HttpServletResponse.SC_OK);
 					}else {
-						hasedPassword="";
 						res.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
 					}
 				}else {
@@ -60,12 +59,11 @@ public class Login extends HttpServlet{
 			}else {
 				res.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
 			}
-			resultSet.close();
-			pStmt.close();
-			con.close();
+			
 			
 		}catch(Exception err) {
 			err.printStackTrace();
+			System.out.println(err);
 			res.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
 		}
     }

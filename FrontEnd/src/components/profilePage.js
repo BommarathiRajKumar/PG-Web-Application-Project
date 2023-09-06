@@ -25,6 +25,7 @@ const Profile = ()=>{
     const [totalHostelsCount, setTotalHostelsCount] = useState()
     const [formErr, setFormErr]=useState(false)
     const[err,setErr]=useState();
+    const[token,setToken]=useState(localStorage.getItem("token"));
     
 
     const [hostelDetails, setHostelDetails] = useState({
@@ -73,8 +74,8 @@ const Profile = ()=>{
     }
     
         
-    
-
+    const[added,setAdded]=useState(false);
+    let updatedHostelDetails ={};
     const sendHostelDeatils = async (e) => {
         e.preventDefault();
         let updatedValues={};
@@ -202,10 +203,12 @@ const Profile = ()=>{
                 const response = await axios.post(apiUrl+"profile?", updatedHostelDetails, {
                     headers: {
                         'Content-Type': 'multipart/form-data',
+                        'Authorization': `Bearer ${token}`
                     },
                 });
                 if (response.status === 200) {
                     alert("Hostel Uploaded successfully.");
+                    setAdded(true);
                     HandlerToMakeDefaultHostelsDetails();
                     setAddHostelControl(!addHostelControl);
                 } else {
@@ -268,14 +271,14 @@ const Profile = ()=>{
 
     const logOut = () => {
         setUserData('')
-        localStorage.removeItem('key1')
+        localStorage.removeItem('token')
         localStorage.removeItem('key2')
         navigate('/login')
     }
 
     
    useEffect(()=>{
-    if(localStorage.getItem('key1') === null || localStorage.getItem('key2') === null) {
+    if(token === null) {
         logOut()
     }
    },[]) 
@@ -286,12 +289,11 @@ const Profile = ()=>{
         setServerErr(false);
         setConnectionRefuseErr(false);
 
-        let formData = new FormData();
-        formData.append("state", "profileLoad")
-        formData.append("mobile", localStorage.getItem('key1'));
-        formData.append("password", localStorage.getItem('key2'));
-
-        axios.post(apiUrl+"profile?", formData).then(
+        axios.post(apiUrl+"profile?state=profileLoad", {}, {
+            headers: {
+              'Authorization': `Bearer ${token}`
+            }
+          }).then(
             response => {
                 if(response.status===200){
                     setUserData(response.data)
@@ -302,25 +304,28 @@ const Profile = ()=>{
                         ownerName: response.data.profileDetails.ownerName,
                     }))
                 }else{
-                    setServerErr(true)
+                    alert("your session expired do login again.")
+                    logOut();
                 }
             }
         ).catch((err)=>{
             if(err.response){
-                if(err.response.status===401){
-                    alert("your session expired do login again.")
+                if(err.response.status===500){
+                    setServerErr(true)
+                }else if(err.response.status===400){
+                    alert("Bad Request do login again.");
                     logOut();
                 }else{
-                    setServerErr(true)
+                    alert("your session expired do login again.")
+                    logOut();
                 }
             }else{
                 setConnectionRefuseErr(true);
             }
         }).finally(()=>{
             setLoading(false);
-            formData=null;
         })
-    },[])
+    },[added])
 
 
     return(
@@ -373,10 +378,14 @@ const Profile = ()=>{
                                                     </div>
                                                 </div>
                                             :
-                                                <div style={{width:'100%',height:'100%',display:'flex',flexDirection:'column',justifyContent:'center',alignItems:'center'}}>
-                                                    <div style={{color:'rgba(0, 0, 0, 0.5)',marginBottom:'3%'}}>You didn't added your hostels yet.</div>
-                                                    <div style={{color:'rgba(0, 0, 0, 0.5)'}}>Click Above "Add New Hostel?" Button.</div>
+                                                <div style={{width:'100%',height:'100%'}}>
+                                                    {!added&&
+                                                        <div style={{width:'100%',height:'100%',display:'flex',flexDirection:'column',justifyContent:'center',alignItems:'center'}}>
+                                                            <div style={{color:'rgba(0, 0, 0, 0.5)',marginBottom:'3%'}}>You didn't added your hostels yet.</div>
+                                                            <div style={{color:'rgba(0, 0, 0, 0.5)'}}>Click Above "Add New Hostel?" Button.</div>
 
+                                                        </div>
+                                                    }
                                                 </div>
                                             }
                                         </div>
