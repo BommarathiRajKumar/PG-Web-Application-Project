@@ -1,47 +1,58 @@
 import {useState, useEffect} from "react";
-import axios from "axios";
 import { useNavigate } from "react-router-dom";
-import loginPageCss from "../css/loginPage.module.css";
-import ServerError from "../components/serverErrorPage"
-import ConnectionRefuse from "../components/connectionRefusePage";
 import { Oval } from 'react-loader-spinner';
+import axios from "axios";
+
 import {apiUrl} from './url.js';
 
+import loginPageCss from "../css/loginPage.module.css";
 
-    //if you want to run any fun after return then use useEffect(Hook) fun/method
-    //useEffect fun/method will excute directly after the completeion of return to browser this is called life cycle.
-    //useEffect return only once when we not give any dependency's
-    //it will take two parameters one is function and second is dependency's.
+import ServerError from "../components/serverErrorPage"
+import ConnectionRefuse from "../components/connectionRefusePage";
+
+
+
+//if you want to run any fun after return then use useEffect(Hook) fun/method
+//useEffect fun/method will excute directly after the completeion of return to browser this is called life cycle.
+//useEffect return only once when we not give any dependency's
+//it will take two parameters one is function and second is dependency's.
+
 
 
 const Login = () => {
+
     const navigate = useNavigate();
+
     const[loading,setLoading] = useState();
+
     const [credentials, setCredentails] = useState({
         mobileNumber: '',
         password: ''
-    })
+    });
     const {mobileNumber, password} = credentials;
     const updateHandler = e => {
         setCredentails({...credentials,[e.target.name]:e.target.value})
     }
-    //const [token, setToken] = useState(localStorage.getItem('token'))
-    //useState ReactHook this RactHook's always use in fun level components only don't use in class level components.
-   //To use useState Hook we want to use(or)assign one var&one fun. var is for to assign the value which is given by us and fun is for to change the value of first var.
+
     const[credentialsErr, setCredentialsErr] = useState();
     const[connectionRefused, setconnectionRefused] =useState(false);
     const [serverErr, setServerErr] = useState(false);
+
+    //const [token, setToken] = useState(localStorage.getItem('token'))
+    //useState ReactHook this RactHook's always use in fun level components only don't use in class level components.
+    //To use useState Hook we want to use(or)assign one var&one fun. var is for to assign the value which is given by us and fun is for to change the value of first var.
     
+
 
     useEffect(()=>{
         if(localStorage.getItem('token') !== null) {
             navigate('/profile');
         }
-    },[]) 
+    },[]);
 
 
 
-    const userCredentialsSubmitHandler = e => {
+    const userCredentialsSubmitHandler = (e) => {
         e.preventDefault();
         //By using the preventDefault() we can stop the reloding of form(or)this will prevent all the default activies.
 
@@ -86,8 +97,9 @@ const Login = () => {
         }
     }
 
-    
+
     return( 
+
         <div className={loginPageCss.mainDiv}>
             <div className={loginPageCss.mainContainer}>
 
@@ -121,6 +133,7 @@ const Login = () => {
                 }
             </div>
         </div>
+        
     )
 }
 

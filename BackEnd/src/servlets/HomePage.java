@@ -8,7 +8,6 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.json.JSONObject;
 
-
 import dataBase.MysqlDataBaseConnection;
 
 import java.sql.Connection;

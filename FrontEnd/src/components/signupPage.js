@@ -1,42 +1,46 @@
-import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { useState } from "react";
 import axios from "axios";
-import signupPageCss from "../css/signupPage.module.css";
-import ServerError from "../components/serverErrorPage";
-import ConnectionRefuse from "../components/connectionRefusePage";
 import { Oval } from 'react-loader-spinner';
-import {apiUrl} from './url.js'
 import   {AiFillPicture} from "react-icons/ai";
 
+import {apiUrl} from './url.js'
+
+import signupPageCss from "../css/signupPage.module.css";
+
+import ServerError from "../components/serverErrorPage";
+import ConnectionRefuse from "../components/connectionRefusePage";
+
+
 const Signup = () => {
+
     const navigate = useNavigate();
+
     const[loading,setLoading]=useState()
     const [showSignupError, setShowSignupError] = useState(false);
     const [signupError, setSignupError] = useState(false);
+
     const [showOtpError, setShowOtpError] = useState(false);
+
+    var [otpReq, setOtpReq] = useState(false);
+    
     const [serverErr, setServerErr] = useState(false);
     const [connectionErr, setConnectionErr] = useState(false);
-    var [otpReq, setOtpReq] = useState(false);
-    const [ownerImage, setOwnerImage]= useState('')
 
-    const ownerImageSetHandler = (e) => {
-        setOwnerImage(e.target.files[0])
-    }
-
-    var [userDetails,setUserDetails] = useState({
+    const [userDetails,setUserDetails] = useState({
         mobileNumber: "",
         ownerName: "",
+        ownerImage:"",
         password: "",
         confirmPassword: "",
         otp: ""
     });
     //objectDestructuring
-    const {mobileNumber, ownerName, password, confirmPassword, otp}  = userDetails
-
+    const {mobileNumber, ownerName, ownerImage, password, confirmPassword, otp}  = userDetails
     //by this Handler we are updating the userDeatils varables with particular user inputs.
-    const userDetailsUpdateHandler = e => {
-        setUserDetails({...userDetails,[e.target.name]:e.target.value})
-        
+    const userDetailsUpdateHandler = (e) => {
+        if(e.target.name==="ownerImage") setUserDetails({...userDetails,[e.target.name]:e.target.files[0]});
+        else setUserDetails({...userDetails,[e.target.name]:e.target.value});
     }
 
     //by this Handler we are submiting the updated details to backend and at same time we are doing form validation giving error mesg to particular error input giving by user.
@@ -94,16 +98,7 @@ const Signup = () => {
             setLoading(true)
             setShowOtpError(false)
 
-            const formData = new FormData();
-            formData.append('state',"validateOtp")
-            formData.append('mobileNumber',userDetails.mobileNumber)
-            formData.append('password',userDetails.password)
-            formData.append('ownerName',userDetails.ownerName)
-            formData.append('otp',userDetails.otp)
-            formData.append('ownerImage',ownerImage)
-
-
-            axios.post(apiUrl+"signup?", formData).then(
+            axios.post(apiUrl+"signup?", userDetails).then(
                 function(response){
                     if(response){
                         if(response.status === 201){
@@ -134,48 +129,50 @@ const Signup = () => {
             }).finally(()=>{setLoading(false)})
         }
     }
+
     return(
+
         <div className={signupPageCss.mainDiv}>
             <div className={signupPageCss.mainContainer}>
 
-            {serverErr || connectionErr ?
-                <div style={{width:'100%',height:'100%'}}>
-                    {serverErr ? <ServerError/>:<ConnectionRefuse />}
-                </div>
-            :
-                <div>
-                    {otpReq ?
-                        <form onSubmit={otpValidateAndSignupHandler} autoComplete="of">
-                            <div style={{height:'30px',width:'280px'}}>Please Enter the (6-Digit OTP) recevied by your mobile number.</div><br/>
-                            {showOtpError && <div className={signupPageCss.error}>Invalid Otp.</div>}
-                            <input style={{display:'flex',justifyContent:'center',textAlign:'center',fontSize:'15px'}} type="text" placeholder="OTP" name="otp" value={otp} onChange={userDetailsUpdateHandler}/>
-                            <button className={signupPageCss.buttonValidate} disabled={loading}>{loading?<Oval color="black" height={30} width={30}/>:<span>Validate</span>}</button>
-                        </form>
-                    : 
-                        <form onSubmit={userDeatilsSubmitAndOtpGenHandler} autoComplete="of"> 
-                            <h1>New User Signup.</h1>
-                            <div>{showSignupError && <div className={signupPageCss.error}>{signupError}</div>}</div>
-                    
-                            <div>Owner Name</div>
-                            <input type="text" name="ownerName" value={ownerName} onChange={userDetailsUpdateHandler}/><br/><br/>
-                            <div>MobileNumber</div>
-                            <input type="text" name="mobileNumber" value={mobileNumber} onChange={userDetailsUpdateHandler}/><br/><br/>
-                            <div>Password</div>
-                            <input type="password" name="password" value={password} onChange={userDetailsUpdateHandler}/><br/><br/>
-                            <div>ConfirmPassword</div>
-                            <input type="password" name="confirmPassword" value={confirmPassword} onChange={userDetailsUpdateHandler}/><br/><br/>
-                            <input  id="imgInput" style={{display:'none'}} type='file' accept="image/*" name='ownerImage' onChange={ownerImageSetHandler}/>
-                            <label for="imgInput"  className={signupPageCss.label}><AiFillPicture/>&nbsp;&nbsp;&nbsp;{ownerImage.name || "Choose Owner Photo"}</label>
-                            <button className={signupPageCss.submitBut} disabled={loading}>{loading?<Oval color="black" height={30} width={30}/>:<span>Submit</span>}</button>     
-                            
-                            <button className={signupPageCss.homeBut} onClick={()=>navigate('/')}>Home</button>
-                        </form>
-                    }
-                </div>
-            }
+                {serverErr || connectionErr ?
+                    <div style={{width:'100%',height:'100%'}}>
+                        {serverErr ? <ServerError/>:<ConnectionRefuse />}
+                    </div>
+                :
+                    <div>
+                        {otpReq ?
+                            <form onSubmit={otpValidateAndSignupHandler} autoComplete="of">
+                                <div style={{height:'30px',width:'280px'}}>Please Enter the (6-Digit OTP) recevied by your mobile number.</div><br/>
+                                {showOtpError && <div className={signupPageCss.error}>Invalid Otp.</div>}
+                                <input style={{display:'flex',justifyContent:'center',textAlign:'center',fontSize:'15px'}} type="text" placeholder="OTP" name="otp" value={otp} onChange={userDetailsUpdateHandler}/>
+                                <button className={signupPageCss.buttonValidate} disabled={loading}>{loading?<Oval color="black" height={30} width={30}/>:<span>Validate</span>}</button>
+                            </form>
+                        : 
+                            <form onSubmit={userDeatilsSubmitAndOtpGenHandler} autoComplete="of"> 
+                                <h1>New User Signup.</h1>
+                                <div>{showSignupError && <div className={signupPageCss.error}>{signupError}</div>}</div>
+                        
+                                <div>Owner Name</div>
+                                <input type="text" name="ownerName" value={ownerName} onChange={userDetailsUpdateHandler}/><br/><br/>
+                                <div>MobileNumber</div>
+                                <input type="text" name="mobileNumber" value={mobileNumber} onChange={userDetailsUpdateHandler}/><br/><br/>
+                                <div>Password</div>
+                                <input type="password" name="password" value={password} onChange={userDetailsUpdateHandler}/><br/><br/>
+                                <div>ConfirmPassword</div>
+                                <input type="password" name="confirmPassword" value={confirmPassword} onChange={userDetailsUpdateHandler}/><br/><br/>
+                                <input  id="imgInput" style={{display:'none'}} type='file' accept="image/*" name='ownerImage' onChange={userDetailsUpdateHandler}/>
+                                <label for="imgInput"  className={signupPageCss.label}><AiFillPicture/>&nbsp;&nbsp;&nbsp;{ownerImage.name || "Choose Owner Photo"}</label>
+                                <button className={signupPageCss.submitBut} disabled={loading}>{loading?<Oval color="black" height={30} width={30}/>:<span>Submit</span>}</button>     
+                                
+                                <button className={signupPageCss.homeBut} onClick={()=>navigate('/')}>Home</button>
+                            </form>
+                        }
+                    </div>
+                }
+            </div>
+        </div>
 
-        </div>
-        </div>
     )
 }
 

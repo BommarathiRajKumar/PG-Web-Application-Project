@@ -12,12 +12,13 @@ import javax.servlet.http.HttpServletResponse;
 import org.json.JSONObject;
 
 import dataBase.MysqlDataBaseConnection;
-import hash.Hashing;
+import dataBase.Operations;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 
+import hash.Hashing;
 
 @MultipartConfig
 @WebServlet("/forgotPassword")
@@ -51,10 +52,9 @@ public class ForgotPassword extends HttpServlet {
 					
 					if(resultSet.next()) {
 						if(resultSet.getString(1).equals(mobileNumber)) {
-							Signup obj=new Signup();
-							int otp=obj.generateOtp();
-							obj.deleteOtpFromDataBase(mobileNumber);
-							obj.insertOtpAndMobileNumberIntoDataBase(mobileNumber, otp);
+							int otp=Operations.generateOtp();
+							Operations.deleteOtpFromDataBase(mobileNumber);
+							Operations.insertOtpAndMobileNumberIntoDataBase(mobileNumber, otp);
 							response.getWriter().println(otp);
 							response.setStatus(HttpServletResponse.SC_CREATED);
 		
@@ -81,7 +81,7 @@ public class ForgotPassword extends HttpServlet {
 							pStm.executeUpdate();
 							response.setStatus(HttpServletResponse.SC_CREATED);
 							salt=null;
-							new Signup().deleteOtpFromDataBase(mobileNumber);
+							Operations.deleteOtpFromDataBase(mobileNumber);
 						}else {
 							response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
 						}
@@ -96,7 +96,7 @@ public class ForgotPassword extends HttpServlet {
 			err.printStackTrace();
 			response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
 			try {
-				new Signup().deleteOtpFromDataBase(mobileNumber);
+				Operations.deleteOtpFromDataBase(mobileNumber);
 			} catch (Exception e) {
 				err.printStackTrace();
 				response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);

@@ -9,14 +9,18 @@ import { useNavigate } from "react-router-dom";
 
 const ForgotPassword=()=>{
     const navigate = useNavigate();
+
     const[lock,setLock]=useState(false);
-    const[showErr,setShowErr]=useState(false)
+    const[showErr,setShowErr]=useState(false);
     const[err,setErr]=useState('');
-    const[test,setTest]=useState(false)
-    const[otpReqLoading,setOtpReqLoading]=useState(false);
-    const[validateLoading,setValidateLoading]=useState(false);
+
     const[serverErr,setServerErr]=useState(false);
     const[conErr,setConErr]=useState(false);
+
+    const[otpReqLoading,setOtpReqLoading]=useState(false);
+    const[validateLoading,setValidateLoading]=useState(false);
+
+
 
     const[details,setDetails]=useState({
         mobileNumber:'',
@@ -27,10 +31,8 @@ const ForgotPassword=()=>{
     const{mobileNumber,otp,newPassword,confirmNewPassword}=details;
 
     const HandlerToUpdateDetails=(e)=>{
-        setDetails({...details,[e.target.name]:e.target.value})
-
+        setDetails({...details,[e.target.name]:e.target.value});
     }
-
 
     const sendOtpHandler=e=>{
         e.preventDefault();
@@ -74,7 +76,8 @@ const ForgotPassword=()=>{
         }
 
     }
-    const validateOtpAndUpdatePassword=e=>{
+
+    const validateOtpAndUpdatePassword=(e)=>{
         e.preventDefault();
 
         if(details.otp.length!==6 || isNaN(details.otp)){
@@ -95,7 +98,7 @@ const ForgotPassword=()=>{
         
             axios.post(apiUrl+"forgotPassword?state=validateOtp",details,{
                 headers: {
-                    "Content-Type": "application/json", // Set the Content-Type header to JSON
+                    "Content-Type": "application/json",
                 },
             }).then(
                 function (response) {
@@ -122,13 +125,12 @@ const ForgotPassword=()=>{
                 setLock(false)
             })
         }
-
-
     }
 
 
 
     return(
+
         <div className={forgotPasswordPageCss.mainDiv}>
             <div className={forgotPasswordPageCss.mainContainer}>
                 {serverErr || conErr ?
@@ -136,7 +138,6 @@ const ForgotPassword=()=>{
                         {serverErr ? <ServerError/> : <ConnectionRefuse/>}
                     </div>
                 :
-                
                     <form>
                         {showErr&&<div className={forgotPasswordPageCss.error}>{err}</div>}
                         <div>Enter your Mobile Number:</div>
@@ -160,8 +161,8 @@ const ForgotPassword=()=>{
                     </form>
                 }
             </div>
-
         </div>
+
     )
 }
 

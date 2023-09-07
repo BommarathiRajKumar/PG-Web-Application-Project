@@ -1,24 +1,38 @@
-import React,{useEffect, useState} from "react"
-import noDataImage from '../images/noData.jpg';
+import React,{useEffect, useState} from "react";
 import {useNavigate} from 'react-router-dom';
 import axios from "axios";
-import DisplayHostelsPage from './displayHostelsPage.js';
-import homePageCss from "../css/homePage.module.css"
 import { Oval } from 'react-loader-spinner';
-import ConnectionRefuse from '../components/connectionRefusePage'
-import ServerError from '../components/serverErrorPage'
-import {apiUrl} from './url.js'
+
+import {apiUrl} from './url.js';
+import DisplayHostelsPage from './displayHostelsPage.js';
+import noDataImage from '../images/noData.jpg';
+import homePageCss from "../css/homePage.module.css";
+
+import ConnectionRefuse from '../components/connectionRefusePage';
+import ServerError from '../components/serverErrorPage';
+
+
 
 const Home = () =>{
     const navigate = useNavigate();
 
     const [loading, setLoading] = useState();
     const [loginDisplay, setLoginDisplay] = useState(false);
-    const [connectionRefuseError, setConnectionRefuseError]=useState(false);
-    const [serverError, setServerError]=useState(false);
-    const[noDataFound, setNoDataFound]=useState(false);
     
     const [totalHostelsDetails, setTotalHostelsDetails] = useState();
+    const[noDataFound, setNoDataFound]=useState(false);
+
+    const [formErr, setFormErr] = useState(false);
+    const [errToPrint, setErrToPrint] = useState();
+
+    
+    const[headerHeight, setHeaderHeight]=useState(23);
+    const[contentDivHeight,setContentDivHeight]=useState(77);
+    const[height,setHeight]=useState(false)
+
+    const [connectionRefuseError, setConnectionRefuseError]=useState(false);
+    const [serverError, setServerError]=useState(false);
+    
     useEffect(() => {
         setLoading(true);
         setServerError(false);
@@ -63,6 +77,7 @@ const Home = () =>{
     }
 
 
+
     const [userSelectedRoomType, setUserSelectedRoomType] = useState();
     const [showRoomsList, setShowRoomsList] = useState(false);
     const Handler_setShowRoomsList = () => {
@@ -92,6 +107,7 @@ const Home = () =>{
     };
 
 
+
     const [userSelectedPrice, setUserSelectedPrice] = useState();
     const HandlerSetUserSelectedPrice = (price) =>{
         setUserSelectedPrice(price);
@@ -101,19 +117,16 @@ const Home = () =>{
 
     const  noResultJson = {
         key: 'No Result'
-    };
-    
+    };  
     const[stateNamesLoading,setStateNamesLoading] = useState(false)
     const [stateNames, setStateNames] = useState('');
     const [userSelectedStateName, setUserSelectedStateName] = useState(null);
     const [showStatesList, setShowStatesList] = useState(false);
-    
     const handleStateSelect = (stateName)=>{
         setUserSelectedStateName(stateName)
         setShowStatesList(false)
         setFormErr(false);
     }
-
     const stateInputChangeHandler = (event) => {
         setStateNamesLoading(true)
         setUserSelectedStateName(event.target.value)
@@ -158,12 +171,12 @@ const Home = () =>{
         }
     }
 
+
     
     const[cityNamesLoading,setCityNamesLoading] = useState(false)
     const [cityNames, setCityNames] = useState('');
     const [userSelectedCityName, setUserSelectedCityName] = useState(null);
     const [showCitysList, setShowCitysList] = useState(false);
-   
     const handleCitySelect = (cityName)=>{
         setUserSelectedCityName(cityName)
         setShowCitysList(false)
@@ -214,11 +227,11 @@ const Home = () =>{
     }
 
     
+
     const[areaNamesLoading,setAreaNamesLoading] = useState(false)
     const [areaNames, setAreaNames] = useState('');
     const [userSelectedAreaName, setUserSelectedAreaName] = useState(null);
-    const [showAreasList, setShowAreasList] = useState(false);
-    
+    const [showAreasList, setShowAreasList] = useState(false); 
     const handleAreaSelect = (areaName)=>{
         setUserSelectedAreaName(areaName)
         setShowAreasList(false)
@@ -267,8 +280,6 @@ const Home = () =>{
     }
 
 
-    const [formErr, setFormErr] = useState(false);
-    const [errToPrint, setErrToPrint] = useState()
 
     const HandlerSearch = (e) => {
         e.preventDefault();
@@ -297,8 +308,7 @@ const Home = () =>{
             setFormErr(true); 
         }else{
             const formData = new FormData();
-
-            formData.append('state','userSearch')
+            formData.append('state','userSearch');
             formData.append("hostelType", userSelectedHostelType)
             formData.append('share', userSelectedRoomType)
             formData.append('price', userSelectedPrice)
@@ -306,12 +316,10 @@ const Home = () =>{
             formData.append('cityName', userSelectedCityName)
             formData.append('areaName', userSelectedAreaName)
 
-            HandlerToSetDefaultHeight();
-            
-            setErrToPrint('')
-            setFormErr(false)
             setLoading(true);
-
+            HandlerToSetDefaultHeight();
+            setFormErr(false)
+            setErrToPrint('')
             setConnectionRefuseError(false);
             setServerError(false);
             setNoDataFound(false);
@@ -339,20 +347,15 @@ const Home = () =>{
                     setLoading(false);
                 }
             )
-
         }
-
     }
 
-    const [headerHeight, setHeaderHeight]=useState(23);
-    const[contentDivHeight,setContentDivHeight]=useState(77);
-    const[height,setHeight]=useState(false)
+
+
     const setMoreFiltersHeights =()=>{
         setHeaderHeight(35);
         setContentDivHeight(65)
-        
         setHeight(true)
-        
     }
 
     const HandlerToSetDefaultHeight=()=>{
@@ -360,7 +363,6 @@ const Home = () =>{
             setHeaderHeight(23);
             setContentDivHeight(77);
         }
-
     }
 
     const searchCancelHandler=()=>{
@@ -379,6 +381,7 @@ const Home = () =>{
 
 
     return(
+
         <div className={homePageCss.mainDiv}>
             <div className={homePageCss.mainContainer}>
                 <header style={{backgroundColor: '#3177877', height: `${headerHeight}%`, width: '100%',overflow:'auto'}}>
@@ -624,13 +627,11 @@ const Home = () =>{
                             }
                         </div>
                     }
-                </div>
-
-                
-                
-                
+                </div> 
             </div>
         </div>
+
     )
 }
+
 export default Home;

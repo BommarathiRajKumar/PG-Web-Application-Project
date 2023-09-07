@@ -1,32 +1,43 @@
 import {useEffect, useState} from 'react';
-import profilePageCss from '../css/profilePage.module.css';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
-import DisplayHostelsPage from './displayHostelsPage.js';
 import { Oval } from 'react-loader-spinner';
-import ServerError from './serverErrorPage';
-import ConnectionRefuse from './connectionRefusePage'
-import {apiUrl} from './url.js'
 import   {AiFillPicture} from "react-icons/ai";
 
+import {apiUrl} from './url.js';
+
+import profilePageCss from '../css/profilePage.module.css';
+
+import DisplayHostelsPage from './displayHostelsPage.js';
+
+import ServerError from './serverErrorPage';
+import ConnectionRefuse from './connectionRefusePage';
+
 const Profile = ()=>{
+
     const navigate= useNavigate();
+    
+    const [userData,setUserData] = useState();
+    const [totalHostelsCount, setTotalHostelsCount] = useState();
+
+    const [addHostelControl, setAddHostelControl] = useState(true)
+
     const[oneShareApplicable, setOneShareApplicable] = useState(false);
     const[twoShareApplicable, setTwoShareApplicable] = useState(false);
     const[threeShareApplicable, setThreeShareApplicable] = useState(false);
     const[fourShareApplicable, setFourShareApplicable] = useState(false);
     const[fiveShareApplicable, setFiveShareApplicable] = useState(false);
+
+    const [showFormErr, setShowFormErr]=useState(false)
+    const[err,setErr]=useState();
+
     const [loading, setLoading] = useState();
+
     const[hostelSubmitLoading, setHostelSubmitLoading]=useState();
+
     const [serverErr, setServerErr] = useState(false);
     const [connectionRefuseErr, setConnectionRefuseErr] = useState(false);
-    const [addHostelControl, setAddHostelControl] = useState(true)
-    const [userData,setUserData] = useState();
-    const [totalHostelsCount, setTotalHostelsCount] = useState()
-    const [formErr, setFormErr]=useState(false)
-    const[err,setErr]=useState();
-    const[token,setToken]=useState(localStorage.getItem("token"));
-    
+    const[added,setAdded]=useState(false);
 
     const [hostelDetails, setHostelDetails] = useState({
         state:"uploadHostel",
@@ -60,7 +71,6 @@ const Profile = ()=>{
         areaName: "",
         landMark: ""
     });
-
     const hostelDetailsUpdateHandler = (e) => {
         if(e.target.name==="imageOne"){
             setHostelDetails({...hostelDetails,[e.target.name]:e.target.files[0]})
@@ -72,12 +82,61 @@ const Profile = ()=>{
             setHostelDetails({...hostelDetails,[e.target.name]:e.target.value})
         }   
     }
-    
-        
-    const[added,setAdded]=useState(false);
-    let updatedHostelDetails ={};
-    const sendHostelDeatils = async (e) => {
+
+    useEffect(()=>{
+        if(localStorage.getItem("token") === null) {
+            logOut()
+        }
+    },[]);
+
+    useEffect(()=>{
+        setLoading(true);
+        setServerErr(false);
+        setConnectionRefuseErr(false);
+
+        axios.post(apiUrl+"profile?state=profileLoad", {}, {
+            headers: {
+              'Authorization': `Bearer ${localStorage.getItem("token")}`
+            }
+          }).then(
+            response => {
+                if(response.status===200){
+                    setUserData(response.data)
+                    setTotalHostelsCount(Object.keys(response.data.hostelsDetails).length)
+                    setHostelDetails((prevHostelDetails) => ({
+                        ...prevHostelDetails,
+                        mobileNumber: response.data.profileDetails.mobileNumber,
+                        ownerName: response.data.profileDetails.ownerName,
+                    }))
+                }else{
+                    alert("your session expired do login again.")
+                    logOut();
+                }
+            }
+        ).catch((err)=>{
+            if(err.response){
+                if(err.response.status===500){
+                    setServerErr(true)
+                }else if(err.response.status===400){
+                    alert("Bad Request do login again.");
+                    logOut();
+                }else{
+                    alert("your session expired do login again.")
+                    logOut();
+                }
+            }else{
+                setConnectionRefuseErr(true);
+            }
+        }).finally(()=>{
+            setLoading(false);
+        })
+    },[added])
+
+
+
+    const handlerToUploadNewHostel = async (e) => {
         e.preventDefault();
+
         let updatedValues={};
         
         if(!oneShareApplicable){
@@ -110,100 +169,99 @@ const Profile = ()=>{
             ...updatedValues
         }
 
-    
         if(updatedHostelDetails.hostelName.trim()===""){
-            setFormErr(true);
+            setShowFormErr(true);
             setErr("please enter 'Hostel Name'.")
 
         }else if (oneShareApplicable && updatedHostelDetails.oneShareCost.trim()==="") {
-            setFormErr(true);
+            setShowFormErr(true);
             setErr("1-Share room Rs/month cannot be empty.");
         } else if (oneShareApplicable && isNaN(updatedHostelDetails.oneShareCost)) {
-            setFormErr(true);
+            setShowFormErr(true);
             setErr("Invalid input at 1-Share room Rs/month.");
         }else if(oneShareApplicable && updatedHostelDetails.oneShareRoomsAvailable===""){
-            setFormErr(true);
+            setShowFormErr(true);
             setErr("please select 1-share room's availability 'Yes' or 'No'.")
 
         }else if(twoShareApplicable && updatedHostelDetails.twoShareCost.trim()===""){
-            setFormErr(true);
+            setShowFormErr(true);
             setErr("2-Share room Rs/month cannot be empty.");
         }else if (twoShareApplicable && isNaN(updatedHostelDetails.twoShareCost)) {
-            setFormErr(true);
+            setShowFormErr(true);
             setErr("Invalid input at 2-Share room Rs/month.");
         }else if(twoShareApplicable && updatedHostelDetails.twoShareRoomsAvailable===""){
-            setFormErr(true);
+            setShowFormErr(true);
             setErr("please select 2-share room's availability 'Yes' or 'No'.")
 
         }else if(threeShareApplicable && updatedHostelDetails.threeShareCost.trim()===""){
-            setFormErr(true);
+            setShowFormErr(true);
             setErr("3-share room Rs/month cannot be empty.")
         }else if (threeShareApplicable && isNaN(updatedHostelDetails.threeShareCost)) {
-            setFormErr(true);
+            setShowFormErr(true);
             setErr("Invalid input at '3-Share room Rs/month");
         }else if(threeShareApplicable && updatedHostelDetails.threeShareRoomsAvailable===""){
-            setFormErr(true);
+            setShowFormErr(true);
             setErr("please select 3-share room's availability 'Yes' or 'No'.")
         }else if(fourShareApplicable && updatedHostelDetails.fourShareCost.trim()===""){
-            setFormErr(true);
+            setShowFormErr(true);
             setErr("4-share room Rs/month cannot be empty.")
         }else if (fourShareApplicable && isNaN(updatedHostelDetails.fourShareCost)) {
-            setFormErr(true);
+            setShowFormErr(true);
             setErr("Invalid input at '4-Share room Rs/month");
         }else if(fourShareApplicable && updatedHostelDetails.fourShareRoomsAvailable===""){
-            setFormErr(true);
+            setShowFormErr(true);
             setErr("please select 4-share room's availability 'Yes' or 'No'.")
         }else if(fiveShareApplicable && updatedHostelDetails.fiveShareCost.trim()===""){
-            setFormErr(true);
+            setShowFormErr(true);
             setErr("5-share room Rs/month cannot be empty.")
         }else if (fiveShareApplicable && isNaN(updatedHostelDetails.fiveShareCost)) {
-            setFormErr(true);
+            setShowFormErr(true);
             setErr("Invalid input at '5-Share room Rs/month");
         }else if(fiveShareApplicable && updatedHostelDetails.fiveShareApplicable===""){
-            setFormErr(true);
+            setShowFormErr(true);
             setErr("please select 5-share room's availability 'Yes' or 'No'.")
         }else if(updatedHostelDetails.imageOne===""){
-            setFormErr(true);
+            setShowFormErr(true);
             setErr("please choose 'hostel room Image One'.")
         }else if(updatedHostelDetails.imageTwo===""){
-            setFormErr(true);
+            setShowFormErr(true);
             setErr("please choose 'hostel room Image Two'.")
         }else if(updatedHostelDetails.imageThree===""){
-            setFormErr(true);
+            setShowFormErr(true);
             setErr("please choose 'hostel room Image Three'.")
         }else if(updatedHostelDetails.stateName.trim()===""){
-            setFormErr(true);
+            setShowFormErr(true);
             setErr("please enter 'State Name'.")
         }else if(updatedHostelDetails.cityName.trim()===""){
-            setFormErr(true);
+            setShowFormErr(true);
             setErr("please enter 'City Name'.")
         }else if(updatedHostelDetails.areaName.trim()===""){
-            setFormErr(true);
+            setShowFormErr(true);
             setErr("please enter 'Area Name'.")
         }else if(updatedHostelDetails.landMark.trim()===""){
-            setFormErr(true);
+            setShowFormErr(true);
             setErr("please enter 'Land Mark'.")
         }else if(updatedHostelDetails.hostelType===""){
-            setFormErr(true);
+            setShowFormErr(true);
             setErr("please select Hoste type 'Girls or Boys'.")
         }else if(updatedHostelDetails.wifi===""){
-            setFormErr(true);
+            setShowFormErr(true);
             setErr("please select Wifi Available 'Yes or No'.")
-        }else if(updatedHostelDetails.laundry==""){
-            setFormErr(true);
+        }else if(updatedHostelDetails.laundry===""){
+            setShowFormErr(true);
             setErr("please select Laundry Available 'Yes or No'.")
-        }else if(updatedHostelDetails.hotWater==""){
-            setFormErr(true);
+        }else if(updatedHostelDetails.hotWater===""){
+            setShowFormErr(true);
             setErr("please select Hotwater Available 'Yes or No'.")
         }else {
-            setFormErr(false);
+            setShowFormErr(false);
             setHostelSubmitLoading(true);
 
             try {
                 const response = await axios.post(apiUrl+"profile?", updatedHostelDetails, {
                     headers: {
                         'Content-Type': 'multipart/form-data',
-                        'Authorization': `Bearer ${token}`
+                        'Authorization': `Bearer ${localStorage.getItem("token")}`
                     },
                 });
                 if (response.status === 200) {
@@ -229,8 +287,6 @@ const Profile = ()=>{
         }
         
     };
-
-
     const HandlerToMakeDefaultHostelsDetails = ()=>{
         setHostelDetails((prevHostelDetails)=>({
             ...prevHostelDetails,
@@ -271,61 +327,10 @@ const Profile = ()=>{
 
     const logOut = () => {
         setUserData('')
-        localStorage.removeItem('token')
-        localStorage.removeItem('key2')
+        localStorage.removeItem('token');
         navigate('/login')
     }
 
-    
-   useEffect(()=>{
-    if(token === null) {
-        logOut()
-    }
-   },[]) 
-
-
-    useEffect(()=>{
-        setLoading(true);
-        setServerErr(false);
-        setConnectionRefuseErr(false);
-
-        axios.post(apiUrl+"profile?state=profileLoad", {}, {
-            headers: {
-              'Authorization': `Bearer ${token}`
-            }
-          }).then(
-            response => {
-                if(response.status===200){
-                    setUserData(response.data)
-                    setTotalHostelsCount(Object.keys(response.data.hostelsDetails).length)
-                    setHostelDetails((prevHostelDetails) => ({
-                        ...prevHostelDetails,
-                        mobileNumber: response.data.profileDetails.mobileNumber,
-                        ownerName: response.data.profileDetails.ownerName,
-                    }))
-                }else{
-                    alert("your session expired do login again.")
-                    logOut();
-                }
-            }
-        ).catch((err)=>{
-            if(err.response){
-                if(err.response.status===500){
-                    setServerErr(true)
-                }else if(err.response.status===400){
-                    alert("Bad Request do login again.");
-                    logOut();
-                }else{
-                    alert("your session expired do login again.")
-                    logOut();
-                }
-            }else{
-                setConnectionRefuseErr(true);
-            }
-        }).finally(()=>{
-            setLoading(false);
-        })
-    },[added])
 
 
     return(
@@ -564,11 +569,11 @@ const Profile = ()=>{
 
                                     
                                     <div style={{display:'flex',justifyContent:'center',alignItems:'center'}}>
-                                        {formErr&&<label style={{color: 'red',marginBottom:'3%',fontSize:'105%'}}>{err}</label>}
+                                        {showFormErr&&<label style={{color: 'red',marginBottom:'3%',fontSize:'105%'}}>{err}</label>}
                                     </div> 
 
                                     <div style={{display:'flex',flexDirection:'column',justifyContent:'center',alignItems:'center'}}>
-                                        <button className={profilePageCss.formButtons} onClick={sendHostelDeatils}>Add Hostel</button>
+                                        <button className={profilePageCss.formButtons} onClick={handlerToUploadNewHostel} disabled={hostelSubmitLoading}>{hostelSubmitLoading?<Oval width={30} height={30}/>:<span>Add Hostel</span>}</button>
                                         <button className={profilePageCss.formButtons} style={{marginTop:'15px', marginBottom:'30px'}} onClick={()=>setAddHostelControl(!addHostelControl)}>cancel</button>
                                     </div>
                                 </div>

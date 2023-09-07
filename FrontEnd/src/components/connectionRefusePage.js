@@ -9,8 +9,7 @@ const ConnectionRefuse=()=> {
       <div style={{fontSize:'130%',marginBottom:'3%'}}>Temporarily unavailable.</div>
       <div style={{fontSize:'120%',marginBottom:'3%'}}>Please try again soon.</div>
     </div>
-
-    
+        
   )
 }
 

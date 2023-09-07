@@ -9,15 +9,14 @@ const DisplayHostelsPage=({data,style})=>{
     }
     const imageTwoHadler = ()=>{
         setCurrentImage(data.imageTwo);
-        
     }
     const imageThreeHadler = ()=>{
         setCurrentImage(data.imageThree);
-        
     }
 
     const [showHostelDetails, setShowHostelDetails]=useState(false)
     return(
+
         <div style={style} className={displayHostelsPage.mainDiv}>
                   
             <img className={displayHostelsPage.Images} src={`data:image/jpeg;base64,${currentImage}`} alt="roomImg"/>
@@ -111,6 +110,8 @@ const DisplayHostelsPage=({data,style})=>{
                 </table>
             }
         </div>
+
     )
 }
+
 export default DisplayHostelsPage;

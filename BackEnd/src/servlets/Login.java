@@ -14,7 +14,6 @@ import java.sql.ResultSet;
 
 import org.json.JSONObject;
 
-
 import dataBase.MysqlDataBaseConnection;
 import hash.Hashing;
 import jjwt.JWT;
