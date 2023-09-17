@@ -59,6 +59,7 @@ public class FilterWord extends HttpServlet {
 				if(i!=0)res.setStatus(HttpServletResponse.SC_OK);
 				else res.setStatus(HttpServletResponse.SC_NOT_FOUND);
 		}catch(Exception err) {
+			err.printStackTrace();
 			res.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
 		}finally {
 			try {

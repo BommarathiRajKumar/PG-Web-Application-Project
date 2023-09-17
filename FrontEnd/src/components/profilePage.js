@@ -8,7 +8,7 @@ import {apiUrl} from './url.js';
 
 import profilePageCss from '../css/profilePage.module.css';
 
-import DisplayHostelsPage from './displayHostelsPage.js';
+import DisplayHostelsProfilePage from './displayHostelsProfilePage.js';
 
 import ServerError from './serverErrorPage';
 import ConnectionRefuse from './connectionRefusePage';
@@ -22,12 +22,6 @@ const Profile = ()=>{
 
     const [addHostelControl, setAddHostelControl] = useState(true)
 
-    const[oneShareApplicable, setOneShareApplicable] = useState(false);
-    const[twoShareApplicable, setTwoShareApplicable] = useState(false);
-    const[threeShareApplicable, setThreeShareApplicable] = useState(false);
-    const[fourShareApplicable, setFourShareApplicable] = useState(false);
-    const[fiveShareApplicable, setFiveShareApplicable] = useState(false);
-
     const [showFormErr, setShowFormErr]=useState(false)
     const[err,setErr]=useState();
 
@@ -39,25 +33,29 @@ const Profile = ()=>{
     const [connectionRefuseErr, setConnectionRefuseErr] = useState(false);
     const[added,setAdded]=useState(false);
 
+    const refresh = () => {
+        setAdded(!added);
+    };
+
     const [hostelDetails, setHostelDetails] = useState({
         state:"uploadHostel",
         mobileNumber: "",
         ownerName: "",
         hostelName: "",
         hostelType:"",
-        oneShareApplicable:"Yes",
+        oneShareApplicable:false,
         oneShareCost: "",
         oneShareRoomsAvailable: "",
-        twoShareApplicable:"Yes",
+        twoShareApplicable:false,
         twoShareCost: "",
         twoShareRoomsAvailable: "",
-        threeShareApplicable:"Yes",
+        threeShareApplicable:false,
         threeShareCost: "",
         threeShareRoomsAvailable: "",
-        fourShareApplicable:"Yes",
+        fourShareApplicable:false,
         fourShareCost: "",
         fourShareRoomsAvailable: "",
-        fiveShareApplicable: "Yes",
+        fiveShareApplicable: false,
         fiveShareCost: "",
         fiveShareRoomsAvailable: "",
         wifi:"",
@@ -78,6 +76,16 @@ const Profile = ()=>{
             setHostelDetails({...hostelDetails,[e.target.name]:e.target.files[0]})
         }else if(e.target.name==="imageThree"){
             setHostelDetails({...hostelDetails,[e.target.name]:e.target.files[0]})
+        }else if(e.target.name==="oneShareApplicable"){
+            setHostelDetails({...hostelDetails,[e.target.name]:(!hostelDetails.oneShareApplicable)})
+        }else if(e.target.name==="twoShareApplicable"){
+            setHostelDetails({...hostelDetails,[e.target.name]:(!hostelDetails.twoShareApplicable)})
+        }else if(e.target.name==="threeShareApplicable"){
+            setHostelDetails({...hostelDetails,[e.target.name]:(!hostelDetails.threeShareApplicable)})
+        }else if(e.target.name==="fourShareApplicable"){
+            setHostelDetails({...hostelDetails,[e.target.name]:(!hostelDetails.fourShareApplicable)})
+        }else if(e.target.name==="fiveShareApplicable"){
+            setHostelDetails({...hostelDetails,[e.target.name]:(!hostelDetails.fiveShareApplicable)})
         }else{
             setHostelDetails({...hostelDetails,[e.target.name]:e.target.value})
         }   
@@ -109,7 +117,7 @@ const Profile = ()=>{
                         ownerName: response.data.profileDetails.ownerName,
                     }))
                 }else{
-                    alert("your session expired do login again.")
+                    alert("your session expired do login again and login .")
                     logOut();
                 }
             }
@@ -139,28 +147,23 @@ const Profile = ()=>{
 
         let updatedValues={};
         
-        if(!oneShareApplicable){
-            updatedValues.oneShareApplicable="No";
+        if(!hostelDetails.oneShareApplicable){
             updatedValues.oneShareCost="Not-Applicable";
             updatedValues.oneShareRoomsAvailable="Not-Applicable";
         }
-        if(!twoShareApplicable){
-            updatedValues.twoShareApplicable="No";
+        if(!hostelDetails.twoShareApplicable){
             updatedValues.twoShareCost="Not-Applicable";
             updatedValues.twoShareRoomsAvailable="Not-Applicable";
         }
-        if(!threeShareApplicable){
-            updatedValues.threeShareApplicable="No";
+        if(!hostelDetails.threeShareApplicable){
             updatedValues.threeShareCost="Not-Applicable";
             updatedValues.threeShareRoomsAvailable="Not-Applicable";
         }
-        if(!fourShareApplicable){
-            updatedValues.fourShareApplicable="No";
+        if(!hostelDetails.fourShareApplicable){
             updatedValues.fourShareCost="Not-Applicable";
             updatedValues.fourShareRoomsAvailable="Not-Applicable";
         }
-        if(!fiveShareApplicable){
-            updatedValues.fiveShareApplicable="No";
+        if(!hostelDetails.fiveShareApplicable){
             updatedValues.fiveShareCost="Not-Applicable";
             updatedValues.fiveShareRoomsAvailable="Not-Applicable";
         }
@@ -171,53 +174,53 @@ const Profile = ()=>{
 
         if(updatedHostelDetails.hostelName.trim()===""){
             setShowFormErr(true);
-            setErr("please enter 'Hostel Name'.")
+            setErr("please enter 'Hostel Name'.");
 
-        }else if (oneShareApplicable && updatedHostelDetails.oneShareCost.trim()==="") {
+        }else if (hostelDetails.oneShareApplicable && updatedHostelDetails.oneShareCost.trim()==="") {
             setShowFormErr(true);
             setErr("1-Share room Rs/month cannot be empty.");
-        } else if (oneShareApplicable && isNaN(updatedHostelDetails.oneShareCost)) {
+        } else if (hostelDetails.oneShareApplicable && isNaN(updatedHostelDetails.oneShareCost)) {
             setShowFormErr(true);
             setErr("Invalid input at 1-Share room Rs/month.");
-        }else if(oneShareApplicable && updatedHostelDetails.oneShareRoomsAvailable===""){
+        }else if(hostelDetails.oneShareApplicable && updatedHostelDetails.oneShareRoomsAvailable===""){
             setShowFormErr(true);
             setErr("please select 1-share room's availability 'Yes' or 'No'.")
 
-        }else if(twoShareApplicable && updatedHostelDetails.twoShareCost.trim()===""){
+        }else if(hostelDetails.twoShareApplicable && updatedHostelDetails.twoShareCost.trim()===""){
             setShowFormErr(true);
             setErr("2-Share room Rs/month cannot be empty.");
-        }else if (twoShareApplicable && isNaN(updatedHostelDetails.twoShareCost)) {
+        }else if (hostelDetails.twoShareApplicable && isNaN(updatedHostelDetails.twoShareCost)) {
             setShowFormErr(true);
             setErr("Invalid input at 2-Share room Rs/month.");
-        }else if(twoShareApplicable && updatedHostelDetails.twoShareRoomsAvailable===""){
+        }else if(hostelDetails.twoShareApplicable && updatedHostelDetails.twoShareRoomsAvailable===""){
             setShowFormErr(true);
             setErr("please select 2-share room's availability 'Yes' or 'No'.")
 
-        }else if(threeShareApplicable && updatedHostelDetails.threeShareCost.trim()===""){
+        }else if(hostelDetails.threeShareApplicable && updatedHostelDetails.threeShareCost.trim()===""){
             setShowFormErr(true);
             setErr("3-share room Rs/month cannot be empty.")
-        }else if (threeShareApplicable && isNaN(updatedHostelDetails.threeShareCost)) {
+        }else if (hostelDetails.threeShareApplicable && isNaN(updatedHostelDetails.threeShareCost)) {
             setShowFormErr(true);
             setErr("Invalid input at '3-Share room Rs/month");
-        }else if(threeShareApplicable && updatedHostelDetails.threeShareRoomsAvailable===""){
+        }else if(hostelDetails.threeShareApplicable && updatedHostelDetails.threeShareRoomsAvailable===""){
             setShowFormErr(true);
             setErr("please select 3-share room's availability 'Yes' or 'No'.")
-        }else if(fourShareApplicable && updatedHostelDetails.fourShareCost.trim()===""){
+        }else if(hostelDetails.fourShareApplicable && updatedHostelDetails.fourShareCost.trim()===""){
             setShowFormErr(true);
             setErr("4-share room Rs/month cannot be empty.")
-        }else if (fourShareApplicable && isNaN(updatedHostelDetails.fourShareCost)) {
+        }else if (hostelDetails.fourShareApplicable && isNaN(updatedHostelDetails.fourShareCost)) {
             setShowFormErr(true);
             setErr("Invalid input at '4-Share room Rs/month");
-        }else if(fourShareApplicable && updatedHostelDetails.fourShareRoomsAvailable===""){
+        }else if(hostelDetails.fourShareApplicable && updatedHostelDetails.fourShareRoomsAvailable===""){
             setShowFormErr(true);
             setErr("please select 4-share room's availability 'Yes' or 'No'.")
-        }else if(fiveShareApplicable && updatedHostelDetails.fiveShareCost.trim()===""){
+        }else if(hostelDetails.fiveShareApplicable && updatedHostelDetails.fiveShareCost.trim()===""){
             setShowFormErr(true);
             setErr("5-share room Rs/month cannot be empty.")
-        }else if (fiveShareApplicable && isNaN(updatedHostelDetails.fiveShareCost)) {
+        }else if (hostelDetails.fiveShareApplicable && isNaN(updatedHostelDetails.fiveShareCost)) {
             setShowFormErr(true);
             setErr("Invalid input at '5-Share room Rs/month");
-        }else if(fiveShareApplicable && updatedHostelDetails.fiveShareApplicable===""){
+        }else if(hostelDetails.fiveShareApplicable && updatedHostelDetails.fiveShareApplicable===""){
             setShowFormErr(true);
             setErr("please select 5-share room's availability 'Yes' or 'No'.")
         }else if(updatedHostelDetails.imageOne===""){
@@ -264,20 +267,33 @@ const Profile = ()=>{
                         'Authorization': `Bearer ${localStorage.getItem("token")}`
                     },
                 });
-                if (response.status === 200) {
-                    alert("Hostel Uploaded successfully.");
-                    setAdded(true);
-                    HandlerToMakeDefaultHostelsDetails();
-                    setAddHostelControl(!addHostelControl);
-                } else {
-                    alert("Internal server error, please refresh the page and try again.");
+                if(response){
+                    if (response.status === 200) {
+                        alert("Hostel Uploaded successfully.");
+                        setAdded(!added);
+                        HandlerToMakeDefaultHostelsDetails();
+                        setAddHostelControl(!addHostelControl);
+                    } else {
+                        alert("your session expired do login again.")
+                        logOut();
+                    }
+                }else{
+                    alert("Internal server error, please refresh the page and try login again.");
+                    logOut();
                 }
             } catch (err) {
-                if (err.response) {
-                    alert("Internal server error, please refresh the page and try again.");
-                } else {
-                    
-                    alert("Service unavailable, please try again after some time.");
+                if(err.response){
+                    if(err.response.status===500){
+                        setServerErr(true)
+                    }else if(err.response.status===400){
+                        alert("Bad Request do login again and upload hostel.");
+                        logOut();
+                    }else{
+                        alert("your session expired do login again and upload hostel.")
+                        logOut();
+                    }
+                }else{
+                    setConnectionRefuseErr(true);
                 }
             } finally {
                 setHostelSubmitLoading(false);
@@ -292,19 +308,19 @@ const Profile = ()=>{
             ...prevHostelDetails,
             hostelName: "",
             hostelType:"",
-            oneShareApplicable:"Yes",
+            oneShareApplicable:false,
             oneShareCost: "",
             oneShareRoomsAvailable: "",
-            twoShareApplicable:"Yes",
+            twoShareApplicable:false,
             twoShareCost: "",
             twoShareRoomsAvailable: "",
-            threeShareApplicable:"Yes",
+            threeShareApplicable:false,
             threeShareCost: "",
             threeShareRoomsAvailable: "",
-            fourShareApplicable:"Yes",
+            fourShareApplicable:false,
             fourShareCost: "",
             fourShareRoomsAvailable: "",
-            fiveShareApplicable: "Yes",
+            fiveShareApplicable: false,
             fiveShareCost: "",
             fiveShareRoomsAvailable: "",
             wifi:"",
@@ -318,11 +334,6 @@ const Profile = ()=>{
             areaName: "",
             landMark: ""
         }));
-        setOneShareApplicable(false);
-        setTwoShareApplicable(false);
-        setThreeShareApplicable(false);
-        setFourShareApplicable(false);
-        setFiveShareApplicable(false);
     }
 
     const logOut = () => {
@@ -356,45 +367,45 @@ const Profile = ()=>{
                                     />
                                     <div style={{fontSize:'75%', marginBottom:'1%'}}>{userData.profileDetails.ownerName}</div>
                                     <div style={{fontSize:'75%'}}>{userData.profileDetails.mobileNumber}</div>
-                                    <button className={profilePageCss.headerButtons} onClick={()=>setAddHostelControl(!addHostelControl)}>Add New Hostle</button>
+                                    <button className={profilePageCss.headerButtons} onClick={()=>{setAddHostelControl(!addHostelControl);setShowFormErr(false)}}>Add New Hostle</button>
                                     <button style={{marginBottom:'15px'}} className={profilePageCss.headerButtons} onClick={logOut}>Log out</button>
                                 </header>
                             }
                             <main style={{height:'75%',width:'100%'}}>
                                 {loading?
-                                        <div style={{width:'100%',height:'100%',display:'flex',flexDirection:'column',justifyContent:'center',alignItems:'center'}}>
-                                            <Oval color="#00BFFF" height={60} width={60} />
-                                            <div style={{marginTop:'8%'}}>
-                                                Please wait, Data is loading...
-                                            </div>
+                                    <div style={{width:'100%',height:'125%',display:'flex',flexDirection:'column',justifyContent:'center',alignItems:'center'}}>
+                                        <Oval color="#00BFFF" height={60} width={60} />
+                                        <div style={{marginTop:'8%'}}>
+                                            Please wait, Data is loading...
                                         </div>
-                                    :
-                                        <div style={{width:'100%',height:'100%'}}>
-                                            {totalHostelsCount>0 ?
-                                                <div style={{backgroundColor: ' #E2D1F9',width:'100%',height:'100%',overflow:'auto',display:'flex', justifyContent:'center',alignItems:'center'}}>       
-                                                    <div style={{width:'88%', height:'100%'}}>
-                                                        <div style={{marginTop:'8%',marginBottom:'8%'}}>Hostels:</div>
-                                                            {Object.keys(userData.hostelsDetails).map((key) => (
+                                    </div>
+                                :
+                                    <div style={{width:'100%',height:'100%'}}>
+                                        {totalHostelsCount>0 ?
+                                            <div style={{backgroundColor: ' #E2D1F9',width:'100%',height:'100%',overflow:'auto',display:'flex', justifyContent:'center',alignItems:'center'}}>       
+                                                <div style={{width:'88%', height:'100%'}}>
+                                                    <div style={{marginTop:'8%',marginBottom:'8%'}}>Hostels:</div>
+                                                        {Object.keys(userData.hostelsDetails).map((key) => (
+                                                        
+                                                            <DisplayHostelsProfilePage refresh={refresh} style={{marginBottom:'40px'}} key={key} data={userData.hostelsDetails[key]}/>
                                                             
-                                                                <DisplayHostelsPage style={{marginBottom:'40px'}} key={key} data={userData.hostelsDetails[key]}/>
-                                                                
-                                                            ))}
-                                                            <br/>
-                                                    </div>
+                                                        ))}
+                                                        <br/>
                                                 </div>
-                                            :
-                                                <div style={{width:'100%',height:'100%'}}>
-                                                    {!added&&
-                                                        <div style={{width:'100%',height:'100%',display:'flex',flexDirection:'column',justifyContent:'center',alignItems:'center'}}>
-                                                            <div style={{color:'rgba(0, 0, 0, 0.5)',marginBottom:'3%'}}>You didn't added your hostels yet.</div>
-                                                            <div style={{color:'rgba(0, 0, 0, 0.5)'}}>Click Above "Add New Hostel?" Button.</div>
+                                            </div>
+                                        :
+                                            <div style={{width:'100%',height:'100%'}}>
+                                                {!added&&
+                                                    <div style={{width:'100%',height:'100%',display:'flex',flexDirection:'column',justifyContent:'center',alignItems:'center'}}>
+                                                        <div style={{color:'rgba(0, 0, 0, 0.5)',marginBottom:'3%'}}>You didn't added your hostels yet.</div>
+                                                        <div style={{color:'rgba(0, 0, 0, 0.5)'}}>Click Above "Add New Hostel?" Button.</div>
 
-                                                        </div>
-                                                    }
-                                                </div>
-                                            }
-                                        </div>
-                                    }
+                                                    </div>
+                                                }
+                                            </div>
+                                        }
+                                    </div>
+                                }
                             </main>
 
                         </div>
@@ -408,11 +419,11 @@ const Profile = ()=>{
                                     <div style={{marginBottom:'4%'}}>
                                         <div className={profilePageCss.oneShareDiv}>
                                             <label>1-Share rooms:</label>
-                                            <input type="checkbox" onClick={()=>{setOneShareApplicable(!oneShareApplicable)}} style={{ width: '5%', height: '5%' }} />
+                                            <input type="checkbox" name="oneShareApplicable" onClick={hostelDetailsUpdateHandler} checked={hostelDetails.oneShareApplicable===true}  style={{ width: '5%', height: '5%' }} />
                                             <label>Applicable</label>
                                         </div>
 
-                                        {oneShareApplicable&&
+                                        {hostelDetails.oneShareApplicable&&
                                             <div className={profilePageCss.secShareDiv}>
                                                 <label> &#8377;/month :</label>
                                                 <input style={{width:'15%'}}  type='text' name="oneShareCost" value={hostelDetails.oneShareCost} onChange={hostelDetailsUpdateHandler}/>
@@ -431,11 +442,11 @@ const Profile = ()=>{
                                     <div style={{marginBottom:'4%'}}>
                                         <div className={profilePageCss.oneShareDiv}>
                                             <label>2-Share rooms:</label>
-                                            <input type="checkbox" onClick={()=>{setTwoShareApplicable(!twoShareApplicable)}} style={{ width: '5%', height: '5%' }}/>
+                                            <input type="checkbox" name="twoShareApplicable" onClick={hostelDetailsUpdateHandler} checked={hostelDetails.twoShareApplicable===true} style={{ width: '5%', height: '5%' }}/>
                                             <label>Applicable</label>
                                         </div>
 
-                                        {twoShareApplicable&&
+                                        {hostelDetails.twoShareApplicable&&
                                             <div className={profilePageCss.secShareDiv}>
                                                 <label> &#8377;/month :</label>
                                                 <input style={{width:'15%'}}  type='text' name="twoShareCost" value={hostelDetails.twoShareCost} onChange={hostelDetailsUpdateHandler}/>
@@ -451,11 +462,11 @@ const Profile = ()=>{
                                     <div style={{marginBottom:'4%'}}>
                                         <div className={profilePageCss.oneShareDiv}>
                                             <label>3-Share rooms:</label>
-                                            <input type="checkbox" style={{ width: '5%', height: '5%' }} onClick={()=>setThreeShareApplicable(!threeShareApplicable)}/>
+                                            <input type="checkbox" name="threeShareApplicable" onClick={hostelDetailsUpdateHandler} style={{ width: '5%', height: '5%' }} checked={hostelDetails.threeShareApplicable===true} />
                                             <label>Applicable</label>
                                         </div>
                                     
-                                        {threeShareApplicable&&
+                                        {hostelDetails.threeShareApplicable&&
                                             <div className={profilePageCss.secShareDiv}>
                                                 <label> &#8377;/month :</label>
                                                 <input style={{width:'15%'}}  type='text' name="threeShareCost" value={hostelDetails.threeShareCost} onChange={hostelDetailsUpdateHandler}/>
@@ -472,11 +483,11 @@ const Profile = ()=>{
                                     <div style={{marginBottom:'4%'}}>
                                         <div className={profilePageCss.oneShareDiv}>
                                             <label>4-Share rooms:</label>
-                                            <input type="checkbox" style={{ width: '5%', height: '5%' }} onClick={()=>{setFourShareApplicable(!fourShareApplicable)}} />
+                                            <input type="checkbox" name="fourShareApplicable" onClick={hostelDetailsUpdateHandler} style={{ width: '5%', height: '5%' }} checked={hostelDetails.fourShareApplicable===true}/>
                                             <label>Applicable</label>
                                         </div>
                                     
-                                        {fourShareApplicable&&
+                                        {hostelDetails.fourShareApplicable&&
                                             <div className={profilePageCss.secShareDiv}>
                                                 <label> &#8377;/month :</label>
                                                 <input style={{width:'15%'}}  type='text' name="fourShareCost" value={hostelDetails.fourShareCost} onChange={hostelDetailsUpdateHandler}/>
@@ -493,11 +504,11 @@ const Profile = ()=>{
                                     <div style={{marginBottom:'4%'}}>
                                         <div className={profilePageCss.oneShareDiv}>
                                             <label>5-Share rooms:</label>
-                                            <input type="checkbox" style={{ width: '5%', height: '5%' }} onClick={()=>{setFiveShareApplicable(!fiveShareApplicable)}} />
+                                            <input type="checkbox" name="fiveShareApplicable" onClick={hostelDetailsUpdateHandler} style={{ width: '5%', height: '5%' }} checked={hostelDetails.fiveShareApplicable===true} />
                                             <label>Applicable</label>
                                         </div>
 
-                                        {fiveShareApplicable&&
+                                        {hostelDetails.fiveShareApplicable&&
                                             <div className={profilePageCss.secShareDiv}>
                                                 <label> &#8377;/month :</label>
                                                 <input style={{width:'15%'}}  type='text' name="fiveShareCost" value={hostelDetails.fiveShareCost} onChange={hostelDetailsUpdateHandler}/>
@@ -573,8 +584,8 @@ const Profile = ()=>{
                                     </div> 
 
                                     <div style={{display:'flex',flexDirection:'column',justifyContent:'center',alignItems:'center'}}>
-                                        <button className={profilePageCss.formButtons} onClick={handlerToUploadNewHostel} disabled={hostelSubmitLoading}>{hostelSubmitLoading?<Oval width={30} height={30}/>:<span>Add Hostel</span>}</button>
-                                        <button className={profilePageCss.formButtons} style={{marginTop:'15px', marginBottom:'30px'}} onClick={()=>setAddHostelControl(!addHostelControl)}>cancel</button>
+                                        <button className={profilePageCss.formButtons} onClick={handlerToUploadNewHostel} disabled={hostelSubmitLoading}>{hostelSubmitLoading?<Oval color='black' width={20} height={20}/>:<span style={{height:'100%',display:'flex',justifyContent:'center',justifyItems:'center'}}>Add Hostel</span>}</button>
+                                        <button className={profilePageCss.formButtons} style={{marginTop:'15px', marginBottom:'30px'}} onClick={()=>setAddHostelControl(!addHostelControl)}><span style={{height:'100%',display:'flex',justifyContent:'center',justifyItems:'center'}}>Cancel</span></button>
                                     </div>
                                 </div>
                             </form>   

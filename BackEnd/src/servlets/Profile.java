@@ -76,19 +76,19 @@ public class Profile extends HttpServlet{
 					            	singleHostelDetails.put("ownerName", resultSet.getString("ownerName"));
 			                    	singleHostelDetails.put("hostelName", resultSet.getString("hostelName"));
 			                    	singleHostelDetails.put("hostelType", resultSet.getString("hostelType"));
-			                    	singleHostelDetails.put("oneShareApplicable", resultSet.getString("oneShareApplicable"));
+			                    	singleHostelDetails.put("oneShareApplicable", resultSet.getBoolean("oneShareApplicable"));
 			                    	singleHostelDetails.put("oneShareCost", resultSet.getString("oneShareCost"));
 			                    	singleHostelDetails.put("oneShareRoomsAvailable", resultSet.getString("oneShareRoomsAvailable"));
-			                    	singleHostelDetails.put("twoShareApplicable", resultSet.getString("twoShareApplicable"));
+			                    	singleHostelDetails.put("twoShareApplicable", resultSet.getBoolean("twoShareApplicable"));
 			                    	singleHostelDetails.put("twoShareCost", resultSet.getString("twoShareCost"));
 			                    	singleHostelDetails.put("twoShareRoomsAvailable", resultSet.getString("twoShareRoomsAvailable"));
-			                    	singleHostelDetails.put("threeShareApplicable", resultSet.getString("threeShareApplicable"));
+			                    	singleHostelDetails.put("threeShareApplicable", resultSet.getBoolean("threeShareApplicable"));
 			                    	singleHostelDetails.put("threeShareCost", resultSet.getString("threeShareCost"));
 			                    	singleHostelDetails.put("threeShareRoomsAvailable", resultSet.getString("threeShareRoomsAvailable"));
-			                    	singleHostelDetails.put("fourShareApplicable", resultSet.getString("fourShareApplicable"));
+			                    	singleHostelDetails.put("fourShareApplicable", resultSet.getBoolean("fourShareApplicable"));
 			                    	singleHostelDetails.put("fourShareCost", resultSet.getString("fourShareCost"));
 			                    	singleHostelDetails.put("fourShareRoomsAvailable", resultSet.getString("fourShareRoomsAvailable"));
-			                    	singleHostelDetails.put("fiveShareApplicable", resultSet.getString("fiveShareApplicable"));
+			                    	singleHostelDetails.put("fiveShareApplicable", resultSet.getBoolean("fiveShareApplicable"));
 			                    	singleHostelDetails.put("fiveShareCost", resultSet.getString("fiveShareCost"));
 			                    	singleHostelDetails.put("fiveShareRoomsAvailable", resultSet.getString("fiveShareRoomsAvailable"));
 			                    	singleHostelDetails.put("wifi", resultSet.getString("wifi"));
@@ -143,19 +143,19 @@ public class Profile extends HttpServlet{
 		                        pStmt.setString(2,req.getParameter("ownerName"));
 		                        pStmt.setString(3,req.getParameter("hostelName"));
 		                        pStmt.setString(4,req.getParameter("hostelType"));
-		                        pStmt.setString(5, req.getParameter("oneShareApplicable"));
+		                        pStmt.setBoolean(5, Boolean.valueOf(req.getParameter("oneShareApplicable")));
 		                        pStmt.setString(6,req.getParameter("oneShareCost"));
 		                        pStmt.setString(7, req.getParameter("oneShareRoomsAvailable"));
-		                        pStmt.setString(8, req.getParameter("twoShareApplicable"));
+		                        pStmt.setBoolean(8,Boolean.valueOf(req.getParameter("twoShareApplicable")));
 		                        pStmt.setString(9,req.getParameter("twoShareCost"));
 		                        pStmt.setString(10, req.getParameter("twoShareRoomsAvailable"));
-		                        pStmt.setString(11, req.getParameter("threeShareApplicable"));
+		                        pStmt.setBoolean(11,Boolean.valueOf(req.getParameter("threeShareApplicable")));
 		                        pStmt.setString(12,req.getParameter("threeShareCost"));
 		                        pStmt.setString(13, req.getParameter("threeShareRoomsAvailable"));
-		                        pStmt.setString(14, req.getParameter("fourShareApplicable"));
+		                        pStmt.setBoolean(14,Boolean.valueOf(req.getParameter("fourShareApplicable")));
 		                        pStmt.setString(15,req.getParameter("fourShareCost"));
 		                        pStmt.setString(16, req.getParameter("fourShareRoomsAvailable"));
-		                        pStmt.setString(17, req.getParameter("fiveShareApplicable"));
+		                        pStmt.setBoolean(17,Boolean.valueOf(req.getParameter("fiveShareApplicable")));
 		                        pStmt.setString(18,req.getParameter("fiveShareCost"));
 		                        pStmt.setString(19, req.getParameter("fiveShareRoomsAvailable"));
 		                        pStmt.setString(20,req.getParameter("wifi"));
@@ -172,10 +172,81 @@ public class Profile extends HttpServlet{
 		                        pStmt.executeUpdate();
 
 		                        res.setStatus(HttpServletResponse.SC_OK);
+		                    }else if(state.equals("updateHostelDetails")){
+
+		                    	String query = "UPDATE hostelsDetails SET "
+		                    			+ "hostelName = ?, "
+		                    			+ "hostelType = ?, "
+		                    			+ "oneShareApplicable = ?, "
+		                    			+ "oneShareCost = ?, "
+		                    			+ "oneShareRoomsAvailable = ?, "
+		                    			+ "twoShareApplicable = ?, "
+		                    			+ "twoShareCost = ?, "
+		                    			+ "twoShareRoomsAvailable = ?, "
+		                    			+ "threeShareApplicable = ?, "
+		                    			+ "threeShareCost = ?, "
+		                    			+ "threeShareRoomsAvailable = ?, "
+		                    			+ "fourShareApplicable = ?, "
+		                    			+ "fourShareCost = ?, "
+		                    			+ "fourShareRoomsAvailable = ?, "
+		                    			+ "fiveShareApplicable = ?, "
+		                    			+ "fiveShareCost = ?, "
+		                    			+ "fiveShareRoomsAvailable = ?, "
+		                    			+ "wifi = ?, "
+		                    			+ "laundry = ?, "
+		                    			+ "hotWater = ?, "
+		                    			/*+ "imageOne = ?, "
+		                    			+ "imageTwo = ?, "
+		                    			+ "imageThree = ?, "*/
+		                    			+ "stateName = ?, "
+		                    			+ "cityName = ?, "
+		                    			+ "areaName = ?, "
+		                    			+ "landMark = ? "
+		                    			+ "WHERE uniqueSerialNumber = ?";
+		                        pStmt = con.prepareStatement(query);
+		                        
+		                        pStmt.setString(1,req.getParameter("hostelName"));
+		                        pStmt.setString(2,req.getParameter("hostelType"));
+		                        pStmt.setBoolean(3, Boolean.valueOf(req.getParameter("oneShareApplicable")));
+		                        pStmt.setString(4,req.getParameter("oneShareCost"));
+		                        pStmt.setString(5, req.getParameter("oneShareRoomsAvailable"));
+		                        pStmt.setBoolean(6,Boolean.valueOf(req.getParameter("twoShareApplicable")));
+		                        pStmt.setString(7,req.getParameter("twoShareCost"));
+		                        pStmt.setString(8, req.getParameter("twoShareRoomsAvailable"));
+		                        pStmt.setBoolean(9,Boolean.valueOf(req.getParameter("threeShareApplicable")));
+		                        pStmt.setString(10,req.getParameter("threeShareCost"));
+		                        pStmt.setString(11, req.getParameter("threeShareRoomsAvailable"));
+		                        pStmt.setBoolean(12,Boolean.valueOf(req.getParameter("fourShareApplicable")));
+		                        pStmt.setString(13,req.getParameter("fourShareCost"));
+		                        pStmt.setString(14, req.getParameter("fourShareRoomsAvailable"));
+		                        pStmt.setBoolean(15,Boolean.valueOf(req.getParameter("fiveShareApplicable")));
+		                        pStmt.setString(16,req.getParameter("fiveShareCost"));
+		                        pStmt.setString(17, req.getParameter("fiveShareRoomsAvailable"));
+		                        pStmt.setString(18,req.getParameter("wifi"));
+		                        pStmt.setString(19,req.getParameter("laundry"));
+		                        pStmt.setString(20,req.getParameter("hotWater"));
+		                        /*pStmt.setBlob(21,req.getPart("imageOne").getInputStream());
+		                        pStmt.setBlob(22,req.getPart("imageTwo").getInputStream());
+		                        pStmt.setBlob(23,req.getPart("imageThree").getInputStream());*/
+		                        pStmt.setString(21, req.getParameter("stateName"));
+		                        pStmt.setString(22, req.getParameter("cityName"));
+		                        pStmt.setString(23, req.getParameter("areaName"));
+		                        pStmt.setString(24, req.getParameter("landMark"));
+		                        pStmt.setString(25, req.getParameter("id"));
+		                        
+		                        pStmt.executeUpdate();
+
+		                        res.setStatus(HttpServletResponse.SC_OK);
+		                    }else if(state.equals("deletePost")) {
+		                    	String query="delete from hostelsDetails where uniqueSerialNumber=?";
+		                    	pStmt = con.prepareStatement(query);
+		                    	pStmt.setString(1, req.getParameter("id"));
+		                    	pStmt.executeUpdate();
+
+		                        res.setStatus(HttpServletResponse.SC_OK);
 		                    }
 							
 		                } else {
-		                	System.out.println("1");
 		                	res.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
 		                }
 					}else {
@@ -188,6 +259,8 @@ public class Profile extends HttpServlet{
 				}
 			}
 		}catch(Exception err) {
+			err.printStackTrace();
+			System.out.println(err);
 			res.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
 		}finally {
 			try {

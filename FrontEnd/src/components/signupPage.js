@@ -98,7 +98,11 @@ const Signup = () => {
             setLoading(true)
             setShowOtpError(false)
 
-            axios.post(apiUrl+"signup?", userDetails).then(
+            axios.post(apiUrl+"signup?state=validateOtp", userDetails, {
+                headers: {
+                    "Content-Type": "multipart/form-data", // Set the Content-Type header to JSON
+                },
+            }).then(
                 function(response){
                     if(response){
                         if(response.status === 201){
@@ -106,11 +110,14 @@ const Signup = () => {
                             alert("user Created Successfully")
                             navigate('/login');
                         }else if(response.status===204){
+                            alert(1)
                             setServerErr(true);
                         }else{
+                            alert(response.status+ "2")
                             setServerErr(true);
                         }
                     }else{
+                        alert(3)
                         setServerErr(true);
                     }
                 }
@@ -119,8 +126,10 @@ const Signup = () => {
                     if(err.response.status === 401){
                         setShowOtpError(true);
                     }else if(err.response.status === 500){
+                        alert(4)
                         setServerErr(true);
                     }else{
+                        alert(5)
                         setServerErr(true);
                     }
                 }else{

@@ -115,6 +115,7 @@ header{
     background-color:#25D366;
     font-size:75%;
     width:30%;
+    font-weight: bold;
     height:30px; 
     border-radius: 5px;
     margin-top:1%;
@@ -123,6 +124,10 @@ header{
     font-size: 12px;
     
     box-shadow: 1px 1px 1px black;
+
+    display: flex;
+    justify-content: center;
+    justify-items: center;
 }
 .formButtons:hover{
     background-color: green;

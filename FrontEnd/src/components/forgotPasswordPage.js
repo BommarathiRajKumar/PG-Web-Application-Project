@@ -61,7 +61,6 @@ const ForgotPassword=()=>{
                     }
                 }
             ).catch((err)=>{
-                alert(err.response.status)
                 if(err.response){
                     setServerErr(true)
                 }else{

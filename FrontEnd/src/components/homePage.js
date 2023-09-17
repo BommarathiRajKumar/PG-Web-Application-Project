@@ -4,7 +4,7 @@ import axios from "axios";
 import { Oval } from 'react-loader-spinner';
 
 import {apiUrl} from './url.js';
-import DisplayHostelsPage from './displayHostelsPage.js';
+import DisplayHostelsHomePage from './displayHostelsHomePage.js';
 import noDataImage from '../images/noData.jpg';
 import homePageCss from "../css/homePage.module.css";
 
@@ -151,7 +151,6 @@ const Home = () =>{
                     if (err.response) {
                         if (err.response.status === 404) {
                             setStateNames(noResultJson);
-                            alert("working")
                         }else if(err.response.status === 500) {
                             setServerError(true);
                         }
@@ -615,7 +614,7 @@ const Home = () =>{
                                                 <div style={{width:'88%', height:'100%'}}>
                                                     <div style={{marginTop:'10%',marginBottom:'10%'}}>Hostels:</div>
                                                     {Object.keys(totalHostelsDetails).map((key) => (
-                                                        <DisplayHostelsPage style={{marginBottom:'40px'}} key={key} data={totalHostelsDetails[key]}/> 
+                                                        <DisplayHostelsHomePage style={{marginBottom:'40px'}} key={key} data={totalHostelsDetails[key]}/> 
                                                     ))}
                                                     <br/>
                                                 </div>
