@@ -45,8 +45,7 @@ body {
 }
 
 .changeImagesButtons{
-    margin-top: 15%;
-    margin-bottom: 15%;
+    margin-bottom: 12px;
     border-radius: 8px;
     cursor: pointer;
     background-color: aliceblue;
@@ -119,25 +118,21 @@ body {
 }
 
 .td {
-    text-align: left;
     padding: 6px;
     overflow: auto;
     white-space: nowrap; 
     border-radius: 5px;
     background-color:#e0e0e0;
+
 }
 
-
-
 span{
+    height: 100%;
     display: flex;
     justify-content: center;
     align-items: center;
 }
 
-.lightBlack{
-    color: rgba(0, 0, 0, 0.3);
-}
 
 
 .editAndDeleteButton{
@@ -150,4 +145,50 @@ span{
     cursor: pointer;
     color: white;
     box-shadow: rgba(0, 0, 0, 3) 5px 5px 15px;
+
+    margin-bottom:7px;
+
+    display: flex;
+    justify-content: center;
+    justify-items: center;
+}
+
+
+
+.updateInputs {
+    overflow: auto;
+    background-color:#e0e0e0;
+    text-align: center;
+    border-style: none;
+    height: 17px;
+    width: 93%;
+
+    border-style:dotted;
+}
+
+.updateAndCancelButton{
+    background-color: rgb(17, 16, 16);
+    border-radius: 8px;
+    height: 30px;
+    width: 100px;
+    cursor: pointer;
+    color: white;
+    box-shadow: rgba(0, 0, 0, 3) 5px 5px 15px;
+
+    margin-Top: 5px;
+
+}
+
+.imgInputContainer{
+    border-radius:8px;
+    width:90%;
+    margin-top: 12px;
+    margin-bottom: 12px;
+    cursor: pointer;
+    padding: 3px;
+    border: 1px solid black;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
 }

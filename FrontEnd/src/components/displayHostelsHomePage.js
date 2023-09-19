@@ -19,7 +19,7 @@ const DisplayHostelsHomePage=({data,style})=>{
         <div style={style} className={displayHostelsHomePage.mainDiv}>
             <img className={displayHostelsHomePage.Images} src={`data:image/jpeg;base64,${currentImage}`} alt="roomImg"/>
 
-            <div style={{ display: 'flex', justifyContent: 'center' }}>
+            <div style={{ display: 'flex', justifyContent: 'center'}}>
                 <button className={displayHostelsHomePage.changeImagesButtons} onClick={imageOneHadler}>1 </button>
                 <button style={{marginLeft:'5px',marginRight:'5px'}} className={displayHostelsHomePage.changeImagesButtons} onClick={imageTwoHadler}>2 </button>
                 <button className={displayHostelsHomePage.changeImagesButtons} onClick={imageThreeHadler}>3 </button>

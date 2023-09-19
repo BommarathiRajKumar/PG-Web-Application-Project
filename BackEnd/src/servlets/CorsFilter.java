@@ -14,7 +14,7 @@ public class CorsFilter implements Filter {
         HttpServletResponse response = (HttpServletResponse) res;
 
         // Set CORS headers
-        response.setHeader("Access-Control-Allow-Origin", "http://localhost:3000");
+        response.setHeader("Access-Control-Allow-Origin", "https://www.bestpgs.in");
         response.setHeader("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE");
         response.setHeader("Access-Control-Allow-Headers", "Content-Type , Authorization");
         response.setHeader("Access-Control-Max-Age", "3600");

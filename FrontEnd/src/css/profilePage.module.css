@@ -138,9 +138,11 @@ header{
 
 .label{
     height: 35px;
-    width: 280px;
+    width: 100%;
     border-radius: 8px;
     background-color: rgb(177, 216, 216);
+
+    cursor: pointer;
    
     font-size: 13px;
     display: flex;

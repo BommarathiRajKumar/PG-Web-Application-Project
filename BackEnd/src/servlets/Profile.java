@@ -3,6 +3,7 @@ package servlets;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.sql.Statement;
 
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.annotation.MultipartConfig;
@@ -173,8 +174,85 @@ public class Profile extends HttpServlet{
 
 		                        res.setStatus(HttpServletResponse.SC_OK);
 		                    }else if(state.equals("updateHostelDetails")){
+		                    	
+		       				 	Statement stm = con.createStatement(ResultSet.TYPE_SCROLL_SENSITIVE,ResultSet.CONCUR_UPDATABLE);
+		       				 	
+		       				 	resultSet=stm.executeQuery("select "
+									       				+ "hostelName, "
+							                 			+ "hostelType, "
+							                 			+ "oneShareApplicable, "
+							                 			+ "oneShareCost, "
+							                 			+ "oneShareRoomsAvailable, "
+							                 			+ "twoShareApplicable, "
+							                 			+ "twoShareCost, "
+							                 			+ "twoShareRoomsAvailable, "
+							                 			+ "threeShareApplicable, "
+							                 			+ "threeShareCost, "
+							                 			+ "threeShareRoomsAvailable, "
+							                 			+ "fourShareApplicable, "
+							                 			+ "fourShareCost, "
+							                 			+ "fourShareRoomsAvailable, "
+							                 			+ "fiveShareApplicable, "
+							                 			+ "fiveShareCost, "
+							                 			+ "fiveShareRoomsAvailable, "
+							                 			+ "wifi, "
+							                 			+ "laundry, "
+							                 			+ "hotWater, "
+							                 			+"imageOne, "
+							                 			+ "imageTwo, "
+							                 			+ "imageThree, "
+							                 			+ "stateName, "
+							                 			+ "cityName, "
+							                 			+ "areaName, "
+							                 			+ "landMark, "
+							                 			+ "uniqueSerialNumber "
+							                 			+ " from hostelsDetails where uniqueSerialNumber='"+req.getParameter("id")+"'");
+		       				 	
+			       				 if (resultSet.next()) {
+			       					resultSet.updateString(1,req.getParameter("hostelName"));
+			       					resultSet.updateString(2,req.getParameter("hostelType"));
+			       					resultSet.updateBoolean(3, Boolean.valueOf(req.getParameter("oneShareApplicable")));
+			                        resultSet.updateString(4,req.getParameter("oneShareCost"));
+			                        resultSet.updateString(5, req.getParameter("oneShareRoomsAvailable"));
+			                        resultSet.updateBoolean(6,Boolean.valueOf(req.getParameter("twoShareApplicable")));
+			                        resultSet.updateString(7,req.getParameter("twoShareCost"));
+			                        resultSet.updateString(8, req.getParameter("twoShareRoomsAvailable"));
+			                        resultSet.updateBoolean(9,Boolean.valueOf(req.getParameter("threeShareApplicable")));
+			                        resultSet.updateString(10,req.getParameter("threeShareCost"));
+			                        resultSet.updateString(11, req.getParameter("threeShareRoomsAvailable"));
+			                        resultSet.updateBoolean(12,Boolean.valueOf(req.getParameter("fourShareApplicable")));
+			                        resultSet.updateString(13,req.getParameter("fourShareCost"));
+			                        resultSet.updateString(14, req.getParameter("fourShareRoomsAvailable"));
+			                        resultSet.updateBoolean(15,Boolean.valueOf(req.getParameter("fiveShareApplicable")));
+			                        resultSet.updateString(16,req.getParameter("fiveShareCost"));
+			                        resultSet.updateString(17, req.getParameter("fiveShareRoomsAvailable"));
+			                        resultSet.updateString(18,req.getParameter("wifi"));
+			                        resultSet.updateString(19,req.getParameter("laundry"));
+			                        resultSet.updateString(20,req.getParameter("hotWater"));
+			                        if(Boolean.valueOf(req.getParameter("imgOneChange"))) {
+			                        	resultSet.updateBlob(21,req.getPart("imageOne").getInputStream());
+			                        }
+			                        if(Boolean.valueOf(req.getParameter("imgTwoChange"))) {
+			                        	resultSet.updateBlob(22,req.getPart("imageTwo").getInputStream());
+			                        }
+			                        if(Boolean.valueOf(req.getParameter("imgThreeChange"))) {
+			                        	resultSet.updateBlob(23,req.getPart("imageThree").getInputStream());
+			                        }
+			                        resultSet.updateString(24, req.getParameter("stateName"));
+			                        resultSet.updateString(25, req.getParameter("cityName"));
+			                        resultSet.updateString(26, req.getParameter("areaName"));
+			                        resultSet.updateString(27, req.getParameter("landMark"));
+				       				
+			                        resultSet.updateRow();
+			       				 } 
+			                 
+		                        resultSet.close();
+		                        stm.close();
+		                        con.close();
 
-		                    	String query = "UPDATE hostelsDetails SET "
+		                        res.setStatus(HttpServletResponse.SC_OK);
+
+		                    	/*String query = "UPDATE hostelsDetails SET "
 		                    			+ "hostelName = ?, "
 		                    			+ "hostelType = ?, "
 		                    			+ "oneShareApplicable = ?, "
@@ -195,9 +273,9 @@ public class Profile extends HttpServlet{
 		                    			+ "wifi = ?, "
 		                    			+ "laundry = ?, "
 		                    			+ "hotWater = ?, "
-		                    			/*+ "imageOne = ?, "
+		                    			+`+ "imageOne = ?, "
 		                    			+ "imageTwo = ?, "
-		                    			+ "imageThree = ?, "*/
+		                    			+ "imageThree = ?, "
 		                    			+ "stateName = ?, "
 		                    			+ "cityName = ?, "
 		                    			+ "areaName = ?, "
@@ -225,18 +303,16 @@ public class Profile extends HttpServlet{
 		                        pStmt.setString(18,req.getParameter("wifi"));
 		                        pStmt.setString(19,req.getParameter("laundry"));
 		                        pStmt.setString(20,req.getParameter("hotWater"));
-		                        /*pStmt.setBlob(21,req.getPart("imageOne").getInputStream());
+		                        pStmt.setBlob(21,req.getPart("imageOne").getInputStream());
 		                        pStmt.setBlob(22,req.getPart("imageTwo").getInputStream());
-		                        pStmt.setBlob(23,req.getPart("imageThree").getInputStream());*/
+		                        pStmt.setBlob(23,req.getPart("imageThree").getInputStream());
 		                        pStmt.setString(21, req.getParameter("stateName"));
 		                        pStmt.setString(22, req.getParameter("cityName"));
 		                        pStmt.setString(23, req.getParameter("areaName"));
 		                        pStmt.setString(24, req.getParameter("landMark"));
 		                        pStmt.setString(25, req.getParameter("id"));
 		                        
-		                        pStmt.executeUpdate();
-
-		                        res.setStatus(HttpServletResponse.SC_OK);
+		                        pStmt.executeUpdate();*/
 		                    }else if(state.equals("deletePost")) {
 		                    	String query="delete from hostelsDetails where uniqueSerialNumber=?";
 		                    	pStmt = con.prepareStatement(query);
