@@ -10,8 +10,16 @@ import profilePageCss from '../css/profilePage.module.css';
 
 import DisplayHostelsProfilePage from './displayHostelsProfilePage.js';
 
+
+import {AiOutlineUser} from "react-icons/ai";
+import {AiFillMobile} from "react-icons/ai";
+import {AiFillCaretLeft} from "react-icons/ai";
+
+
 import ServerError from './serverErrorPage';
 import ConnectionRefuse from './connectionRefusePage';
+
+
 
 const Profile = ()=>{
 
@@ -342,7 +350,119 @@ const Profile = ()=>{
         navigate('/login')
     }
 
+    const[showProfile,setShowProfile]=useState(false);
+    const[mainHeight,setMainHeight]=useState(94);
+    const[deleteLoading,setDeleteLoading]=useState(false);
+    const[otpGen,setOtpGen]=useState(false)
 
+    const HandlerToGenOtpToDeleteAccount=()=>{
+        const confirmDelete = window.confirm('Are you sure you want to delete Account?');
+
+        if (confirmDelete) {
+            setDeleteLoading(true)
+            setDeleteLoading(true)
+            axios.post(apiUrl+"profile?state=genOtpToDeleteAccount", {}, {
+                headers: {
+                  'Authorization': `Bearer ${localStorage.getItem("token")}`
+                }
+            }).then(
+                response => {
+                    if(response){
+                        if(response.status===201){
+                            setOtpGen(true)
+                            alert("your otp note this for next process:- "+response.data);
+                        }else{
+                            alert("your session expired do login again.")
+                            logOut();
+                        }
+                    }else{
+                        alert("Internal error please try again by refreshing the page.");
+                    }
+                }
+            ).catch((err)=>{
+                if(err.response){
+                    if(err.response.status===500){
+                        alert("internal server error please try again some time.")
+                    }else if(err.response.status===400){
+                        alert("Bad Request do login again.");
+                        logOut();
+                    }else{
+                        alert("your session expired do login again.")
+                        logOut()
+                    }
+                }else{
+                    alert("Internal error please try again by refreshing the page.");
+                }
+            }).finally(()=>{
+                setDeleteLoading(false);
+            })
+           
+        }
+    }
+
+    let[otp,setOtp]=useState(null);
+    const [showOtpError, setShowOtpError] = useState(false);
+    const[submitLoading,setSubmitLoading]=useState(false);
+
+    const HandlerToOtpValidateToDeleteAccount=(action)=>{
+            if(action==='cancel'){
+                otp='cancel';
+                setOtpGen(false);
+            }
+
+            if(otp===null){
+                setShowOtpError(true)
+            }else if(otp.length!==6 || isNaN(otp) && action==='submit'){
+                setShowOtpError(true)
+            }else{
+                setSubmitLoading(true)
+                setShowOtpError(false)
+
+
+                axios.post(apiUrl+"profile?state=otpValidateToDeleteAccount&otp="+otp, {},{
+                    headers: {
+                        'Authorization': `Bearer ${localStorage.getItem("token")}`,
+                    }
+                }).then(
+                    function(response){
+                        if(response){
+                            if(response.status === 200){
+                                if(response.data==="Deleted"){
+                                    alert("Account deleted Sucessfully");
+                                    localStorage.removeItem("token")
+                                    navigate('/signup');
+                                }else{
+                                    setOtpGen(false);
+                                }
+                            }else if(response.status===204){
+                                alert("server error try after some time.")
+                                setOtpGen(false);
+                            }else{
+                                alert("server error try after some time.")
+                            }
+                        }else{
+                            alert("server error try after some time.")
+                        }
+                    }
+                ).catch((err) => {
+                    if(err.response){
+                        if(err.response.status === 401){
+                            setShowOtpError(true);
+                        }else{
+                            alert("Server error try ater some time")
+                            setOtpGen(false);
+                        }
+                    }else{
+                        alert("connection error try after some time.");
+                    }
+                }).finally(
+                    ()=>{
+                        setSubmitLoading(false)
+                    }
+                )
+            }
+        
+    }
 
     return(
  
@@ -357,21 +477,36 @@ const Profile = ()=>{
                 :
                     <div style={{width:'100%',height:'100%'}}>
                     {addHostelControl ?
-                        <div style={{width:'100%',height:'100%'}}>
-                            {userData && 
-                                <header>
-                                    <img
-                                        className={profilePageCss.profilePhoto}
-                                        src={`data:image/jpeg;base64,${userData.profileDetails.ownerImage}`}
-                                        alt="profile"
-                                    />
-                                    <div style={{fontSize:'75%', marginBottom:'1%'}}>{userData.profileDetails.ownerName}</div>
-                                    <div style={{fontSize:'75%'}}>{userData.profileDetails.mobileNumber}</div>
-                                    <button className={profilePageCss.headerButtons} onClick={()=>{setAddHostelControl(!addHostelControl);setShowFormErr(false)}}>Add New Hostle</button>
-                                    <button style={{marginBottom:'15px'}} className={profilePageCss.headerButtons} onClick={logOut}>Log out</button>
-                                </header>
-                            }
-                            <main style={{height:'75%',width:'100%'}}>
+                        <div style={{width:'100%',height:'100%'}}>  
+                            <main style={{height:`${mainHeight}%`,width:'100%'}}>
+                                {userData && showProfile && 
+                                    <header className={profilePageCss.headerDiv}>
+                                        <AiFillCaretLeft size={18} style={{cursor:'pointer',position:'absolute',top:'10px',right:'10px'}} onClick={()=>{setShowProfile(!showProfile);setMainHeight(94)}}/>
+                                        <img
+                                            className={profilePageCss.profilePhoto}
+                                            src={`data:image/jpeg;base64,${userData.profileDetails.ownerImage}`}
+                                            alt="profile"
+                                        />
+                                        <div style={{fontSize:'120%',marginBottom:'5px'}}>{userData.profileDetails.ownerName}</div>
+                                        <div style={{fontSize:'120%'}}><span><AiFillMobile/>{userData.profileDetails.mobileNumber}</span></div>
+                                        <button className={profilePageCss.headerButtons} onClick={()=>{setAddHostelControl(!addHostelControl);setShowFormErr(false)}}>Add Hostle</button>
+                                        <button className={profilePageCss.headerButtons} onClick={logOut}>Log Out</button>
+
+                                        {!otpGen?
+                                            <button style={{backgroundColor:'red',marginTop:'18px'}}className={profilePageCss.headerButtons} onClick={HandlerToGenOtpToDeleteAccount} disabled={deleteLoading}>{deleteLoading?<label style={{display:'flex',justifyContent:'center'}}><Oval width={16} height={16} color='black'/></label>:"Delete Account"}</button>
+                                        :
+                                            <div style={{height:'100px',marginTop:'50px',textAlign:'center'}}>
+                                                <label>Enter Otp recevied by your Mobile:</label>
+                                                {!showOtpError && <div style={{color:'#9b122d'}}>Invalid Otp.</div>}
+                                                <input onChange={(e)=>{setOtp(e.target.value)}} placeholder='OTP' style={{width:'130px',textAlign:'center',marginTop:'10px'}}/>
+                                                <div>
+                                                    <button style={{ width: '60px' }} className={profilePageCss.headerButtons} onClick={()=>{HandlerToOtpValidateToDeleteAccount('cancel')}}>Cancel</button>
+                                                    <button style={{width:'60px',backgroundColor:'red',marginLeft:'12px'}} onClick={()=>{HandlerToOtpValidateToDeleteAccount('submit')}} className={profilePageCss.headerButtons} disabled={submitLoading}>{submitLoading?<label style={{display:'flex',justifyContent:'center'}}><Oval width={16} height={16} color='black'/></label>:"Submit"}</button>
+                                                </div>
+                                            </div>
+                                        }
+                                    </header>
+                                }
                                 {loading?
                                     <div style={{width:'100%',height:'125%',display:'flex',flexDirection:'column',justifyContent:'center',alignItems:'center'}}>
                                         <Oval color="#00BFFF" height={60} width={60} />
@@ -386,9 +521,7 @@ const Profile = ()=>{
                                                 <div style={{width:'88%', height:'100%'}}>
                                                     <div style={{marginTop:'8%',marginBottom:'8%'}}>Hostels:</div>
                                                         {Object.keys(userData.hostelsDetails).map((key) => (
-                                                        
                                                             <DisplayHostelsProfilePage refresh={refresh} style={{marginBottom:'40px'}} key={key} data={userData.hostelsDetails[key]}/>
-                                                            
                                                         ))}
                                                         <br/>
                                                 </div>
@@ -398,7 +531,7 @@ const Profile = ()=>{
                                                 {!added&&
                                                     <div style={{width:'100%',height:'100%',display:'flex',flexDirection:'column',justifyContent:'center',alignItems:'center'}}>
                                                         <div style={{color:'rgba(0, 0, 0, 0.5)',marginBottom:'3%'}}>You didn't added your hostels yet.</div>
-                                                        <div style={{color:'rgba(0, 0, 0, 0.5)'}}>Click Above "Add New Hostel?" Button.</div>
+                                                        <div style={{color:'rgba(0, 0, 0, 0.5)'}}><label style={{color:'blue',cursor:'pointer',fontWeight:'bolder'}} onClick={()=>{setAddHostelControl(!addHostelControl)}}>'Click Here'</label> to Add hostel</div>
 
                                                     </div>
                                                 }
@@ -407,7 +540,12 @@ const Profile = ()=>{
                                     </div>
                                 }
                             </main>
-
+                            {!showProfile&&
+                            <footer>
+                                <div className={profilePageCss.profilePicContainer} onClick={()=>{setShowProfile(!showProfile)}}>
+                                    <AiOutlineUser size={23} onClick={()=>{setShowProfile(!showProfile);setMainHeight(100)}}/>
+                                </div>
+                            </footer>}
                         </div>
                     :
                         <div className={profilePageCss.addNewHostelFormDiv}>

@@ -92,8 +92,8 @@ public class Signup extends HttpServlet {
 				    }
 					
 				}
-				resultSet.close();
-				pStm.close();
+				if(resultSet!=null)resultSet.close();
+				if(pStm!=null)pStm.close();
 				con.close();
 			}
 		}catch(Exception err) {

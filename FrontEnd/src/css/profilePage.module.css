@@ -22,50 +22,100 @@ body {
     width: 100%;
 }
 
+
+.headerDiv{
+    position: absolute;
+    top: 0;
+    left: 0;
+    background-color:#317773;
+    height: 100%;
+    width: 50%;
+
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
 @media screen and (min-width: 1024px) {
     .mainContainer{
         width:30%;
     }
+
+    .headerDiv{
+        width: 15%;
+        left: 35%;
+    }
+    
+}
+@media screen and (min-width: 550px) {
+    .mainContainer{
+        width:30%;
+    }
+
+    header{
+        width: 15%;
+        left: 35%;
+    }
     
 }
 
-
-header{
-    background-color: #317773;
-    height: 25%;
-    width: 100%;
+footer{
+    background-color:#317773;
+    height:6%;
+    width:100%;
 
     display: flex;
-    flex-direction: column;
     justify-content: center;
-    align-items: center;
+    justify-items: center;
+
+}
+
+.profilePicContainer{
+    position: absolute;
+    bottom: 3%;
+    display:flex;
+    justify-content:center;
+    justify-items:center;
+    background-color:#317773;
+    width:35px;
+    height:35px;
+    border-radius:50px;
+    cursor: pointer;
+
+    box-shadow: 0px 0px 5px rgba(0, 0, 0, 0.3);
+}
+.profilePicContainer:hover{
+    box-shadow: 0px 0px 5px rgba(0, 0, 0, 1);
 }
 
 .profilePhoto{
-    width: 50px;
-    height: 100px;
+    width: 80px;
+    height: 80px;
     border: 1px solid black;
     border-radius: 50%;
     margin-top: 2%;
     margin-bottom: 2%;
+    margin-top: 30px;
+    margin-bottom: 10px;
 }
 
 .headerButtons{
     background-color:#25D366;
-    font-size:75%;
-    width:30%;
-    height:35px; 
+    font-weight: bold;
+    width:50%;
+    height:25px; 
     border-radius: 5px;
-    margin-top:1%;
-    margin-bottom:1%;
+    margin-top:10px;
     cursor: pointer;
-    font-size: 12px;
-    
-    box-shadow: 1px 1px 1px black;
+    font-size: 10px;
+    box-shadow: 0px 0px 5px rgba(0, 0, 0, 0.5);
+
+    text-align: center;
+    vertical-align: middle;
 }
 .headerButtons:hover{
     background-color: green;
-    box-shadow: 3px 3px 3px black;
+    box-shadow: 0px 0px 5px rgba(0, 0, 0, 1);
     font-size: 13px;
 
 }

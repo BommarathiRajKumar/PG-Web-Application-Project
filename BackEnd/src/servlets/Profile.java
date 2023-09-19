@@ -14,7 +14,8 @@ import javax.servlet.http.HttpServletResponse;
 import org.json.JSONObject;
 
 import dataBase.MysqlDataBaseConnection;
-
+import dataBase.Operations;
+import hash.Hashing;
 import jjwt.JWT;
 
 @MultipartConfig
@@ -252,67 +253,6 @@ public class Profile extends HttpServlet{
 
 		                        res.setStatus(HttpServletResponse.SC_OK);
 
-		                    	/*String query = "UPDATE hostelsDetails SET "
-		                    			+ "hostelName = ?, "
-		                    			+ "hostelType = ?, "
-		                    			+ "oneShareApplicable = ?, "
-		                    			+ "oneShareCost = ?, "
-		                    			+ "oneShareRoomsAvailable = ?, "
-		                    			+ "twoShareApplicable = ?, "
-		                    			+ "twoShareCost = ?, "
-		                    			+ "twoShareRoomsAvailable = ?, "
-		                    			+ "threeShareApplicable = ?, "
-		                    			+ "threeShareCost = ?, "
-		                    			+ "threeShareRoomsAvailable = ?, "
-		                    			+ "fourShareApplicable = ?, "
-		                    			+ "fourShareCost = ?, "
-		                    			+ "fourShareRoomsAvailable = ?, "
-		                    			+ "fiveShareApplicable = ?, "
-		                    			+ "fiveShareCost = ?, "
-		                    			+ "fiveShareRoomsAvailable = ?, "
-		                    			+ "wifi = ?, "
-		                    			+ "laundry = ?, "
-		                    			+ "hotWater = ?, "
-		                    			+`+ "imageOne = ?, "
-		                    			+ "imageTwo = ?, "
-		                    			+ "imageThree = ?, "
-		                    			+ "stateName = ?, "
-		                    			+ "cityName = ?, "
-		                    			+ "areaName = ?, "
-		                    			+ "landMark = ? "
-		                    			+ "WHERE uniqueSerialNumber = ?";
-		                        pStmt = con.prepareStatement(query);
-		                        
-		                        pStmt.setString(1,req.getParameter("hostelName"));
-		                        pStmt.setString(2,req.getParameter("hostelType"));
-		                        pStmt.setBoolean(3, Boolean.valueOf(req.getParameter("oneShareApplicable")));
-		                        pStmt.setString(4,req.getParameter("oneShareCost"));
-		                        pStmt.setString(5, req.getParameter("oneShareRoomsAvailable"));
-		                        pStmt.setBoolean(6,Boolean.valueOf(req.getParameter("twoShareApplicable")));
-		                        pStmt.setString(7,req.getParameter("twoShareCost"));
-		                        pStmt.setString(8, req.getParameter("twoShareRoomsAvailable"));
-		                        pStmt.setBoolean(9,Boolean.valueOf(req.getParameter("threeShareApplicable")));
-		                        pStmt.setString(10,req.getParameter("threeShareCost"));
-		                        pStmt.setString(11, req.getParameter("threeShareRoomsAvailable"));
-		                        pStmt.setBoolean(12,Boolean.valueOf(req.getParameter("fourShareApplicable")));
-		                        pStmt.setString(13,req.getParameter("fourShareCost"));
-		                        pStmt.setString(14, req.getParameter("fourShareRoomsAvailable"));
-		                        pStmt.setBoolean(15,Boolean.valueOf(req.getParameter("fiveShareApplicable")));
-		                        pStmt.setString(16,req.getParameter("fiveShareCost"));
-		                        pStmt.setString(17, req.getParameter("fiveShareRoomsAvailable"));
-		                        pStmt.setString(18,req.getParameter("wifi"));
-		                        pStmt.setString(19,req.getParameter("laundry"));
-		                        pStmt.setString(20,req.getParameter("hotWater"));
-		                        pStmt.setBlob(21,req.getPart("imageOne").getInputStream());
-		                        pStmt.setBlob(22,req.getPart("imageTwo").getInputStream());
-		                        pStmt.setBlob(23,req.getPart("imageThree").getInputStream());
-		                        pStmt.setString(21, req.getParameter("stateName"));
-		                        pStmt.setString(22, req.getParameter("cityName"));
-		                        pStmt.setString(23, req.getParameter("areaName"));
-		                        pStmt.setString(24, req.getParameter("landMark"));
-		                        pStmt.setString(25, req.getParameter("id"));
-		                        
-		                        pStmt.executeUpdate();*/
 		                    }else if(state.equals("deletePost")) {
 		                    	String query="delete from hostelsDetails where uniqueSerialNumber=?";
 		                    	pStmt = con.prepareStatement(query);
@@ -320,8 +260,52 @@ public class Profile extends HttpServlet{
 		                    	pStmt.executeUpdate();
 
 		                        res.setStatus(HttpServletResponse.SC_OK);
+		                    }else if(state.equals("genOtpToDeleteAccount")) {
+		                    	int otp=Operations.generateOtp();
+						    	Operations.deleteOtpFromDataBase(mob);
+						    	Operations.insertOtpAndMobileNumberIntoDataBase(mob, otp);
+							    res.getWriter().println(otp);
+								res.setStatus(HttpServletResponse.SC_CREATED);
+								
+		                    }else if(state.equals("otpValidateToDeleteAccount")){
+		                    	
+		                    	if(req.getParameter("otp")!=null) {
+		                    	
+			                    	if(req.getParameter("otp").equals("cancel")) {
+			                    		Operations.deleteOtpFromDataBase(mob);
+			                    		res.setStatus(HttpServletResponse.SC_OK);
+			                    	}else {
+			                    		pStmt = con.prepareStatement("select otp from otpTable where mobileNumber=?");
+			        				    pStmt.setString(1, mob);
+			        				    resultSet= pStmt.executeQuery();
+	
+				    				    if(resultSet.next()) {
+				    				    	
+				    					    if(resultSet.getInt("otp")==Integer.parseInt(req.getParameter("otp"))) {
+				    					    	pStmt = con.prepareStatement("delete from hostelsDetails where mobileNumber=?");
+					        				    pStmt.setString(1, mob);
+					        				    pStmt.executeUpdate();
+					        				    
+					        				    pStmt = con.prepareStatement("delete from users where mobileNumber=?");
+					        				    pStmt.setString(1, mob);
+					        				    pStmt.executeUpdate();
+				    					    	
+				    					    	res.getWriter().write("Deleted");
+				    					    	res.setStatus(HttpServletResponse.SC_OK);
+				    					    	Operations.deleteOtpFromDataBase(mob);
+				    					    }else {
+				    					    	res.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+				    					    }
+				    				    }else {
+				    				    	res.setStatus(HttpServletResponse.SC_NO_CONTENT);
+				    				    }
+			                    	}
+		                    	}else {
+		                    		res.setStatus(HttpServletResponse.SC_NO_CONTENT);
+		                    	}
+		                    }else {
+		                    	res.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
 		                    }
-							
 		                } else {
 		                	res.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
 		                }
