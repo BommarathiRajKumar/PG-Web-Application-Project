@@ -15,7 +15,6 @@ import org.json.JSONObject;
 
 import dataBase.MysqlDataBaseConnection;
 import dataBase.Operations;
-import hash.Hashing;
 import jjwt.JWT;
 
 @MultipartConfig
@@ -48,26 +47,35 @@ public class Profile extends HttpServlet{
 						resultSet= pStmt.executeQuery();
 						
 						if (resultSet.next()) {
+							
 							if(state.equals("profileLoad")) {
 	                        
 								JSONObject userDetails = new JSONObject();
-								JSONObject profileDetails = new JSONObject();
-								JSONObject hostelsDetails = new JSONObject();
 								           
-								profileDetails.put("mobileNumber", resultSet.getString("mobileNumber"));
-								profileDetails.put("ownerName", resultSet.getString("ownerName"));
+								userDetails.put("mobileNumber", resultSet.getString("mobileNumber"));
+								userDetails.put("ownerName", resultSet.getString("ownerName"));
 								
 							    byte[] ownerImageBytes = resultSet.getBytes("ownerImage");
 			                    if (ownerImageBytes != null) {
 			                        String ownerImageBase64 = java.util.Base64.getEncoder().encodeToString(ownerImageBytes);
-			                        profileDetails.put("ownerImage", ownerImageBase64);
+			                        userDetails.put("ownerImage", ownerImageBase64);
 			                    }
-			                    userDetails.put("profileDetails",profileDetails);
+
+							    res.getWriter().println(userDetails.toString());
+							    res.setStatus(HttpServletResponse.SC_OK);
+							    
+							}else if(state.equals("userHostelsLoad")) {
+
 			                    
-			                   String query="select * from hostelsDetails where mobileNumber=?";
+			                   String query="select * from hostelsDetails where mobileNumber=? ORDER BY hostelID DESC limit 5 offset ?";
 			                   pStmt=con.prepareStatement(query);
 			                   pStmt.setString(1, mob);
+			   			    	pStmt.setInt(2, Integer.valueOf(req.getParameter("offSet")));
 			                   resultSet= pStmt.executeQuery();
+			                   
+			       			
+
+			   				JSONObject hostelsDetails = new JSONObject();
 			                   
 			                   
 			                    int i=0;
@@ -96,7 +104,7 @@ public class Profile extends HttpServlet{
 			                    	singleHostelDetails.put("wifi", resultSet.getString("wifi"));
 			                    	singleHostelDetails.put("laundry", resultSet.getString("laundry"));
 			                    	singleHostelDetails.put("hotWater", resultSet.getString("hotWater"));
-			                    	singleHostelDetails.put("uniqueSerialNumber", resultSet.getString("uniqueSerialNumber"));
+			                    	singleHostelDetails.put("hostelId", resultSet.getInt("hostelId"));
 			                    	
 			                    	byte[] imageOne = resultSet.getBytes("imageOne");
 			                        if (imageOne != null) {
@@ -121,19 +129,39 @@ public class Profile extends HttpServlet{
 			                    	singleHostelDetails.put("areaName", resultSet.getString("areaName"));
 			                    	singleHostelDetails.put("landMark", resultSet.getString("landMark"));
 			                    	
-			                        hostelsDetails.put(("hostel"+String.valueOf(++i)),singleHostelDetails);   
-			                        
+			                        hostelsDetails.put(++i+"",singleHostelDetails);   
 			                    }
-			                    userDetails.put("hostelsDetails", hostelsDetails);
+			                    
+			                   query="SELECT COUNT(*) FROM (SELECT '' FROM hostelsDetails WHERE mobileNumber=? ORDER BY hostelID DESC LIMIT 5 OFFSET ? ) AS subquery";
+			                   pStmt=con.prepareStatement(query);
+			                   pStmt.setString(1, mob);
+			   			       pStmt.setInt(2, Integer.valueOf(req.getParameter("offSet"))+5);
+			                   resultSet= pStmt.executeQuery();
+			                
+			                   
+			                   if(resultSet.next()) {
+			                	   hostelsDetails.put("count",resultSet.getInt(1));
+			                   }else {
+			                	   hostelsDetails.put("count",0);
+			                   }
+			                   
+			                   
 			                    res.setContentType("application/json");
-							    res.getWriter().println(userDetails.toString());
-							    res.setStatus(HttpServletResponse.SC_OK);
-							    
+							    if(i!=0) {
+									res.setContentType("application/json");
+								    res.getWriter().write(hostelsDetails.toString());
+								    res.setStatus(HttpServletResponse.SC_OK);
+								}else {
+									res.setStatus(HttpServletResponse.SC_NO_CONTENT); 
+								}
 							    resultSet.close();
 							    pStmt.close();
 							    con.close();
+							 
 	
 							}else if(state.equals("uploadHostel")) {
+								
+								
 								String query="insert into hostelsDetails(mobileNumber,ownerName, hostelName, hostelType, oneShareApplicable, oneShareCost, "
 		                                + "oneShareRoomsAvailable, twoShareApplicable, twoShareCost, twoShareRoomsAvailable, threeShareApplicable, threeShareCost, "
 		                                + "threeShareRoomsAvailable,fourShareApplicable, fourShareCost, fourShareRoomsAvailable, fiveShareApplicable, fiveShareCost, "
@@ -172,7 +200,7 @@ public class Profile extends HttpServlet{
 		                        pStmt.setString(29, req.getParameter("landMark"));
 		                        
 		                        pStmt.executeUpdate();
-
+								
 		                        res.setStatus(HttpServletResponse.SC_OK);
 		                    }else if(state.equals("updateHostelDetails")){
 		                    	
@@ -206,8 +234,8 @@ public class Profile extends HttpServlet{
 							                 			+ "cityName, "
 							                 			+ "areaName, "
 							                 			+ "landMark, "
-							                 			+ "uniqueSerialNumber "
-							                 			+ " from hostelsDetails where uniqueSerialNumber='"+req.getParameter("id")+"'");
+							                 			+ "hostelId "
+							                 			+ " from hostelsDetails where hostelId='"+req.getParameter("id")+"'");
 		       				 	
 			       				 if (resultSet.next()) {
 			       					resultSet.updateString(1,req.getParameter("hostelName"));
@@ -254,9 +282,9 @@ public class Profile extends HttpServlet{
 		                        res.setStatus(HttpServletResponse.SC_OK);
 
 		                    }else if(state.equals("deletePost")) {
-		                    	String query="delete from hostelsDetails where uniqueSerialNumber=?";
+		                    	String query="delete from hostelsDetails where hostelId=?";
 		                    	pStmt = con.prepareStatement(query);
-		                    	pStmt.setString(1, req.getParameter("id"));
+		                    	pStmt.setInt(1, Integer.valueOf(req.getParameter("id")));
 		                    	pStmt.executeUpdate();
 
 		                        res.setStatus(HttpServletResponse.SC_OK);

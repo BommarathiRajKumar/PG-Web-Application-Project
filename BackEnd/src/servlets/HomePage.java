@@ -25,34 +25,38 @@ public class HomePage extends HttpServlet {
 		
 		try{
 			Connection con= MysqlDataBaseConnection.getMysqlConnection();
-			PreparedStatement pStm = con.prepareStatement("select * from hostelsDetails limit 50");
+			PreparedStatement pStm = con.prepareStatement("SELECT * FROM hostelsDetails ORDER BY hostelID ASC LIMIT 5 OFFSET ?");
+		    pStm.setInt(1, Integer.valueOf(req.getParameter("offSet")));
 			ResultSet hostelsDetailsResultSet=null;
 			
 			String state = req.getParameter("state");
-			int price=0;
+			
+			
 				 
 			if(state.equals("userSearch")) {
-				String hostelType = req.getParameter("hostelType");
-				price=Integer.valueOf(req.getParameter("price"));
-				String share = req.getParameter("share");
-				String stateName = req.getParameter("stateName");
-				String cityName = req.getParameter("cityName");
-				String areaName = req.getParameter("areaName");
 				
-				pStm = con.prepareStatement("select * from hostelsDetails where hostelType = ? and "+share+"Cost <= ? and stateName = ? and cityName = ? and areaName = ?");
-				pStm.setString(1, hostelType);
-			    pStm.setInt(2, price);
-			    pStm.setString(3, stateName);
-			    pStm.setString(4, cityName);
-			    pStm.setString(5, areaName);
+				String share=req.getParameter("share");
+				
+				
+				
+				pStm = con.prepareStatement("select * from hostelsDetails where "+share+"Applicable = ? and hostelType = ? and "+share+"Cost <= ? and stateName = ? and cityName = ? and areaName = ? ORDER BY hostelID ASC  limit 5 offset ?");
+				
+				pStm.setBoolean(1, true);
+				pStm.setString(2, req.getParameter("hostelType"));
+			    pStm.setString(3, req.getParameter("price"));
+			    pStm.setString(4, req.getParameter("stateName"));
+			    pStm.setString(5, req.getParameter("cityName"));
+			    pStm.setString(6, req.getParameter("areaName"));
+			    pStm.setInt(7, Integer.valueOf(req.getParameter("offSet")));
+			    
 			}
-			
+
+			hostelsDetailsResultSet = pStm.executeQuery();
+
+		    
 				JSONObject hostelsDetails = new JSONObject();
 				int i=0;
-				int count=0;
-				do {
-					hostelsDetailsResultSet = pStm.executeQuery();
-		            while (hostelsDetailsResultSet.next()) {
+		            while (hostelsDetailsResultSet.next()) { 
 		            	JSONObject singleHostelDetails = new JSONObject();
 		            	
 		            	singleHostelDetails.put("mobileNumber", hostelsDetailsResultSet.getString("mobileNumber"));
@@ -77,10 +81,6 @@ public class HomePage extends HttpServlet {
                     	singleHostelDetails.put("wifi", hostelsDetailsResultSet.getString("wifi"));
                     	singleHostelDetails.put("laundry", hostelsDetailsResultSet.getString("laundry"));
                     	singleHostelDetails.put("hotWater", hostelsDetailsResultSet.getString("hotWater"));
-		            	
-		            	
-		            	
-		            	
 		            	byte[] imageOne = hostelsDetailsResultSet.getBytes("imageOne");
 		                if (imageOne != null) {
 		                    String imageOne64 = java.util.Base64.getEncoder().encodeToString(imageOne);
@@ -98,24 +98,42 @@ public class HomePage extends HttpServlet {
 		                    String imageThree64 = java.util.Base64.getEncoder().encodeToString(imageThree);
 		                    singleHostelDetails.put("imageThree", imageThree64);
 		                }
-		            	
 		            	singleHostelDetails.put("stateName", hostelsDetailsResultSet.getString("stateName"));
                     	singleHostelDetails.put("cityName", hostelsDetailsResultSet.getString("cityName"));
                     	singleHostelDetails.put("areaName", hostelsDetailsResultSet.getString("areaName"));
                     	singleHostelDetails.put("landMark", hostelsDetailsResultSet.getString("landMark"));
 		           
-		                hostelsDetails.put(("hostel"+String.valueOf(++i)),singleHostelDetails);        
+		                hostelsDetails.put(++i+"",singleHostelDetails);        
 		            }
-		            if(state.equals("userSearch")) {
-			            pStm.setInt(2, price+=500);
-			            count++;
-		            }
-				}while(i==0 && count<=3 && state.equals("userSearch"));
+		            
+				
+				if(state.equals("userSearch")) {
+					pStm = con.prepareStatement("select count(*) from (select '' from hostelsDetails where "+req.getParameter("share")+"Applicable = ? and hostelType = ? and "+req.getParameter("share")+"Cost <= ? and stateName = ? and cityName = ? and areaName = ? ORDER BY hostelID ASC  limit 5 offset ?) AS subquery" );
+				
+					pStm.setBoolean(1, true);
+					pStm.setString(2, req.getParameter("hostelType"));
+				    pStm.setString(3, req.getParameter("price"));
+				    pStm.setString(4, req.getParameter("stateName"));
+				    pStm.setString(5, req.getParameter("cityName"));
+				    pStm.setString(6, req.getParameter("areaName"));
+				    pStm.setInt(7, Integer.valueOf(req.getParameter("offSet"))+5);
+				}else {
+					pStm = con.prepareStatement("SELECT COUNT(*) FROM (SELECT '' FROM hostelsDetails ORDER BY hostelID ASC LIMIT 5 OFFSET ? ) AS subquery");
+					pStm.setInt(1, Integer.valueOf(req.getParameter("offSet"))+5);
+				}
+				
+				hostelsDetailsResultSet= pStm.executeQuery();
+                if(hostelsDetailsResultSet.next()) {
+             	   hostelsDetails.put("count",hostelsDetailsResultSet.getInt(1));
+                }else {
+             	   hostelsDetails.put("count",0);
+                }
+				
 			
 				
 				if(i!=0) {
 					res.setContentType("application/json");
-				    res.getWriter().println(hostelsDetails.toString());
+				    res.getWriter().write(hostelsDetails.toString());
 				    res.setStatus(HttpServletResponse.SC_OK);
 				}else {
 					res.setStatus(HttpServletResponse.SC_NO_CONTENT); 

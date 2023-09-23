@@ -11,6 +11,9 @@ import homePageCss from "../css/homePage.module.css";
 import ConnectionRefuse from '../components/connectionRefusePage';
 import ServerError from '../components/serverErrorPage';
 
+import {AiFillCaretLeft} from "react-icons/ai";
+import {AiFillCaretRight} from "react-icons/ai";
+
 
 
 const Home = () =>{
@@ -19,32 +22,59 @@ const Home = () =>{
     const [loading, setLoading] = useState();
     const [loginDisplay, setLoginDisplay] = useState(false);
     
-    const [totalHostelsDetails, setTotalHostelsDetails] = useState();
-    const[noDataFound, setNoDataFound]=useState(false);
+    const [totalHostelsDetailsHomePage, setTotalHostelsDetailsHomePage] = useState();
+    
+
 
     const [formErr, setFormErr] = useState(false);
     const [errToPrint, setErrToPrint] = useState();
+
 
     
     const[headerHeight, setHeaderHeight]=useState(23);
     const[contentDivHeight,setContentDivHeight]=useState(77);
     const[height,setHeight]=useState(false)
 
+
+    const[offSet,setOffSet]=useState(0);
+    const[page,setPage]=useState(1);
+    const[count,setCount]=useState();
+
+    
+    const[userSearchActivated,setUserSearchActivated]=useState(false);
+
+    const[offSetUserSearch,setOffSetUserSearch]=useState(0);
+    const[pageUserSearch,setPageUserSearch]=useState(1);
+    const[countUserSearch,setCountUserSearch]=useState();
+    
+
     const [connectionRefuseError, setConnectionRefuseError]=useState(false);
     const [serverError, setServerError]=useState(false);
     
+    
     useEffect(() => {
+        HandlerToLoadHostels();
+    }, []);
+
+    const HandlerToLoadHostels=(direction)=>{
         setLoading(true);
         setServerError(false);
-        setNoDataFound(false);
         setConnectionRefuseError(false);
 
-        axios.post(apiUrl+"home?state=one")
+        let updated=offSet;
+        if(direction==='right'){
+            updated=offSet+5;
+        }else if(direction==='left'){
+            updated=offSet-5;
+        }
+
+        axios.post(apiUrl+"home?state=one&offSet="+updated)
             .then(res => {
                 if (res.status === 200) {
-                    setTotalHostelsDetails(res.data);
+                    setTotalHostelsDetailsHomePage(res.data);
+                    setCount(res.data.count)
                 } else if(res.status ===204){
-                    setNoDataFound(true);
+                    setCount(0)
                 }else{
                     alert("Please do refresh and try after some time.");
                 }
@@ -62,7 +92,7 @@ const Home = () =>{
                 setLoading(false);
             }
         );
-    }, []);
+    }
 
 
     const [userSelectedHostelType, setUserSelectedHostelType] = useState();
@@ -74,6 +104,7 @@ const Home = () =>{
         setUserSelectedHostelType(data)
         setShowHostelTypeList(!showHostelTypeList)
         setFormErr(false);
+        setOffSetUserSearch(0);
     }
 
 
@@ -104,6 +135,8 @@ const Home = () =>{
         setContentDivHeight(77);
         }
 
+        setOffSetUserSearch(0);
+
     };
 
 
@@ -112,6 +145,7 @@ const Home = () =>{
     const HandlerSetUserSelectedPrice = (price) =>{
         setUserSelectedPrice(price);
         setFormErr(false);
+        setOffSetUserSearch(0);
     }
 
 
@@ -126,6 +160,8 @@ const Home = () =>{
         setUserSelectedStateName(stateName)
         setShowStatesList(false)
         setFormErr(false);
+
+        setOffSetUserSearch(0);
     }
     const stateInputChangeHandler = (event) => {
         setStateNamesLoading(true)
@@ -180,6 +216,7 @@ const Home = () =>{
         setUserSelectedCityName(cityName)
         setShowCitysList(false)
         setFormErr(false);
+        setOffSetUserSearch(0);
     }
     const cityInputChangeHandler = (event) => {
         setCityNamesLoading(true);
@@ -235,6 +272,7 @@ const Home = () =>{
         setUserSelectedAreaName(areaName)
         setShowAreasList(false)
         setFormErr(false);
+        setOffSetUserSearch(0);
     }
     const areaInputChangeHandler = (event) => {
         setAreaNamesLoading(true);
@@ -280,8 +318,7 @@ const Home = () =>{
 
 
 
-    const HandlerSearch = (e) => {
-        e.preventDefault();
+    const HandlerSearch = (direction) => {
         setShowStatesList(false)
         setShowCitysList(false)
         setShowAreasList(false)
@@ -306,6 +343,7 @@ const Home = () =>{
             setErrToPrint("Please select the Area name.")
             setFormErr(true); 
         }else{
+
             const formData = new FormData();
             formData.append('state','userSearch');
             formData.append("hostelType", userSelectedHostelType)
@@ -315,21 +353,33 @@ const Home = () =>{
             formData.append('cityName', userSelectedCityName)
             formData.append('areaName', userSelectedAreaName)
 
+            setUserSearchActivated(true)
+
+            let updated=offSetUserSearch;
+
+            if(direction==='right'){
+                updated=offSetUserSearch+5;
+            }else if(direction==='left'){
+                updated=offSetUserSearch-5;
+            }
+
+
             setLoading(true);
             HandlerToSetDefaultHeight();
             setFormErr(false)
             setErrToPrint('')
             setConnectionRefuseError(false);
             setServerError(false);
-            setNoDataFound(false);
 
-            axios.post(apiUrl+"home?", formData)
+            axios.post(apiUrl+"home?offSet="+updated, formData)
                 .then(res => {
                     if (res.status === 200) {
-                        setTotalHostelsDetails(res.data);
-                    } else if(res.status===204){
-                        setNoDataFound(true);
-                    }else {
+                        setTotalHostelsDetailsHomePage(res.data);
+                        setCountUserSearch(res.data.count)
+                    } else if(res.status ===204){
+                        setCountUserSearch(0)
+                        
+                    }else{
                         alert("Please do refresh and try after some time.");
                     }
                 })
@@ -376,6 +426,12 @@ const Home = () =>{
         setShowStatesList(false)
         setShowCitysList(false)
         setShowAreasList(false)
+
+        setUserSearchActivated(false)
+
+        HandlerToLoadHostels();
+
+        setOffSetUserSearch(0);
     }
 
 
@@ -383,7 +439,7 @@ const Home = () =>{
 
         <div className={homePageCss.mainDiv}>
             <div className={homePageCss.mainContainer}>
-                <header style={{backgroundColor: '#3177877', height: `${headerHeight}%`, width: '100%',overflow:'auto'}}>
+                <header style={{backgroundColor: '#317773', height: `${headerHeight}%`, width: '100%',overflow:'auto'}}>
                     <table style={{position:'relative',width:'100%',height:'100%'}}>
                         <thead>
                             <tr>
@@ -602,23 +658,47 @@ const Home = () =>{
                                 </div>
                             :
                                 <div style={{width:'100%',height:'100%'}}>
-                                    {noDataFound?
+                                    {countUserSearch===0 && pageUserSearch===1 &&  userSearchActivated?
                                         <div style={{height:'100%',display:'flex',flexDirection:'column', justifyContent:'center',alignItems:'center'}}>
                                             <img src={noDataImage} alt="noDataImg"/>
-                                            <div style={{color:'#B2BEB5'}}>Please do Change Filters Options.</div>
+                                            <div style={{color:'#B2BEB5',marginBottom:'8px'}}>Please do Change Filters Options.</div>
+                                            <div style={{color:'#B2BEB5',marginBottom:'8px'}}>Or</div>
+                                            <div onClick={searchCancelHandler} style={{color:'blue',cursor:'pointer',marginBottom:'8px'}}>Click Here</div>
+                                            <label style={{color:'#B2BEB5'}}>to go home Page.</label>
                                         </div>
                                     :
                                         <div style={{backgroundColor: ' #E2D1F9',width:'100%',height:'100%',overflow:'auto',display:'flex', justifyContent:'center',alignItems:'center'}}>
-                                            {totalHostelsDetails&&
-                                                
+                                            {totalHostelsDetailsHomePage&&
                                                 <div style={{width:'88%', height:'100%'}}>
-                                                    <div style={{marginTop:'10%',marginBottom:'10%'}}>Hostels:</div>
-                                                    {Object.keys(totalHostelsDetails).map((key) => (
-                                                        <DisplayHostelsHomePage style={{marginBottom:'40px'}} key={key} data={totalHostelsDetails[key]}/> 
-                                                    ))}
+                                                    {userSearchActivated?
+                                                        
+                                                        <div style={{marginTop:'20px',marginBottom:'20px'}}>
+                                                            <label onClick={searchCancelHandler} style={{color:'blue',cursor:'pointer'}}>'Click Here'</label> <label style={{marginLeft:'10px'}}>To Exit from Search Result.</label>
+                                                            <h2 style={{marginTop:'10px'}}>Search Result:</h2>
+                                                        </div>
+                                                    
+                                                    :
+                                                        <h2 style={{marginTop:'20px',marginBottom:'20px',}}>Hostels:</h2>
+                                                    }
+                                                        {Object.keys(totalHostelsDetailsHomePage).map((key) => (
+                                                           key!=="count" && <DisplayHostelsHomePage style={{marginBottom:'40px'}} key={key} data={totalHostelsDetailsHomePage[key]}/> 
+                                                        ))}
+
+                                                        {userSearchActivated?
+                                                             <div  style={{width: '100%', display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+                                                                {pageUserSearch>1&&<AiFillCaretLeft size={20} style={{cursor:'pointer'}} onClick={() => { setOffSetUserSearch(offSet-5); setPageUserSearch(page-1);HandlerSearch('left')}}/>}
+                                                                <div style={{marginLeft:'8px',marginRight:'8px'}}>Page: {pageUserSearch}</div>
+                                                                {countUserSearch>0&&<AiFillCaretRight size={20} style={{cursor:'pointer'}}  onClick={() => { setOffSetUserSearch(offSet+5); setPageUserSearch(page+1);HandlerSearch('right')} }/>}
+                                                            </div>
+                                                        :
+                                                            <div  style={{width: '100%', display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+                                                                {page>1&&<AiFillCaretLeft size={20} style={{cursor:'pointer'}} onClick={() => { setOffSet(offSet-5); setPage(page - 1);HandlerToLoadHostels('left')}}/>}
+                                                                <div style={{marginLeft:'8px',marginRight:'8px'}}>Page: {page}</div>
+                                                                {count>0&&<AiFillCaretRight size={20} style={{cursor:'pointer'}}  onClick={() => { setOffSet(offSet+5); setPage(page + 1);HandlerToLoadHostels('right')} }/>}
+                                                            </div>
+                                                        }
                                                     <br/>
                                                 </div>
-                                                
                                             }
                                         </div>
                                     }

@@ -22,7 +22,7 @@ const DisplayHostelsProfilePage=({data,style,refresh})=>{
 
     const [hostelDetails, setHostelDetails] = useState({
         state:"updateHostelDetails",
-        id: data.uniqueSerialNumber,
+        id: data.hostelId,
         mobileNumber: data.mobileNumber,
         ownerName: data.ownerName,
         hostelName: data.hostelName,
@@ -334,7 +334,7 @@ const DisplayHostelsProfilePage=({data,style,refresh})=>{
         setHostelDetails((prevHostelDetails)=>({
             ...prevHostelDetails,
             state:"updateHostelDetails",
-            id: data.uniqueSerialNumber,
+            id: data.hostelId,
             mobileNumber: data.mobileNumber,
             ownerName: data.ownerName,
             hostelName: data.hostelName,
@@ -379,7 +379,7 @@ const DisplayHostelsProfilePage=({data,style,refresh})=>{
 
         if (confirmDelete) {
             setDeleteLoading(true)
-            axios.post(apiUrl+"profile?state=deletePost&id="+data.uniqueSerialNumber, {}, {
+            axios.post(apiUrl+"profile?state=deletePost&id="+data.hostelId, {}, {
                 headers: {
                 'Authorization': `Bearer ${localStorage.getItem("token")}`
                 }

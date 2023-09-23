@@ -13,20 +13,32 @@ import DisplayHostelsProfilePage from './displayHostelsProfilePage.js';
 
 import {AiOutlineUser} from "react-icons/ai";
 import {AiFillMobile} from "react-icons/ai";
-import {AiFillCaretLeft} from "react-icons/ai";
+import {AiFillBackward} from "react-icons/ai";
+
+
 
 
 import ServerError from './serverErrorPage';
 import ConnectionRefuse from './connectionRefusePage';
 
-
+import {AiFillCaretLeft} from "react-icons/ai";
+import {AiFillCaretRight} from "react-icons/ai";
 
 const Profile = ()=>{
 
     const navigate= useNavigate();
     
+const[noDataFound, setNoDataFound]=useState(false);
+
+
+const[offSet,setOffSet]=useState(0);
+const[page,setPage]=useState(1);
+const[count,setCount]=useState();
+
+
+
     const [userData,setUserData] = useState();
-    const [totalHostelsCount, setTotalHostelsCount] = useState();
+    const [totalHostelsDetailsProfilePage, setTotalHostelsDetailsProfilePage] = useState();
 
     const [addHostelControl, setAddHostelControl] = useState(true)
 
@@ -39,10 +51,12 @@ const Profile = ()=>{
 
     const [serverErr, setServerErr] = useState(false);
     const [connectionRefuseErr, setConnectionRefuseErr] = useState(false);
-    const[added,setAdded]=useState(false);
+    
 
     const refresh = () => {
-        setAdded(!added);
+        setOffSet(0);
+        setPage(1);
+        HandlerToLoadHostels();
     };
 
     const [hostelDetails, setHostelDetails] = useState({
@@ -106,7 +120,6 @@ const Profile = ()=>{
     },[]);
 
     useEffect(()=>{
-        setLoading(true);
         setServerErr(false);
         setConnectionRefuseErr(false);
 
@@ -118,12 +131,58 @@ const Profile = ()=>{
             response => {
                 if(response.status===200){
                     setUserData(response.data)
-                    setTotalHostelsCount(Object.keys(response.data.hostelsDetails).length)
+                    HandlerToLoadHostels();
                     setHostelDetails((prevHostelDetails) => ({
                         ...prevHostelDetails,
-                        mobileNumber: response.data.profileDetails.mobileNumber,
-                        ownerName: response.data.profileDetails.ownerName,
+                        mobileNumber: response.data.mobileNumber,
+                        ownerName: response.data.ownerName,
                     }))
+                }else{
+                    alert("your session expired do login again and login .")
+                    logOut();
+                }
+            }
+        ).catch((err)=>{
+            if(err.response){
+                if(err.response.status===500){
+                    setServerErr(true)
+                }else if(err.response.status===400){
+                    alert("Bad Request do login again.");
+                    logOut();
+                }else{
+                    alert("your session expired do login again.")
+                    logOut();
+                }
+            }else{
+                setConnectionRefuseErr(true);
+            }
+        })
+    },[])
+    
+    const HandlerToLoadHostels=(direction)=>{
+        setLoading(true);
+        setServerErr(false);
+        setConnectionRefuseErr(false);
+
+        let updated=offSet;
+        if(direction==='right'){
+            updated=offSet+5;
+        }else if(direction==='left'){
+            updated=offSet-5;
+        }
+
+        axios.post(apiUrl+"profile?state=userHostelsLoad&offSet="+updated, {}, {
+            headers: {
+              'Authorization': `Bearer ${localStorage.getItem("token")}`
+            }
+          }).then(
+            res => {
+                if (res.status === 200) {
+                    setTotalHostelsDetailsProfilePage(res.data);
+                    setCount(res.data.count)
+                } else if(res.status ===204){
+                    setCount(0)
+                    setNoDataFound(true);
                 }else{
                     alert("your session expired do login again and login .")
                     logOut();
@@ -146,7 +205,7 @@ const Profile = ()=>{
         }).finally(()=>{
             setLoading(false);
         })
-    },[added])
+    }
 
 
 
@@ -278,7 +337,7 @@ const Profile = ()=>{
                 if(response){
                     if (response.status === 200) {
                         alert("Hostel Uploaded successfully.");
-                        setAdded(!added);
+                        refresh();
                         HandlerToMakeDefaultHostelsDetails();
                         setAddHostelControl(!addHostelControl);
                     } else {
@@ -355,6 +414,10 @@ const Profile = ()=>{
     const[deleteLoading,setDeleteLoading]=useState(false);
     const[otpGen,setOtpGen]=useState(false)
 
+    let[otp,setOtp]=useState(null);
+    const [showOtpError, setShowOtpError] = useState(false);
+    const[submitLoading,setSubmitLoading]=useState(false);
+
     const HandlerToGenOtpToDeleteAccount=()=>{
         const confirmDelete = window.confirm('Are you sure you want to delete Account?');
 
@@ -400,19 +463,14 @@ const Profile = ()=>{
         }
     }
 
-    let[otp,setOtp]=useState(null);
-    const [showOtpError, setShowOtpError] = useState(false);
-    const[submitLoading,setSubmitLoading]=useState(false);
-
     const HandlerToOtpValidateToDeleteAccount=(action)=>{
+            setShowOtpError(false)
             if(action==='cancel'){
                 otp='cancel';
                 setOtpGen(false);
             }
 
-            if(otp===null){
-                setShowOtpError(true)
-            }else if(otp.length!==6 || isNaN(otp) && action==='submit'){
+            if(otp.length!==6 || isNaN(otp) && action==='submit'){
                 setShowOtpError(true)
             }else{
                 setSubmitLoading(true)
@@ -436,7 +494,6 @@ const Profile = ()=>{
                                 }
                             }else if(response.status===204){
                                 alert("server error try after some time.")
-                                setOtpGen(false);
                             }else{
                                 alert("server error try after some time.")
                             }
@@ -450,7 +507,6 @@ const Profile = ()=>{
                             setShowOtpError(true);
                         }else{
                             alert("Server error try ater some time")
-                            setOtpGen(false);
                         }
                     }else{
                         alert("connection error try after some time.");
@@ -481,27 +537,27 @@ const Profile = ()=>{
                             <main style={{height:`${mainHeight}%`,width:'100%'}}>
                                 {userData && showProfile && 
                                     <header className={profilePageCss.headerDiv}>
-                                        <AiFillCaretLeft size={18} style={{cursor:'pointer',position:'absolute',top:'10px',right:'10px'}} onClick={()=>{setShowProfile(!showProfile);setMainHeight(94)}}/>
+                                        <AiFillBackward size={23} style={{cursor:'pointer',position:'absolute',top:'10px',right:'10px'}} onClick={()=>{setShowProfile(!showProfile);setMainHeight(94)}}/>
                                         <img
                                             className={profilePageCss.profilePhoto}
-                                            src={`data:image/jpeg;base64,${userData.profileDetails.ownerImage}`}
+                                            src={`data:image/jpeg;base64,${userData.ownerImage}`}
                                             alt="profile"
                                         />
-                                        <div style={{fontSize:'120%',marginBottom:'5px'}}>{userData.profileDetails.ownerName}</div>
-                                        <div style={{fontSize:'120%'}}><span><AiFillMobile/>{userData.profileDetails.mobileNumber}</span></div>
+                                        <div style={{fontSize:'120%',marginBottom:'5px'}}>{userData.ownerName}</div>
+                                        <div style={{fontSize:'120%'}}><span><AiFillMobile/>{userData.mobileNumber}</span></div>
                                         <button className={profilePageCss.headerButtons} onClick={()=>{setAddHostelControl(!addHostelControl);setShowFormErr(false)}}>Add Hostle</button>
                                         <button className={profilePageCss.headerButtons} onClick={logOut}>Log Out</button>
 
                                         {!otpGen?
-                                            <button style={{backgroundColor:'red',marginTop:'18px'}}className={profilePageCss.headerButtons} onClick={HandlerToGenOtpToDeleteAccount} disabled={deleteLoading}>{deleteLoading?<label style={{display:'flex',justifyContent:'center'}}><Oval width={16} height={16} color='black'/></label>:"Delete Account"}</button>
+                                            <button style={{backgroundColor:'#ef5350',marginTop:'18px'}}className={profilePageCss.headerButtons} onClick={HandlerToGenOtpToDeleteAccount} disabled={deleteLoading}>{deleteLoading?<label style={{display:'flex',justifyContent:'center'}}><Oval width={16} height={16} color='black'/></label>:"Delete Account"}</button>
                                         :
                                             <div style={{height:'100px',marginTop:'50px',textAlign:'center'}}>
                                                 <label>Enter Otp recevied by your Mobile:</label>
-                                                {!showOtpError && <div style={{color:'#9b122d'}}>Invalid Otp.</div>}
+                                                {showOtpError && <div style={{color:'#9b122d'}}>Invalid Otp.</div>}
                                                 <input onChange={(e)=>{setOtp(e.target.value)}} placeholder='OTP' style={{width:'130px',textAlign:'center',marginTop:'10px'}}/>
                                                 <div>
                                                     <button style={{ width: '60px' }} className={profilePageCss.headerButtons} onClick={()=>{HandlerToOtpValidateToDeleteAccount('cancel')}}>Cancel</button>
-                                                    <button style={{width:'60px',backgroundColor:'red',marginLeft:'12px'}} onClick={()=>{HandlerToOtpValidateToDeleteAccount('submit')}} className={profilePageCss.headerButtons} disabled={submitLoading}>{submitLoading?<label style={{display:'flex',justifyContent:'center'}}><Oval width={16} height={16} color='black'/></label>:"Submit"}</button>
+                                                    <button style={{width:'60px',backgroundColor:'#ef5350',marginLeft:'12px'}} onClick={()=>{HandlerToOtpValidateToDeleteAccount('submit')}} className={profilePageCss.headerButtons} disabled={submitLoading}>{submitLoading?<label style={{display:'flex',justifyContent:'center'}}><Oval width={16} height={16} color='black'/></label>:"Submit"}</button>
                                                 </div>
                                             </div>
                                         }
@@ -515,37 +571,42 @@ const Profile = ()=>{
                                         </div>
                                     </div>
                                 :
-                                    <div style={{width:'100%',height:'100%'}}>
-                                        {totalHostelsCount>0 ?
-                                            <div style={{backgroundColor: ' #E2D1F9',width:'100%',height:'100%',overflow:'auto',display:'flex', justifyContent:'center',alignItems:'center'}}>       
-                                                <div style={{width:'88%', height:'100%'}}>
-                                                    <div style={{marginTop:'8%',marginBottom:'8%'}}>Hostels:</div>
-                                                        {Object.keys(userData.hostelsDetails).map((key) => (
-                                                            <DisplayHostelsProfilePage refresh={refresh} style={{marginBottom:'40px'}} key={key} data={userData.hostelsDetails[key]}/>
-                                                        ))}
-                                                        <br/>
-                                                </div>
-                                            </div>
-                                        :
-                                            <div style={{width:'100%',height:'100%'}}>
-                                                {!added&&
-                                                    <div style={{width:'100%',height:'100%',display:'flex',flexDirection:'column',justifyContent:'center',alignItems:'center'}}>
-                                                        <div style={{color:'rgba(0, 0, 0, 0.5)',marginBottom:'3%'}}>You didn't added your hostels yet.</div>
-                                                        <div style={{color:'rgba(0, 0, 0, 0.5)'}}><label style={{color:'blue',cursor:'pointer',fontWeight:'bolder'}} onClick={()=>{setAddHostelControl(!addHostelControl)}}>'Click Here'</label> to Add hostel</div>
+                                <div style={{width:'100%',height:'100%'}}>
+                                {noDataFound && page===1?
+                                    <div style={{width:'100%',height:'100%',display:'flex',flexDirection:'column',justifyContent:'center',alignItems:'center'}}>
+                                    <div style={{color:'rgba(0, 0, 0, 0.5)',marginBottom:'3%'}}>You didn't added your hostels yet.</div>
+                                    <div style={{color:'rgba(0, 0, 0, 0.5)'}}><label style={{color:'blue',cursor:'pointer',fontWeight:'bolder'}} onClick={()=>{setAddHostelControl(!addHostelControl)}}>'Click Here'</label> to Add hostel</div>
 
-                                                    </div>
-                                                }
+                                    </div>
+                                :
+                                    <div style={{backgroundColor: ' #E2D1F9',width:'100%',height:'100%',overflow:'auto',display:'flex', justifyContent:'center',alignItems:'center'}}>
+                                       {totalHostelsDetailsProfilePage&&
+                                        <div style={{width:'88%', height:'100%'}}>
+                                            <div style={{marginTop:'10%',marginBottom:'10%'}}>Hostels:</div>
+                                                {Object.keys(totalHostelsDetailsProfilePage).map((key) => (
+                                                    key!=="count" && <DisplayHostelsProfilePage refresh={refresh} style={{marginBottom:'40px'}} key={key} data={totalHostelsDetailsProfilePage[key]}/>
+                                                    
+                                                ))} 
+                                            <div  style={{width: '100%', display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+                                                {page>1&&<AiFillCaretLeft size={20} style={{cursor:'pointer'}} onClick={()=>{setOffSet(offSet-5);setPage(page-1);HandlerToLoadHostels('left')}}/>}
+                                                <div style={{marginLeft:'8px',marginRight:'8px'}}>Page: {page}</div>
+                                                {count>0&&<AiFillCaretRight size={20} style={{cursor:'pointer'}} onClick={()=>{setOffSet(offSet+5);setPage(page+1);HandlerToLoadHostels('right')}}/>}
                                             </div>
+                                            <br/>
+                                        </div>
                                         }
                                     </div>
                                 }
+                            </div>
+                                }
                             </main>
                             {!showProfile&&
-                            <footer>
-                                <div className={profilePageCss.profilePicContainer} onClick={()=>{setShowProfile(!showProfile)}}>
-                                    <AiOutlineUser size={23} onClick={()=>{setShowProfile(!showProfile);setMainHeight(100)}}/>
-                                </div>
-                            </footer>}
+                                <footer>
+                                    <div className={profilePageCss.profilePicContainer} onClick={()=>{setShowProfile(!showProfile)}}>
+                                        <AiOutlineUser size={23} onClick={()=>{setShowProfile(!showProfile);setMainHeight(100)}}/>
+                                    </div>
+                                </footer>
+                            }
                         </div>
                     :
                         <div className={profilePageCss.addNewHostelFormDiv}>
