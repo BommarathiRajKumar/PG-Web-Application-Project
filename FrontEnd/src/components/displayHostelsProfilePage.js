@@ -4,18 +4,18 @@ import displayHostelsProfilePage from '../css/displayHostelsProfilePage.module.c
 import { apiUrl } from "./url";
 import { Oval } from "react-loader-spinner";
 import { useNavigate } from "react-router-dom";
-import   {AiFillPicture} from "react-icons/ai";
+
+import   {CiImageOn} from "react-icons/ci";
 import {AiOutlineMore} from "react-icons/ai";
 import {AiFillEdit} from "react-icons/ai";
 import   {AiFillDelete} from "react-icons/ai";
 
-import {AiOutlineUser} from "react-icons/ai";
 
 
 
 import profilePageCss from '../css/profilePage.module.css';
 
-const DisplayHostelsProfilePage=({data,style,refresh})=>{
+const DisplayHostelsProfilePage=({data,style,edited, deleted})=>{
 
     const [showFormErr, setShowFormErr]=useState(false)
     const[err,setErr]=useState();
@@ -298,7 +298,7 @@ const DisplayHostelsProfilePage=({data,style,refresh})=>{
                         if(response){
                             if(response.status===200){
                                 alert("updated successfully.");
-                                refresh();
+                                edited();
                             }else{
                                 alert("your session expired do login again and update Hostel Details.")
                                 logOut();
@@ -388,7 +388,7 @@ const DisplayHostelsProfilePage=({data,style,refresh})=>{
                     if(response){
                         if(response.status===200){
                             alert("Post Deleted succefully");
-                            refresh();
+                            deleted(data.hostelId);
                         }else{
                             alert("your session expired do login again.")
                             logOut();
@@ -541,19 +541,19 @@ const DisplayHostelsProfilePage=({data,style,refresh})=>{
                         {currentImgNumber==1&&
                             <label style={{width:'100%'}}>
                                 <input  id="imageOne" name='imageOne' type='file' style={{display:'none'}}  accept="image/*" onChange={hostelDetailsUpdateHandler}/>
-                                <label for="imageOne"  className={profilePageCss.label}>1.&nbsp;<AiFillPicture/>&nbsp;&nbsp;&nbsp;{hostelDetails.imageOne.name || <label for="imageOne" style={{color:'blue',cursor:'pointer'}}>Update Image?</label>}</label>
+                                <label for="imageOne"  className={profilePageCss.label}>1.&nbsp;<CiImageOn/>&nbsp;&nbsp;&nbsp;{hostelDetails.imageOne.name || <label for="imageOne" style={{color:'blue',cursor:'pointer'}}>Update Image?</label>}</label>
                             </label>
                         }
                         {currentImgNumber==2&&
                             <label style={{width:'100%'}}>
                                 <input  id="imageTwo" name='imageTwo' type='file' style={{display:'none'}}  accept="image/*" onChange={hostelDetailsUpdateHandler}/>
-                                <label for="imageTwo"  className={profilePageCss.label}>2.&nbsp;<AiFillPicture/>&nbsp;&nbsp;&nbsp;{hostelDetails.imageTwo.name ||  <label for="imageOne" style={{color:'blue',cursor:'pointer'}}>Update Image?</label>}</label>
+                                <label for="imageTwo"  className={profilePageCss.label}>2.&nbsp;<CiImageOn/>&nbsp;&nbsp;&nbsp;{hostelDetails.imageTwo.name ||  <label for="imageOne" style={{color:'blue',cursor:'pointer'}}>Update Image?</label>}</label>
                             </label>
                         }
                         {currentImgNumber==3&&
                             <label style={{width:'100%'}}>
                                 <input  id="imageThree" name='imageThree' type='file' style={{display:'none'}}  accept="image/*" onChange={hostelDetailsUpdateHandler}/>
-                                <label for="imageThree"  className={profilePageCss.label}>3.&nbsp;<AiFillPicture/>&nbsp;&nbsp;&nbsp;{hostelDetails.imageThree.name ||  <label for="imageOne" style={{color:'blue',cursor:'pointer'}}>Update Image?</label>}</label>
+                                <label for="imageThree"  className={profilePageCss.label}>3.&nbsp;<CiImageOn/>&nbsp;&nbsp;&nbsp;{hostelDetails.imageThree.name ||  <label for="imageOne" style={{color:'blue',cursor:'pointer'}}>Update Image?</label>}</label>
                             </label>
                         }
                     </div>
@@ -701,7 +701,7 @@ const DisplayHostelsProfilePage=({data,style,refresh})=>{
 
                                 <td className={displayHostelsProfilePage.td}>
                                     {hostelDetails.fourShareApplicable?
-                                        <input className={displayHostelsProfilePage.updateInputs} type='text' name="fiveShareCost" value={hostelDetails.fourShareCost=="Not-Applicable"?"":hostelDetails.fourShareCost} onChange={hostelDetailsUpdateHandler}/>
+                                        <input className={displayHostelsProfilePage.updateInputs} type='text' name="fourShareCost" value={hostelDetails.fourShareCost=="Not-Applicable"?"":hostelDetails.fourShareCost} onChange={hostelDetailsUpdateHandler}/>
                                     :
                                         <span style={{color:'rgba(0, 0, 0, 0.3)'}}>---</span>
                                     }

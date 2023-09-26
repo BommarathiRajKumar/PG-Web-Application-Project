@@ -38,7 +38,6 @@ public class HomePage extends HttpServlet {
 				String share=req.getParameter("share");
 				
 				
-				
 				pStm = con.prepareStatement("select * from hostelsDetails where "+share+"Applicable = ? and hostelType = ? and "+share+"Cost <= ? and stateName = ? and cityName = ? and areaName = ? ORDER BY hostelID ASC  limit 5 offset ?");
 				
 				pStm.setBoolean(1, true);
@@ -102,8 +101,9 @@ public class HomePage extends HttpServlet {
                     	singleHostelDetails.put("cityName", hostelsDetailsResultSet.getString("cityName"));
                     	singleHostelDetails.put("areaName", hostelsDetailsResultSet.getString("areaName"));
                     	singleHostelDetails.put("landMark", hostelsDetailsResultSet.getString("landMark"));
+                    	i++;
 		           
-		                hostelsDetails.put(++i+"",singleHostelDetails);        
+		                hostelsDetails.put(hostelsDetailsResultSet.getInt("hostelID")+"",singleHostelDetails);        
 		            }
 		            
 				
@@ -144,6 +144,7 @@ public class HomePage extends HttpServlet {
 				con.close();
 				
 		}catch(Exception err) {
+			System.out.println(err);
 			err.printStackTrace();
 			res.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
 		}

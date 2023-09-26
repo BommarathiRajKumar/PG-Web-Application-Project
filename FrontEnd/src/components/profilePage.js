@@ -1,8 +1,8 @@
-import {useEffect, useState} from 'react';
+import {useEffect, useState, useRef} from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import { Oval } from 'react-loader-spinner';
-import   {AiFillPicture} from "react-icons/ai";
+import   {CiImageOn} from "react-icons/ci";
 
 import {apiUrl} from './url.js';
 
@@ -21,8 +21,6 @@ import {AiFillBackward} from "react-icons/ai";
 import ServerError from './serverErrorPage';
 import ConnectionRefuse from './connectionRefusePage';
 
-import {AiFillCaretLeft} from "react-icons/ai";
-import {AiFillCaretRight} from "react-icons/ai";
 
 const Profile = ()=>{
 
@@ -32,7 +30,6 @@ const[noDataFound, setNoDataFound]=useState(false);
 
 
 const[offSet,setOffSet]=useState(0);
-const[page,setPage]=useState(1);
 const[count,setCount]=useState();
 
 
@@ -46,18 +43,15 @@ const[count,setCount]=useState();
     const[err,setErr]=useState();
 
     const [loading, setLoading] = useState();
+    
+    const[userLoading,setUserLoading]=useState(false);
 
     const[hostelSubmitLoading, setHostelSubmitLoading]=useState();
 
     const [serverErr, setServerErr] = useState(false);
     const [connectionRefuseErr, setConnectionRefuseErr] = useState(false);
+    const[hostelsRefresh,setHostelsRefresh]=useState(false);
     
-
-    const refresh = () => {
-        setOffSet(0);
-        setPage(1);
-        HandlerToLoadHostels();
-    };
 
     const [hostelDetails, setHostelDetails] = useState({
         state:"uploadHostel",
@@ -131,7 +125,6 @@ const[count,setCount]=useState();
             response => {
                 if(response.status===200){
                     setUserData(response.data)
-                    HandlerToLoadHostels();
                     setHostelDetails((prevHostelDetails) => ({
                         ...prevHostelDetails,
                         mobileNumber: response.data.mobileNumber,
@@ -158,18 +151,48 @@ const[count,setCount]=useState();
             }
         })
     },[])
+
+
+    function added(){
+        HandlerToLoadHostels('added');
+        setOffSet(0)
+    }
+
+    function edited(){
+        HandlerToLoadHostels('edited');
+    }
+    function deleted(a){
+        HandlerToLoadHostels('deleted',a);
+
+    }
     
-    const HandlerToLoadHostels=(direction)=>{
-        setLoading(true);
+    useEffect(() => {
+        HandlerToLoadHostels();
+    }, []);
+
+    const HandlerToLoadHostels=(event,action)=>{
+        let updated=0;
+        if(event==="user"){
+            setUserLoading(true)
+            updated=offSet+5;
+            setOffSet(offSet+5)
+           
+        }else if(event==="added"){
+            setLoading(true);
+            updated=0;
+        }else if(event==="edited" || event== "deleted"){
+            updated=offSet;
+        }
+        else{
+            setLoading(true);
+            updated=0;
+            setOffSet(offSet+5)
+            
+        }
         setServerErr(false);
         setConnectionRefuseErr(false);
+        setNoDataFound(false)
 
-        let updated=offSet;
-        if(direction==='right'){
-            updated=offSet+5;
-        }else if(direction==='left'){
-            updated=offSet-5;
-        }
 
         axios.post(apiUrl+"profile?state=userHostelsLoad&offSet="+updated, {}, {
             headers: {
@@ -178,11 +201,50 @@ const[count,setCount]=useState();
           }).then(
             res => {
                 if (res.status === 200) {
-                    setTotalHostelsDetailsProfilePage(res.data);
+                    if(event==="deleted"){
+                        setTotalHostelsDetailsProfilePage(prevHostelDetails => {
+                            const updatedHostelDetails = { ...prevHostelDetails };
+                             
+                    
+                            
+                              delete updatedHostelDetails[action];
+                            
+                    
+                            Object.keys(res.data).forEach(key => {
+                              updatedHostelDetails[key] = res.data[key];
+                            });
+                    
+                            return updatedHostelDetails;
+                        });
+                        console.log(action);
+                        console.log(totalHostelsDetailsProfilePage)
+                    }else{
+                        setTotalHostelsDetailsProfilePage(prevHostelDetails => {
+                            const updatedHostelDetails = { ...prevHostelDetails };
+                            Object.keys(res.data).forEach(key => {
+                            if (!(key in updatedHostelDetails)) {
+                                updatedHostelDetails[key] = res.data[key];
+                            }
+                            });
+                            return updatedHostelDetails;
+                        });
+                    }
                     setCount(res.data.count)
                 } else if(res.status ===204){
-                    setCount(0)
-                    setNoDataFound(true);
+                    if(event==="deleted"){
+                        setTotalHostelsDetailsProfilePage(prevHostelDetails => {
+                            const updatedHostelDetails = { ...prevHostelDetails };
+                              delete updatedHostelDetails[action];
+                              
+                    
+                            Object.keys(res.data).forEach(key => {
+                                updatedHostelDetails[key] = res.data[key];
+                              });
+                            return updatedHostelDetails;
+                        });
+                    }else{
+                    
+                    setNoDataFound(true);}
                 }else{
                     alert("your session expired do login again and login .")
                     logOut();
@@ -203,7 +265,14 @@ const[count,setCount]=useState();
                 setConnectionRefuseErr(true);
             }
         }).finally(()=>{
-            setLoading(false);
+            if(event==="user"){
+                setUserLoading(false)
+            }else if(event=="added"){
+                setLoading(false);
+            }else if(event==="edited" || event==="deleted"){}
+            else{
+                setLoading(false);
+            }
         })
     }
 
@@ -337,7 +406,8 @@ const[count,setCount]=useState();
                 if(response){
                     if (response.status === 200) {
                         alert("Hostel Uploaded successfully.");
-                        refresh();
+                        added();
+                        setHostelsRefresh(!hostelsRefresh);
                         HandlerToMakeDefaultHostelsDetails();
                         setAddHostelControl(!addHostelControl);
                     } else {
@@ -520,6 +590,44 @@ const[count,setCount]=useState();
         
     }
 
+
+    const containerRef = useRef(null);
+    const[firstHeight, setFirstHeight]=useState();
+
+    useEffect(() => {
+        if (containerRef.current) {
+          setFirstHeight(document.getElementById('your-container-id').scrollHeight);
+        }
+    },[]);
+ 
+    useEffect(() => {
+        if (containerRef.current) {
+          const container = document.getElementById('your-container-id');
+          const scrollPosition = container.scrollHeight-firstHeight*2;
+
+          container.scrollTo({
+            top: scrollPosition,
+            behavior: 'smooth', 
+          });
+        }
+    }, [totalHostelsDetailsProfilePage]);
+
+
+
+const [reachedBottom, setReachedBottom] = useState(false);
+
+  const handleScroll = () => {
+    const container = containerRef.current;
+    if (container.scrollTop + container.clientHeight+10 >= container.scrollHeight && count>0) {
+      if (!reachedBottom) {
+        HandlerToLoadHostels('user')
+        setReachedBottom(true); 
+      }
+    } else {
+      setReachedBottom(false);
+    }
+  };
+
     return(
  
         <div className={profilePageCss.mainDiv}>
@@ -534,10 +642,10 @@ const[count,setCount]=useState();
                     <div style={{width:'100%',height:'100%'}}>
                     {addHostelControl ?
                         <div style={{width:'100%',height:'100%'}}>  
-                            <main style={{height:`${mainHeight}%`,width:'100%'}}>
+                            <main style={{height:'94%',width:'100%'}}>
                                 {userData && showProfile && 
                                     <header className={profilePageCss.headerDiv}>
-                                        <AiFillBackward size={23} style={{cursor:'pointer',position:'absolute',top:'10px',right:'10px'}} onClick={()=>{setShowProfile(!showProfile);setMainHeight(94)}}/>
+                                        <AiFillBackward size={25} style={{cursor:'pointer',position:'absolute',top:'10px',right:'10px'}} onClick={()=>{setShowProfile(!showProfile);setMainHeight(94)}}/>
                                         <img
                                             className={profilePageCss.profilePhoto}
                                             src={`data:image/jpeg;base64,${userData.ownerImage}`}
@@ -563,7 +671,7 @@ const[count,setCount]=useState();
                                         }
                                     </header>
                                 }
-                                {loading?
+                                {loading && !userLoading ?
                                     <div style={{width:'100%',height:'125%',display:'flex',flexDirection:'column',justifyContent:'center',alignItems:'center'}}>
                                         <Oval color="#00BFFF" height={60} width={60} />
                                         <div style={{marginTop:'8%'}}>
@@ -572,25 +680,26 @@ const[count,setCount]=useState();
                                     </div>
                                 :
                                 <div style={{width:'100%',height:'100%'}}>
-                                {noDataFound && page===1?
+                                {noDataFound?
                                     <div style={{width:'100%',height:'100%',display:'flex',flexDirection:'column',justifyContent:'center',alignItems:'center'}}>
                                     <div style={{color:'rgba(0, 0, 0, 0.5)',marginBottom:'3%'}}>You didn't added your hostels yet.</div>
                                     <div style={{color:'rgba(0, 0, 0, 0.5)'}}><label style={{color:'blue',cursor:'pointer',fontWeight:'bolder'}} onClick={()=>{setAddHostelControl(!addHostelControl)}}>'Click Here'</label> to Add hostel</div>
 
                                     </div>
                                 :
-                                    <div style={{backgroundColor: ' #E2D1F9',width:'100%',height:'100%',overflow:'auto',display:'flex', justifyContent:'center',alignItems:'center'}}>
+                                    <div id="your-container-id" ref={containerRef} onScroll={()=>{count>0 && handleScroll()}} style={{scrollBehavior: 'smooth',backgroundColor: ' #E2D1F9',width:'100%',height:'100%',overflow:'auto',display:'flex', justifyContent:'center',alignItems:'center'}}>
                                        {totalHostelsDetailsProfilePage&&
                                         <div style={{width:'88%', height:'100%'}}>
                                             <div style={{marginTop:'10%',marginBottom:'10%'}}>Hostels:</div>
-                                                {Object.keys(totalHostelsDetailsProfilePage).map((key) => (
-                                                    key!=="count" && <DisplayHostelsProfilePage refresh={refresh} style={{marginBottom:'40px'}} key={key} data={totalHostelsDetailsProfilePage[key]}/>
-                                                    
-                                                ))} 
+                                                {Object.keys(totalHostelsDetailsProfilePage)
+                                                    .filter(key => key !== "count")
+                                                    .sort((a, b) => b.localeCompare(a))
+                                                    .map((key) => (
+                                                        <DisplayHostelsProfilePage edited={edited} deleted={deleted} style={{ marginBottom: '40px' }} key={key} data={totalHostelsDetailsProfilePage[key]}/>
+                                                    )
+                                                )}
                                             <div  style={{width: '100%', display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
-                                                {page>1&&<AiFillCaretLeft size={20} style={{cursor:'pointer'}} onClick={()=>{setOffSet(offSet-5);setPage(page-1);HandlerToLoadHostels('left')}}/>}
-                                                <div style={{marginLeft:'8px',marginRight:'8px'}}>Page: {page}</div>
-                                                {count>0&&<AiFillCaretRight size={20} style={{cursor:'pointer'}} onClick={()=>{setOffSet(offSet+5);setPage(page+1);HandlerToLoadHostels('right')}}/>}
+                                                {count>0?<Oval color="black" width={25} height={25}/>:<label>Results End</label>}
                                             </div>
                                             <br/>
                                         </div>
@@ -600,38 +709,42 @@ const[count,setCount]=useState();
                             </div>
                                 }
                             </main>
-                            {!showProfile&&
                                 <footer>
                                     <div className={profilePageCss.profilePicContainer} onClick={()=>{setShowProfile(!showProfile)}}>
-                                        <AiOutlineUser size={23} onClick={()=>{setShowProfile(!showProfile);setMainHeight(100)}}/>
+                                        <AiOutlineUser size={15} onClick={()=>{setShowProfile(!showProfile);setMainHeight(100)}}/>
                                     </div>
                                 </footer>
-                            }
+                            
                         </div>
                     :
                         <div className={profilePageCss.addNewHostelFormDiv}>
                             <form className={profilePageCss.addNewHostelForm}>
                                 <div style={{fontSize:'75%',height:'100%',width:'100%',marginLeft:'3%', marginTop:'4%'}}> 
                                     <div>Hostel Name.<label style={{color:'red'}}>*</label></div>
-                                    <input type='text' name="hostelName" value={hostelDetails.hostelName} onChange={hostelDetailsUpdateHandler}/><br/><br/>
+                                    <input style={{width:'50%'}} type='text' name="hostelName" value={hostelDetails.hostelName} onChange={hostelDetailsUpdateHandler}/>
 
-                                    <div style={{marginBottom:'4%'}}>
+                                    <div style={{marginBottom:'4%' ,marginTop:'30px'}}>
                                         <div className={profilePageCss.oneShareDiv}>
                                             <label>1-Share rooms:</label>
-                                            <input type="checkbox" name="oneShareApplicable" onClick={hostelDetailsUpdateHandler} checked={hostelDetails.oneShareApplicable===true}  style={{ width: '5%', height: '5%' }} />
+                                            <input type="checkbox" name="oneShareApplicable" onClick={hostelDetailsUpdateHandler} checked={hostelDetails.oneShareApplicable===true}  style={{ width: '5%', height: '5%',cursor:'pointer'}} />
                                             <label>Applicable</label>
                                         </div>
 
                                         {hostelDetails.oneShareApplicable&&
                                             <div className={profilePageCss.secShareDiv}>
-                                                <label> &#8377;/month :</label>
-                                                <input style={{width:'15%'}}  type='text' name="oneShareCost" value={hostelDetails.oneShareCost} onChange={hostelDetailsUpdateHandler}/>
-                                                <label style={{marginLeft:'2%'}}>Rooms Available:<label style={{color:'red'}}>*</label></label>
-                                                <label style={{marginLeft:'3%'}}>Yes</label>
-                                                <input type='checkbox' style={{ width: '5%', height: '5%' }} name="oneShareRoomsAvailable" value={"Yes"}  checked={hostelDetails.oneShareRoomsAvailable === "Yes"} onChange={hostelDetailsUpdateHandler}/>
-                                                <label style={{marginLeft:'3%'}}>No</label>
-                                                <input type='checkbox' style={{ width: '5%', height: '5%' }} name="oneShareRoomsAvailable" value={"No"} checked={hostelDetails.oneShareRoomsAvailable === "No"} onChange={hostelDetailsUpdateHandler}/>
-                                                
+                                                <label> &#8377;/month :
+                                                    <input style={{height:'25px',width:'20%',textAlign:'center'}} placeholder='RS.'  type='text' name="oneShareCost" value={hostelDetails.oneShareCost} onChange={hostelDetailsUpdateHandler}/>
+                                                </label>
+
+                                                <div style={{display:'flex',justifyContent:'flex-start',alignItems:'center'}}>
+                                                    <label >Rooms Available:<label style={{color:'red'}}>*</label></label>
+                                                    
+                                                    <input type='checkbox' style={{marginLeft:'6px', height:'14px', width: '14px' ,cursor:'pointer'}} name="oneShareRoomsAvailable" value={"Yes"}  checked={hostelDetails.oneShareRoomsAvailable === "Yes"} onChange={hostelDetailsUpdateHandler}/>
+                                                    Yes
+                                                    
+                                                    <input type='checkbox' style={{marginLeft:'10px',  height:'14px', width: '14px',cursor:'pointer' }} name="oneShareRoomsAvailable" value={"No"} checked={hostelDetails.oneShareRoomsAvailable === "No"} onChange={hostelDetailsUpdateHandler}/>
+                                                    No
+                                                </div>
                                             </div>
                                         }
                                     </div>
@@ -641,19 +754,23 @@ const[count,setCount]=useState();
                                     <div style={{marginBottom:'4%'}}>
                                         <div className={profilePageCss.oneShareDiv}>
                                             <label>2-Share rooms:</label>
-                                            <input type="checkbox" name="twoShareApplicable" onClick={hostelDetailsUpdateHandler} checked={hostelDetails.twoShareApplicable===true} style={{ width: '5%', height: '5%' }}/>
+                                            <input type="checkbox" name="twoShareApplicable" onClick={hostelDetailsUpdateHandler} checked={hostelDetails.twoShareApplicable===true} style={{ width: '5%', height: '5%' ,cursor:'pointer'}}/>
                                             <label>Applicable</label>
                                         </div>
 
                                         {hostelDetails.twoShareApplicable&&
                                             <div className={profilePageCss.secShareDiv}>
-                                                <label> &#8377;/month :</label>
-                                                <input style={{width:'15%'}}  type='text' name="twoShareCost" value={hostelDetails.twoShareCost} onChange={hostelDetailsUpdateHandler}/>
-                                                <label style={{marginLeft:'2%'}}>Rooms Available:<label style={{color:'red'}}>*</label></label>
-                                                <label style={{marginLeft:'3%'}}>Yes</label>
-                                                <input type='checkbox' style={{ width: '5%', height: '5%' }} name="twoShareRoomsAvailable" value={"Yes"}  checked={hostelDetails.twoShareRoomsAvailable === "Yes"} onChange={hostelDetailsUpdateHandler}/>
-                                                <label style={{marginLeft:'3%'}}>No</label>
-                                                <input type='checkbox' style={{ width: '5%', height: '5%' }} name="twoShareRoomsAvailable" value={"No"} checked={hostelDetails.twoShareRoomsAvailable === "No"} onChange={hostelDetailsUpdateHandler}/>
+                                                <label> &#8377;/month :
+                                                    <input style={{height:'25px',width:'20%',textAlign:'center'}} placeholder='RS.'  type='text' name="twoShareCost" value={hostelDetails.twoShareCost} onChange={hostelDetailsUpdateHandler}/>
+                                                </label>
+                                                
+                                                <div style={{display:'flex',justifyContent:'flex-start',alignItems:'center'}}>
+                                                    <label>Rooms Available:<label style={{color:'red'}}>*</label></label>
+                                                    <input type='checkbox' style={{marginLeft:'6px', height:'14px', width: '14px' ,cursor:'pointer'}} name="twoShareRoomsAvailable" value={"Yes"}  checked={hostelDetails.twoShareRoomsAvailable === "Yes"} onChange={hostelDetailsUpdateHandler}/>
+                                                    Yes
+                                                    <input type='checkbox' style={{marginLeft:'10px', height:'14px', width: '14px' ,cursor:'pointer'}} name="twoShareRoomsAvailable" value={"No"} checked={hostelDetails.twoShareRoomsAvailable === "No"} onChange={hostelDetailsUpdateHandler}/>
+                                                    No
+                                                </div>
                                             </div>
                                         }
                                     </div>
@@ -661,20 +778,22 @@ const[count,setCount]=useState();
                                     <div style={{marginBottom:'4%'}}>
                                         <div className={profilePageCss.oneShareDiv}>
                                             <label>3-Share rooms:</label>
-                                            <input type="checkbox" name="threeShareApplicable" onClick={hostelDetailsUpdateHandler} style={{ width: '5%', height: '5%' }} checked={hostelDetails.threeShareApplicable===true} />
+                                            <input type="checkbox" name="threeShareApplicable" onClick={hostelDetailsUpdateHandler} style={{ width: '5%', height: '5%',cursor:'pointer' }} checked={hostelDetails.threeShareApplicable===true} />
                                             <label>Applicable</label>
                                         </div>
                                     
                                         {hostelDetails.threeShareApplicable&&
                                             <div className={profilePageCss.secShareDiv}>
-                                                <label> &#8377;/month :</label>
-                                                <input style={{width:'15%'}}  type='text' name="threeShareCost" value={hostelDetails.threeShareCost} onChange={hostelDetailsUpdateHandler}/>
-                                                <label style={{marginLeft:'2%'}}>Rooms Available:<label style={{color:'red'}}>*</label></label>
-                                                <label style={{marginLeft:'3%'}}>Yes</label>
-                                                <input type='checkbox' style={{ width: '5%', height: '5%' }} name="threeShareRoomsAvailable" value={"Yes"}  checked={hostelDetails.threeShareRoomsAvailable === "Yes"} onChange={hostelDetailsUpdateHandler}/>
-                                                <label style={{marginLeft:'3%'}}>No</label>
-                                                <input type='checkbox' style={{ width: '5%', height: '5%' }} name="threeShareRoomsAvailable" value={"No"} checked={hostelDetails.threeShareRoomsAvailable === "No"} onChange={hostelDetailsUpdateHandler}/>
-                                                
+                                                <label> &#8377;/month :
+                                                    <input style={{height:'25px',width:'20%',textAlign:'center'}} placeholder='RS.'  type='text' name="threeShareCost" value={hostelDetails.threeShareCost} onChange={hostelDetailsUpdateHandler}/>
+                                                </label>
+                                                <div style={{display:'flex',justifyContent:'flex-start',alignItems:'center'}}>
+                                                    <label>Rooms Available:<label style={{color:'red'}}>*</label></label>
+                                                    <input type='checkbox' style={{marginLeft:'6px', height:'14px', width: '14px' ,cursor:'pointer'}} name="threeShareRoomsAvailable" value={"Yes"}  checked={hostelDetails.threeShareRoomsAvailable === "Yes"} onChange={hostelDetailsUpdateHandler}/>
+                                                    Yes
+                                                    <input type='checkbox' style={{marginLeft:'10px', height:'14px', width: '14px' ,cursor:'pointer'}} name="threeShareRoomsAvailable" value={"No"} checked={hostelDetails.threeShareRoomsAvailable === "No"} onChange={hostelDetailsUpdateHandler}/>
+                                                    No
+                                                </div>
                                             </div>
                                         }
                                     </div>
@@ -682,20 +801,22 @@ const[count,setCount]=useState();
                                     <div style={{marginBottom:'4%'}}>
                                         <div className={profilePageCss.oneShareDiv}>
                                             <label>4-Share rooms:</label>
-                                            <input type="checkbox" name="fourShareApplicable" onClick={hostelDetailsUpdateHandler} style={{ width: '5%', height: '5%' }} checked={hostelDetails.fourShareApplicable===true}/>
+                                            <input type="checkbox" name="fourShareApplicable" onClick={hostelDetailsUpdateHandler} style={{ width: '5%', height: '5%',cursor:'pointer' }} checked={hostelDetails.fourShareApplicable===true}/>
                                             <label>Applicable</label>
                                         </div>
                                     
                                         {hostelDetails.fourShareApplicable&&
                                             <div className={profilePageCss.secShareDiv}>
-                                                <label> &#8377;/month :</label>
-                                                <input style={{width:'15%'}}  type='text' name="fourShareCost" value={hostelDetails.fourShareCost} onChange={hostelDetailsUpdateHandler}/>
-                                                <label style={{marginLeft:'2%'}}>Rooms Available:<label style={{color:'red'}}>*</label></label>
-                                                <label style={{marginLeft:'3%'}}>Yes</label>
-                                                <input type='checkbox' style={{ width: '5%', height: '5%' }} name="fourShareRoomsAvailable" value={"Yes"}  checked={hostelDetails.fourShareRoomsAvailable === "Yes"} onChange={hostelDetailsUpdateHandler}/>
-                                                <label style={{marginLeft:'3%'}}>No</label>
-                                                <input type='checkbox' style={{ width: '5%', height: '5%' }} name="fourShareRoomsAvailable" value={"No"} checked={hostelDetails.fourShareRoomsAvailable === "No"} onChange={hostelDetailsUpdateHandler}/>
-                                                
+                                                <label> &#8377;/month :
+                                                    <input style={{height:'25px',width:'20%',textAlign:'center'}} placeholder='RS.'  type='text' name="fourShareCost" value={hostelDetails.fourShareCost} onChange={hostelDetailsUpdateHandler}/>
+                                                </label>
+                                                <div style={{display:'flex',justifyContent:'flex-start',alignItems:'center'}}>
+                                                    <label>Rooms Available:<label style={{color:'red'}}>*</label></label>
+                                                    <input type='checkbox' style={{marginLeft:'6px', height:'14px', width: '14px' ,cursor:'pointer'}} name="fourShareRoomsAvailable" value={"Yes"}  checked={hostelDetails.fourShareRoomsAvailable === "Yes"} onChange={hostelDetailsUpdateHandler}/>
+                                                    Yes
+                                                    <input type='checkbox' style={{marginLeft:'10px', height:'14px', width: '14px' ,cursor:'pointer'}} name="fourShareRoomsAvailable" value={"No"} checked={hostelDetails.fourShareRoomsAvailable === "No"} onChange={hostelDetailsUpdateHandler}/>
+                                                    No
+                                                </div>
                                             </div>
                                         }
                                     </div>
@@ -703,78 +824,81 @@ const[count,setCount]=useState();
                                     <div style={{marginBottom:'4%'}}>
                                         <div className={profilePageCss.oneShareDiv}>
                                             <label>5-Share rooms:</label>
-                                            <input type="checkbox" name="fiveShareApplicable" onClick={hostelDetailsUpdateHandler} style={{ width: '5%', height: '5%' }} checked={hostelDetails.fiveShareApplicable===true} />
+                                            <input type="checkbox" name="fiveShareApplicable" onClick={hostelDetailsUpdateHandler} style={{ width: '5%', height: '5%',cursor:'pointer'}} checked={hostelDetails.fiveShareApplicable===true} />
                                             <label>Applicable</label>
                                         </div>
 
                                         {hostelDetails.fiveShareApplicable&&
                                             <div className={profilePageCss.secShareDiv}>
-                                                <label> &#8377;/month :</label>
-                                                <input style={{width:'15%'}}  type='text' name="fiveShareCost" value={hostelDetails.fiveShareCost} onChange={hostelDetailsUpdateHandler}/>
-                                                <label style={{marginLeft:'2%'}}>Rooms Available:<label style={{color:'red'}}>*</label></label>
-                                                <label style={{marginLeft:'3%'}}>Yes</label>
-                                                <input type='checkbox' style={{ width: '5%', height: '5%' }} name="fiveShareRoomsAvailable" value={"Yes"}  checked={hostelDetails.fiveShareRoomsAvailable === "Yes"} onChange={hostelDetailsUpdateHandler}/>
-                                                <label style={{marginLeft:'3%'}}>No</label>
-                                                <input type='checkbox' style={{ width: '5%', height: '5%' }} name="fiveShareRoomsAvailable" value={"No"} checked={hostelDetails.fiveShareRoomsAvailable === "No"} onChange={hostelDetailsUpdateHandler}/>
+                                                <label> &#8377;/month :
+                                                    <input style={{height:'25px',width:'20%',textAlign:'center'}} placeholder='RS.'  type='text' name="fiveShareCost" value={hostelDetails.fiveShareCost} onChange={hostelDetailsUpdateHandler}/>
+                                                </label>
+                                                <div style={{display:'flex',justifyContent:'flex-start',alignItems:'center'}}>
+                                                    <label>Rooms Available:<label style={{color:'red'}}>*</label></label>
+                                                    <input type='checkbox' style={{marginLeft:'6px', height:'14px', width: '14px' ,cursor:'pointer'}} name="fiveShareRoomsAvailable" value={"Yes"}  checked={hostelDetails.fiveShareRoomsAvailable === "Yes"} onChange={hostelDetailsUpdateHandler}/>
+                                                    Yes
+                                                    <input type='checkbox' style={{marginLeft:'10px', height:'14px', width: '14px' ,cursor:'pointer'}} name="fiveShareRoomsAvailable" value={"No"} checked={hostelDetails.fiveShareRoomsAvailable === "No"} onChange={hostelDetailsUpdateHandler}/>
+                                                    No
+                                                </div>
                                             </div>
                                         }
                                     </div>
 
-                                    <div style={{marginTop:'5%',marginBottom:'3%'}}>Please upload the sample images of hostel rooms.<label style={{color:'red'}}>*</label></div>
+                                    <div style={{marginTop:'30px',marginBottom:'5px'}}>Upload any 3 Rooms Images.<label style={{color:'red'}}>*</label></div>
 
                                     <input  id="imageOne" name='imageOne' type='file' style={{display:'none'}}  accept="image/*" onChange={hostelDetailsUpdateHandler}/>
-                                    <label for="imageOne"  className={profilePageCss.label}><AiFillPicture/>&nbsp;&nbsp;&nbsp;{hostelDetails.imageOne.name || "Choose Image One"}</label><br/>
+                                    <label for="imageOne"  className={profilePageCss.label}><CiImageOn/>&nbsp;&nbsp;&nbsp;{hostelDetails.imageOne.name || "Choose Image One"}</label><br/>
 
                                     
                                     <input  id="imageTwo" name='imageTwo' type='file' style={{display:'none'}}  accept="image/*" onChange={hostelDetailsUpdateHandler}/>
-                                    <label for="imageTwo"  className={profilePageCss.label}><AiFillPicture/>&nbsp;&nbsp;&nbsp;{hostelDetails.imageTwo.name || "Choose Image Two"}</label><br/>
+                                    <label for="imageTwo"  className={profilePageCss.label}><CiImageOn/>&nbsp;&nbsp;&nbsp;{hostelDetails.imageTwo.name || "Choose Image Two"}</label><br/>
 
                                     
                                     <input  id="imageThree" name='imageThree' type='file' style={{display:'none'}}  accept="image/*" onChange={hostelDetailsUpdateHandler}/>
-                                    <label for="imageThree"  className={profilePageCss.label}><AiFillPicture/>&nbsp;&nbsp;&nbsp;{hostelDetails.imageThree.name || "Choose Image Three"}</label><br/>
+                                    <label for="imageThree"  className={profilePageCss.label}><CiImageOn style={{marginLeft:'5px'}}/>&nbsp;&nbsp;&nbsp;{hostelDetails.imageThree.name || "Choose Image Three"}</label><br/>
 
 
-                                    <div style={{marginTop:'5%',marginBottom:'2%'}}>Hostel Address:</div>
+                                    <div style={{marginTop:'30px',marginBottom:'5px'}}>Hostel Address:</div>
                                     <div>State Name.<label style={{color:'red'}}>*</label></div>
-                                    <input style={{marginBottom:'3%'}} type='text' name="stateName" value={hostelDetails.stateName} onChange={hostelDetailsUpdateHandler}/>
+                                    <input style={{marginBottom:'3%',width: '50%',}} type='text' name="stateName" value={hostelDetails.stateName} onChange={hostelDetailsUpdateHandler}/>
                                     <div>City Name.<label style={{color:'red'}}>*</label></div>
-                                    <input style={{marginBottom:'3%'}} type='text' name="cityName" value={hostelDetails.cityName} onChange={hostelDetailsUpdateHandler}/>
+                                    <input style={{marginBottom:'3%',width: '50%'}} type='text' name="cityName" value={hostelDetails.cityName} onChange={hostelDetailsUpdateHandler}/>
                                     <div>Area Name.<label style={{color:'red'}}>*</label></div>
-                                    <input style={{marginBottom:'3%'}} type='text' name="areaName" value={hostelDetails.areaName} onChange={hostelDetailsUpdateHandler}/>
+                                    <input style={{marginBottom:'3%',width: '50%'}} type='text' name="areaName" value={hostelDetails.areaName} onChange={hostelDetailsUpdateHandler}/>
                                     <div>Land Mark.<label style={{color:'red'}}>*</label></div>
-                                    <textarea style={{width: '280px', height: '80px', overflow: 'auto',resize: 'none'}} type='text' name="landMark" value={hostelDetails.landMark} onChange={hostelDetailsUpdateHandler}/><br/><br/>
+                                    <textarea style={{width: '50%', height: '80px', overflow: 'auto',resize: 'none'}} type='text' name="landMark" value={hostelDetails.landMark} onChange={hostelDetailsUpdateHandler}/><br/><br/>
                                         
-                                    <div style={{marginTop:'5%'}}>Hostel type.<label style={{color:'red'}}>*</label></div>
+                                    <div style={{marginTop:'30px'}}>Hostel type.<label style={{color:'red'}}>*</label></div>
                                     <div className={profilePageCss.facilitiesDivs}>
-                                        <label>Girls</label>
-                                        <input style={{ width: '5%', height: '5%' }} type="checkbox" name="hostelType" value={"Girls Hostel"} checked={hostelDetails.hostelType === 'Girls Hostel'} onChange={hostelDetailsUpdateHandler}/>
-                                        <label style={{marginLeft:'3%'}}>Boys</label>
-                                        <input style={{ width: '5%', height: '5%' }} type="checkbox" name="hostelType" value={"Boys Hostel"} checked={hostelDetails.hostelType === 'Boys Hostel'} onChange={hostelDetailsUpdateHandler}/>
+                                        <input style={{ width: '14px', height: '14px' }} type="checkbox" name="hostelType" value={"Girls Hostel"} checked={hostelDetails.hostelType === 'Girls Hostel'} onChange={hostelDetailsUpdateHandler}/>
+                                        Girls
+                                        <input style={{marginLeft:'15px', width: '14px', height: '14px' }} type="checkbox" name="hostelType" value={"Boys Hostel"} checked={hostelDetails.hostelType === 'Boys Hostel'} onChange={hostelDetailsUpdateHandler}/>
+                                        Boys
                                     </div>
 
 
                                     <div>wifi Available.<label style={{color:'red'}}>*</label></div>
                                     <div className={profilePageCss.facilitiesDivs}>
-                                        <label>Yes</label>
-                                        <input style={{ width: '5%', height: '5%' }} type="checkbox" name="wifi" value={"Yes"} checked={hostelDetails.wifi === "Yes"} onChange={hostelDetailsUpdateHandler}/>
-                                        <label style={{marginLeft:'3%'}}>No</label>
-                                        <input style={{ width: '5%', height: '5%' }} type="checkbox" name="wifi" value={"No"} checked={hostelDetails.wifi === "No"} onChange={hostelDetailsUpdateHandler}/>
+                                        <input style={{ width: '14px', height: '14px' }} type="checkbox" name="wifi" value={"Yes"} checked={hostelDetails.wifi === "Yes"} onChange={hostelDetailsUpdateHandler}/>
+                                        Yes
+                                        <input style={{ marginLeft:'15px',width: '14px', height: '14px' }} type="checkbox" name="wifi" value={"No"} checked={hostelDetails.wifi === "No"} onChange={hostelDetailsUpdateHandler}/>
+                                        No
                                     </div>
 
                                     <div>laundry Available.<label style={{color:'red'}}>*</label></div>
                                     <div className={profilePageCss.facilitiesDivs}>
-                                        <label>Yes</label>
-                                        <input style={{ width: '5%', height: '5%' }} type="checkbox" name="laundry" value={"Yes"} checked={hostelDetails.laundry === "Yes"} onChange={hostelDetailsUpdateHandler}/>
-                                        <label style={{marginLeft:'3%'}}>No</label>
-                                        <input style={{ width: '5%', height: '5%' }} type="checkbox" name="laundry" value={"No"} checked={hostelDetails.laundry === "No"} onChange={hostelDetailsUpdateHandler}/>
-                                    </div><br/>
+                                        <input style={{ width: '14px', height: '14px' }} type="checkbox" name="laundry" value={"Yes"} checked={hostelDetails.laundry === "Yes"} onChange={hostelDetailsUpdateHandler}/>
+                                        Yes
+                                        <input style={{ marginLeft:'15px',width: '14px', height: '14px' }} type="checkbox" name="laundry" value={"No"} checked={hostelDetails.laundry === "No"} onChange={hostelDetailsUpdateHandler}/>
+                                        No
+                                    </div>
 
                                     <div>HotWater Available.<label style={{color:'red'}}>*</label></div>
                                     <div className={profilePageCss.facilitiesDivs}>
-                                        <label>Yes</label>
-                                        <input style={{ width: '5%', height: '5%' }} type="checkbox" name="hotWater" value={"Yes"} checked={hostelDetails.hotWater === "Yes"} onChange={hostelDetailsUpdateHandler}/>
-                                        <label style={{marginLeft:'3%'}}>No</label>
-                                        <input style={{ width: '5%', height: '5%' }} type="checkbox" name="hotWater" value={"No"} checked={hostelDetails.hotWater === "No"} onChange={hostelDetailsUpdateHandler}/>
+                                        <input style={{ width: '14px', height: '14px' }} type="checkbox" name="hotWater" value={"Yes"} checked={hostelDetails.hotWater === "Yes"} onChange={hostelDetailsUpdateHandler}/>
+                                        Yes
+                                        <input style={{ marginLeft:'15px',width: '14px', height: '14px' }} type="checkbox" name="hotWater" value={"No"} checked={hostelDetails.hotWater === "No"} onChange={hostelDetailsUpdateHandler}/>
+                                        No
                                     </div>
 
                                     

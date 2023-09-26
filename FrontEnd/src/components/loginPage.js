@@ -114,14 +114,14 @@ const Login = () => {
                         {credentialsErr &&<div className={loginPageCss.error}>Invalid Credentails Please check the <br/>Mobile Number and password.</div>}
                         
                         <div style={{marginTop:'3%'}} >Mobile Number</div>
-                        <input type="text" name="mobileNumber" value={mobileNumber} onChange={updateHandler} />
+                        <input style={{width:'95%',height:'33px'}} type="text" name="mobileNumber" value={mobileNumber} onChange={updateHandler} />
                         
                         <div className={loginPageCss.passwordDiv}>
                             <span>Password</span>
                             <a style={{textDecoration:'none',color: '#9b122d', cursor: 'pointer'}} onClick={()=>{navigate('/forgotPassword')}}>Forgot Password?</a>
                         </div>
 
-                        <input type="password" name="password" value={password} onChange={updateHandler}/><br/>
+                        <input style={{width:'95%',height:'33px'}} type="password" name="password" value={password} onChange={updateHandler}/><br/>
                         <button className={loginPageCss.loginBut}   disabled={loading}>{loading ? <Oval color="black" height={30} width={30}/>:<span>Login</span>}</button>
                         
                         <div style={{marginLeft:'8%'}}>---------------  New User?  ---------------</div>

@@ -2,7 +2,7 @@ import { useNavigate } from "react-router-dom";
 import { useState } from "react";
 import axios from "axios";
 import { Oval } from 'react-loader-spinner';
-import   {AiFillPicture} from "react-icons/ai";
+import   {CiImageOn} from "react-icons/ci";
 
 import {apiUrl} from './url.js'
 
@@ -160,22 +160,28 @@ const Signup = () => {
                         : 
                             <form onSubmit={userDeatilsSubmitAndOtpGenHandler} autoComplete="of"> 
                                 <h1>New User Signup.</h1>
-                                <div>{showSignupError && <div className={signupPageCss.error}>{signupError}</div>}</div>
+                                {showSignupError && <div className={signupPageCss.error}>{signupError}</div>}
                         
                                 <div>Owner Name</div>
-                                <input type="text" name="ownerName" value={ownerName} onChange={userDetailsUpdateHandler}/><br/><br/>
+                                <input  type="text" name="ownerName" value={ownerName} onChange={userDetailsUpdateHandler}/>
+
                                 <div>MobileNumber</div>
-                                <input type="text" name="mobileNumber" value={mobileNumber} onChange={userDetailsUpdateHandler}/><br/><br/>
+                                <input type="text" name="mobileNumber" value={mobileNumber} onChange={userDetailsUpdateHandler}/>
+
                                 <div>Password</div>
-                                <input type="password" name="password" value={password} onChange={userDetailsUpdateHandler}/><br/><br/>
+                                <input type="password" name="password" value={password} onChange={userDetailsUpdateHandler}/>
+
                                 <div>ConfirmPassword</div>
-                                <input type="password" name="confirmPassword" value={confirmPassword} onChange={userDetailsUpdateHandler}/><br/><br/>
+                                <input type="password" name="confirmPassword" value={confirmPassword} onChange={userDetailsUpdateHandler}/>
+
                                 <input  id="imgInput" style={{display:'none'}} type='file' accept="image/*" name='ownerImage' onChange={userDetailsUpdateHandler}/>
-                                <label for="imgInput"  className={signupPageCss.label}><AiFillPicture/>&nbsp;&nbsp;&nbsp;{ownerImage.name || "Choose Owner Photo"}</label>
+                                <label for="imgInput"  className={signupPageCss.label}><CiImageOn/>&nbsp;&nbsp;&nbsp;{ownerImage.name || "Choose Owner Photo"}</label>
+
                                 <button className={signupPageCss.submitBut} disabled={loading}>{loading?<Oval color="black" height={30} width={30}/>:<span>Submit</span>}</button>     
                                 
                                 <button className={signupPageCss.homeBut} onClick={()=>navigate('/')}>Home</button>
                             </form>
+                            
                         }
                     </div>
                 }

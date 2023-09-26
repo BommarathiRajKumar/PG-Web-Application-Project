@@ -28,12 +28,16 @@ body {
     top: 0;
     left: 0;
     background-color:#317773;
-    height: 100%;
+    height: 94%;
     width: 50%;
 
     display: flex;
     flex-direction: column;
     align-items: center;
+
+    
+    border-top-right-radius:20px;
+  border-bottom-right-radius: 20px;
 }
 
 @media screen and (min-width: 1024px) {
@@ -60,32 +64,31 @@ body {
 }
 
 footer{
-    background-color:#317773;
+    background-color:#36454f;
     height:6%;
     width:100%;
 
     display: flex;
     justify-content: center;
-    justify-items: center;
+    align-items: center;
 
 }
 
 .profilePicContainer{
-    position: absolute;
-    bottom: 3%;
-    display:flex;
-    justify-content:center;
-    justify-items:center;
-    background-color:#317773;
-    width:35px;
-    height:35px;
+    background-color:#36454f;
+    width:30px;
+    height:30px;
     border-radius:50px;
     cursor: pointer;
 
-    box-shadow: 0px 0px 5px rgba(0, 0, 0, 0.3);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    box-shadow: 1px 2px 5px rgba(147, 146, 146, 0.9);
 }
 .profilePicContainer:hover{
-    box-shadow: 0px 0px 5px rgba(0, 0, 0, 1);
+    box-shadow: 1px 2px 3px rgba(0, 0, 0, 1);
 }
 
 .profilePhoto{
@@ -146,11 +149,11 @@ footer{
 }
 
 .secShareDiv{
-    margin-left: 2%;
-    margin-top: 1%;
+    margin-left: 10px;
     display: flex;
+    flex-direction: column;
     justify-content: flex-start;;
-    align-items: center;
+    
 }
 
 .facilitiesDivs{
@@ -188,7 +191,7 @@ footer{
 
 .label{
     height: 35px;
-    width: 100%;
+    width: 50%;
     border-radius: 8px;
     background-color: rgb(177, 216, 216);
 

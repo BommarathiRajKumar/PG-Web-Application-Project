@@ -1,1 +1,1 @@
-export const apiUrl="https://www.bestpgs.in/BackEnd/";
+export const apiUrl="http://localhost:8080/BackEnd/";

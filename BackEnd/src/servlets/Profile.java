@@ -128,8 +128,9 @@ public class Profile extends HttpServlet{
 			                    	singleHostelDetails.put("cityName", resultSet.getString("cityName"));
 			                    	singleHostelDetails.put("areaName", resultSet.getString("areaName"));
 			                    	singleHostelDetails.put("landMark", resultSet.getString("landMark"));
-			                    	
-			                        hostelsDetails.put(++i+"",singleHostelDetails);   
+			                    	i++;
+			                        hostelsDetails.put(resultSet.getInt("hostelID")+"",singleHostelDetails);
+			                        
 			                    }
 			                    
 			                   query="SELECT COUNT(*) FROM (SELECT '' FROM hostelsDetails WHERE mobileNumber=? ORDER BY hostelID DESC LIMIT 5 OFFSET ? ) AS subquery";
@@ -167,6 +168,7 @@ public class Profile extends HttpServlet{
 		                                + "threeShareRoomsAvailable,fourShareApplicable, fourShareCost, fourShareRoomsAvailable, fiveShareApplicable, fiveShareCost, "
 		                                + "fiveShareRoomsAvailable, wifi, laundry, hotWater,imageOne, imageTwo, imageThree, stateName, cityName, areaName, landMark) "
 		                                + "values(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
+
 		                        pStmt = con.prepareStatement(query);
 		                        
 		                        pStmt.setString(1,req.getParameter("mobileNumber"));
@@ -200,6 +202,7 @@ public class Profile extends HttpServlet{
 		                        pStmt.setString(29, req.getParameter("landMark"));
 		                        
 		                        pStmt.executeUpdate();
+							
 								
 		                        res.setStatus(HttpServletResponse.SC_OK);
 		                    }else if(state.equals("updateHostelDetails")){

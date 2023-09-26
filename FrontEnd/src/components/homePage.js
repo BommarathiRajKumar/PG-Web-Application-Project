@@ -1,4 +1,4 @@
-import React,{useEffect, useState} from "react";
+import React,{useEffect, useState, useRef} from "react";
 import {useNavigate} from 'react-router-dom';
 import axios from "axios";
 import { Oval } from 'react-loader-spinner';
@@ -16,13 +16,30 @@ import {AiFillCaretRight} from "react-icons/ai";
 
 
 
+import {FiPlus} from "react-icons/fi";
+import {FiX} from "react-icons/fi";
+import {FiUser} from "react-icons/fi";
+import {FiSearch} from "react-icons/fi";
+
+
+
+
+
 const Home = () =>{
     const navigate = useNavigate();
-
-    const [loading, setLoading] = useState();
-    const [loginDisplay, setLoginDisplay] = useState(false);
+    
     
     const [totalHostelsDetailsHomePage, setTotalHostelsDetailsHomePage] = useState();
+    const [totalHostelsDetailsHomePageUserSearch, setTotalHostelsDetailsHomePageUserSearch] = useState();
+
+
+
+
+
+    const [loading, setLoading] = useState(false);
+    const[userLoading,setUserLoading]=useState(false);
+    const[userSearchLoading,setUserSearchLoading]=useState(false)
+    const [loginDisplay, setLoginDisplay] = useState(false);
     
 
 
@@ -37,7 +54,6 @@ const Home = () =>{
 
 
     const[offSet,setOffSet]=useState(0);
-    const[page,setPage]=useState(1);
     const[count,setCount]=useState();
 
     
@@ -56,22 +72,37 @@ const Home = () =>{
         HandlerToLoadHostels();
     }, []);
 
-    const HandlerToLoadHostels=(direction)=>{
-        setLoading(true);
+    const HandlerToLoadHostels=(event)=>{
+        if(event==="user"){
+            setUserLoading(true)
+            setOffSet(offSet+5)
+        }else{
+            setLoading(true);
+            setOffSet(offSet+5)
+        }
         setServerError(false);
         setConnectionRefuseError(false);
 
-        let updated=offSet;
-        if(direction==='right'){
-            updated=offSet+5;
-        }else if(direction==='left'){
-            updated=offSet-5;
-        }
-
-        axios.post(apiUrl+"home?state=one&offSet="+updated)
+        axios.post(apiUrl+"home?state=one&offSet="+offSet)
             .then(res => {
                 if (res.status === 200) {
-                    setTotalHostelsDetailsHomePage(res.data);
+                    /*Object.keys(res.data).forEach((key) => {
+                        setTotalHostelsDetailsHomePage((prevHostelDetails) => ({
+                          ...prevHostelDetails,
+                          [key]: res.data[key],
+                        }));
+                    });*/
+
+                    setTotalHostelsDetailsHomePage(prevHostelDetails => {
+                        const updatedHostelDetails = { ...prevHostelDetails };
+                        Object.keys(res.data).forEach(key => {
+                          if (!(key in updatedHostelDetails)) {
+                            updatedHostelDetails[key] = res.data[key];
+                          }
+                        });
+                        return updatedHostelDetails;
+                    });
+
                     setCount(res.data.count)
                 } else if(res.status ===204){
                     setCount(0)
@@ -89,7 +120,11 @@ const Home = () =>{
                 }
             })
             .finally(() => {
-                setLoading(false);
+                if(event==="user"){
+                    setUserLoading(false)
+                }else{
+                    setLoading(false);
+                }
             }
         );
     }
@@ -105,6 +140,7 @@ const Home = () =>{
         setShowHostelTypeList(!showHostelTypeList)
         setFormErr(false);
         setOffSetUserSearch(0);
+        setTotalHostelsDetailsHomePageUserSearch({});
     }
 
 
@@ -136,6 +172,7 @@ const Home = () =>{
         }
 
         setOffSetUserSearch(0);
+        setTotalHostelsDetailsHomePageUserSearch({});
 
     };
 
@@ -146,6 +183,7 @@ const Home = () =>{
         setUserSelectedPrice(price);
         setFormErr(false);
         setOffSetUserSearch(0);
+        setTotalHostelsDetailsHomePageUserSearch({});
     }
 
 
@@ -156,16 +194,20 @@ const Home = () =>{
     const [stateNames, setStateNames] = useState('');
     const [userSelectedStateName, setUserSelectedStateName] = useState(null);
     const [showStatesList, setShowStatesList] = useState(false);
+    const[state,setState]=useState(false)
     const handleStateSelect = (stateName)=>{
         setUserSelectedStateName(stateName)
         setShowStatesList(false)
         setFormErr(false);
+        setState(true)
 
         setOffSetUserSearch(0);
+        setTotalHostelsDetailsHomePageUserSearch({});
     }
     const stateInputChangeHandler = (event) => {
         setStateNamesLoading(true)
         setUserSelectedStateName(event.target.value)
+
         setShowStatesList(true)
         setShowCitysList(false)
         setShowAreasList(false)
@@ -212,11 +254,14 @@ const Home = () =>{
     const [cityNames, setCityNames] = useState('');
     const [userSelectedCityName, setUserSelectedCityName] = useState(null);
     const [showCitysList, setShowCitysList] = useState(false);
+    const[city,setCity]=useState(false)
     const handleCitySelect = (cityName)=>{
         setUserSelectedCityName(cityName)
         setShowCitysList(false)
         setFormErr(false);
+        setCity(true)
         setOffSetUserSearch(0);
+        setTotalHostelsDetailsHomePageUserSearch({});
     }
     const cityInputChangeHandler = (event) => {
         setCityNamesLoading(true);
@@ -225,40 +270,46 @@ const Home = () =>{
         setShowCitysList(true)
         setShowAreasList(false)
 
+        setFormErr(false)
+
         setConnectionRefuseError(false);
         setServerError(false);
         const letters = event.target.value;
         
-
-        if (letters) {
-            axios.post(apiUrl+"filterWord?type=cityName&stateName="+userSelectedStateName+"&word="+letters)
-                .then(res => {
-                    if (res.status === 200) {
-                        setCityNames(res.data.namesFromBackEnd);
-                        
-                    } else {
-                        alert("Please do refresh and try after some time.");
-                    }
-                })
-                .catch(err => {
-                    if (err.response) {
-                        if (err.response.status === 404) {
-                            setCityNames(noResultJson)
-                        }else if(err.response.status === 500) {
-                            setServerError(true);
+        if(state){
+            if (letters) {
+                axios.post(apiUrl+"filterWord?type=cityName&stateName="+userSelectedStateName+"&word="+letters)
+                    .then(res => {
+                        if (res.status === 200) {
+                            setCityNames(res.data.namesFromBackEnd);
+                            
+                        } else {
+                            alert("Please do refresh and try after some time.");
                         }
-                    } else {
-                        setConnectionRefuseError(true);
+                    })
+                    .catch(err => {
+                        if (err.response) {
+                            if (err.response.status === 404) {
+                                setCityNames(noResultJson)
+                            }else if(err.response.status === 500) {
+                                setServerError(true);
+                            }
+                        } else {
+                            setConnectionRefuseError(true);
+                        }
+                    })
+                    .finally(() => {
+                        setCityNamesLoading(false);
                     }
-                })
-                .finally(() => {
-                    setCityNamesLoading(false);
-                }
-            );
+                );
+            }else{
+                setCityNames(noResultJson)
+                setShowCitysList(false)
+            }
         }else{
-            setCityNames(noResultJson)
-            setShowCitysList(false)
-
+            setShowCitysList(false);
+            setErrToPrint("First select state name.");
+            setFormErr(true);
         }
     }
 
@@ -273,6 +324,7 @@ const Home = () =>{
         setShowAreasList(false)
         setFormErr(false);
         setOffSetUserSearch(0);
+        setTotalHostelsDetailsHomePageUserSearch({});
     }
     const areaInputChangeHandler = (event) => {
         setAreaNamesLoading(true);
@@ -280,45 +332,54 @@ const Home = () =>{
         setShowStatesList(false)
         setShowCitysList(false)
         setShowAreasList(true)
+        setFormErr(false);
 
         setConnectionRefuseError(false);
         setServerError(false);
         const letters = event.target.value;
 
-        if (letters) {
-            axios.post(apiUrl+"filterWord?type=areaName&stateName="+userSelectedStateName+"&cityName="+userSelectedCityName+"&word="+letters)
-                .then(res => {
-                    if (res.status === 200) {
-                        setAreaNames(res.data.namesFromBackEnd);
-                    } else {
-                        alert("Please do refresh and try after some time.");
-                    }
-                })
-                .catch(err => {
-                    if (err.response) {
-                        if (err.response.status === 404) {
-                            setAreaNames(noResultJson);
-                        }else if(err.response.status === 500) {
-                            setServerError(true);
-                        }
-                    } else {
-                        setConnectionRefuseError(true);
-                    }
-                })
-                .finally(() => {
-                    setAreaNamesLoading(false);
-                }
-            );
-        }else{
-            setAreaNames(noResultJson);
-            setShowAreasList(false);
+        console.log(userSelectedStateName)
 
+        if(state && city){
+            if (letters) {
+                axios.post(apiUrl+"filterWord?type=areaName&stateName="+userSelectedStateName+"&cityName="+userSelectedCityName+"&word="+letters)
+                    .then(res => {
+                        if (res.status === 200) {
+                            setAreaNames(res.data.namesFromBackEnd);
+                        } else {
+                            alert("Please do refresh and try after some time.");
+                        }
+                    })
+                    .catch(err => {
+                        if (err.response) {
+                            if (err.response.status === 404) {
+                                setAreaNames(noResultJson);
+                            }else if(err.response.status === 500) {
+                                setServerError(true);
+                            }
+                        } else {
+                            setConnectionRefuseError(true);
+                        }
+                    })
+                    .finally(() => {
+                        setAreaNamesLoading(false);
+                    }
+                );
+            }else{
+                setAreaNames(noResultJson);
+                setShowAreasList(false);
+
+            }
+        }else{
+            setShowAreasList(false)
+            setErrToPrint("First select state & city name.");
+            setFormErr(true);
         }
     }
 
 
-
-    const HandlerSearch = (direction) => {
+const[noDataFound,setNoDataFond]=useState()
+    const HandlerSearch = (e) => {
         setShowStatesList(false)
         setShowCitysList(false)
         setShowAreasList(false)
@@ -344,6 +405,10 @@ const Home = () =>{
             setFormErr(true); 
         }else{
 
+            setNoDataFond(false)
+
+            setShowFilters(false)
+
             const formData = new FormData();
             formData.append('state','userSearch');
             formData.append("hostelType", userSelectedHostelType)
@@ -355,12 +420,14 @@ const Home = () =>{
 
             setUserSearchActivated(true)
 
-            let updated=offSetUserSearch;
+            
 
-            if(direction==='right'){
-                updated=offSetUserSearch+5;
-            }else if(direction==='left'){
-                updated=offSetUserSearch-5;
+            if(e==='user'){
+                setOffSetUserSearch(offSetUserSearch+5);
+                setUserSearchLoading(true)
+            }else{
+                setOffSetUserSearch(offSetUserSearch+5);
+                setLoading(true)
             }
 
 
@@ -371,14 +438,28 @@ const Home = () =>{
             setConnectionRefuseError(false);
             setServerError(false);
 
-            axios.post(apiUrl+"home?offSet="+updated, formData)
+            axios.post(apiUrl+"home?offSet="+offSetUserSearch, formData)
                 .then(res => {
                     if (res.status === 200) {
-                        setTotalHostelsDetailsHomePage(res.data);
+                        /*Object.keys(res.data).forEach((key) => {
+                            setTotalHostelsDetailsHomePageUserSearch((prevHostelDetails) => ({
+                              ...prevHostelDetails,
+                              [key]: res.data[key],
+                            }));
+                        });*/
+
+                        setTotalHostelsDetailsHomePageUserSearch(prevHostelDetails => {
+                            const updatedHostelDetails = { ...prevHostelDetails };
+                            Object.keys(res.data).forEach(key => {
+                              if (!(key in updatedHostelDetails)) {
+                                updatedHostelDetails[key] = res.data[key];
+                              }
+                            });
+                            return updatedHostelDetails;
+                        });
                         setCountUserSearch(res.data.count)
                     } else if(res.status ===204){
-                        setCountUserSearch(0)
-                        
+                        setNoDataFond(true);
                     }else{
                         alert("Please do refresh and try after some time.");
                     }
@@ -393,7 +474,11 @@ const Home = () =>{
                     }
                 })
                 .finally(() => {
-                    setLoading(false);
+                    if(e==='user'){
+                        setUserSearchLoading(false)
+                    }else{
+                        setLoading(false)
+                    }
                 }
             )
         }
@@ -426,215 +511,238 @@ const Home = () =>{
         setShowStatesList(false)
         setShowCitysList(false)
         setShowAreasList(false)
-
         setUserSearchActivated(false)
-
         HandlerToLoadHostels();
-
+        setNoDataFond(false);
         setOffSetUserSearch(0);
+        setTotalHostelsDetailsHomePageUserSearch({});
+        setShowFilters(false)
     }
 
+    const containerRef = useRef(null);
+    const[firstHeight, setFirstHeight]=useState();
+
+    useEffect(() => {
+        if (containerRef.current) {
+          setFirstHeight(document.getElementById('your-container-id').scrollHeight);
+        }
+    },[]);
+ 
+    useEffect(() => {
+        if (containerRef.current) {
+          const container = document.getElementById('your-container-id');
+          const scrollPosition = container.scrollHeight-firstHeight*4;
+          
+          container.scrollTo({
+            top: scrollPosition,
+            behavior: 'smooth', 
+          });
+        }
+    }, [totalHostelsDetailsHomePage,totalHostelsDetailsHomePageUserSearch]);
+
+
+
+const [reachedBottom, setReachedBottom] = useState(false);
+
+  const handleScroll = () => {
+    const container = containerRef.current;
+    if (container.scrollTop + container.clientHeight+10 >= container.scrollHeight && count>0 || countUserSearch>0) {
+      if (!reachedBottom) {
+        if(userSearchActivated){
+            HandlerSearch('user')
+        }else{
+            HandlerToLoadHostels('user')
+        }
+        setReachedBottom(true); 
+      }
+    } else {
+      setReachedBottom(false);
+    }
+  };
+
+  const[show,setShow]=useState(false);
+  const[showFilters,setShowFilters]=useState(false);
 
     return(
 
         <div className={homePageCss.mainDiv}>
             <div className={homePageCss.mainContainer}>
-                <header style={{backgroundColor: '#317773', height: `${headerHeight}%`, width: '100%',overflow:'auto'}}>
-                    <table style={{position:'relative',width:'100%',height:'100%'}}>
-                        <thead>
-                            <tr>
-                                <th style={{textAlign: 'left',color:'black'}}>Use Filters to find desired hostel.</th>
-                                <th style={{textAlign: 'right'}}><button className={homePageCss.pgAndSearchButton} onClick={() => setLoginDisplay(true)}>PG owner</button></th>
-                            </tr>
-                        </thead>
 
-                        <tbody >
-                            <tr>
-                                <td  style={{width:'65%'}}>
-                                    <div style={{cursor: 'pointer',border: '1px solid black',display: 'flex',justifyContent: 'space-between'}}onClick={Handler_setShowHostelTypeList}>
-                                        <div>Hostel Type: {userSelectedHostelType || 'Not Selected'}</div>
-                                        <div>{showHostelTypeList ? '▲' : '▼'}</div>
-                                    </div>
-                                    {showHostelTypeList&&
-                                        <ul style={{padding: '0 15px'}}>
-                                            <li onClick={() => handleHostelTypeSelect('Girls Hostel')} style={{marginBottom:'3px', cursor: 'pointer', background: userSelectedHostelType === 'Girls Hostel' ? 'grey' : 'none' }}>
-                                                Girls Hostel.
-                                            </li>
-                                            <li onClick={() => handleHostelTypeSelect('Boys Hostel')} style={{ cursor: 'pointer', background: userSelectedHostelType === 'Boys Hostel' ? 'grey' : 'none' }}>
-                                                Boys Hostel.
-                                            </li>
-                                        </ul>
-                                    }  
-                                </td>
-                                {showStatesList || showCitysList || showAreasList ?
-                                    <td rowspan="7" className={homePageCss.scaListShowTd}> 
-                                        {showStatesList && 
-                                            <div style={{ height: '100%', overflow: 'auto' }}>
-                                                {stateNamesLoading ? 
-                                                    <div style={{height:'100%',width:'100%', display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
-                                                        <Oval color="#00BFFF" height={35} width={35} />
-                                                    </div>
-                                                : 
-                                                    <ul>
-                                                        <label style={{fontSize:'small', color: '#800000', position: 'relative', left: '-20px' }}>Select State Name:</label><br/><br/>
-                                                        {Object.keys(stateNames).map((key) => (
-                                                            <li className={homePageCss.scaListShowLi} key={stateNames[key]} onClick={() =>stateNames[key]!=="No Result"&&handleStateSelect(stateNames[key])} >
-                                                                {stateNames[key]}
-                                                            </li>
-                                                        ))}
-                                                    </ul>
-                                                }
-                                            </div>
-                                        }
-                                        {showCitysList && 
-                                            <div style={{ height: '100%', overflow: 'auto' }}>
-                                                {cityNamesLoading ? 
-                                                    <div style={{height:'100%',width:'100%', display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
-                                                        <Oval color="#00BFFF" height={35} width={35} />
-                                                    </div>
-                                                : 
-                                                    <ul>
-                                                        <label style={{fontSize:'small', color: '#800000', position: 'relative', left: '-20px' }}>Select City Name:</label><br/><br/>
-                                                        {Object.keys(cityNames).map((key) => (
-                                                            <li className={homePageCss.scaListShowLi} key={cityNames[key]} onClick={() => cityNames[key]!=="No Result"&&handleCitySelect(cityNames[key])}>
-                                                                {cityNames[key]}
-                                                            </li>
-                                                        ))}
-                                                    </ul>
-                                                }
-                                            </div>
-                                        }
-                                        {showAreasList && 
-                                            <div style={{ height: '100%', overflow: 'auto' }}>
-                                                {areaNamesLoading ? 
-                                                    <div style={{height:'100%',width:'100%', display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
-                                                        <Oval color="#00BFFF" height={35} width={35} />
-                                                    </div>
-                                                : 
-                                                    <ul>
-                                                        <label style={{fontSize:'small', color: '#800000', position: 'relative', left: '-20px' }}>Select Area Name:</label><br/><br/>
-                                                        {Object.keys(areaNames).map((key) => (
-                                                            <li className={homePageCss.scaListShowLi} key={areaNames[key]} onClick={() =>areaNames[key]!=="No Result"&&handleAreaSelect(areaNames[key])}>
-                                                                {areaNames[key]}
-                                                            </li>
-                                                        ))}
-                                                    </ul>
-                                                }
-                                            </div>
-                                        }
-                                    </td>
-                                :
-                                    null
-                                }
-                            </tr>
+                {showFilters&&
+                    <header className={homePageCss.headerDiv}>
+                        <h2 style={{display:'flex',justifyContent:'center',alignItems:'center',marginBottom:'-10px'}}>Filters</h2>
 
-                        {!showHostelTypeList && 
-                            <tr>
-                                <td>
-                                        <div>
-                                            <div style={{marginTop:'2px',cursor: 'pointer',border: '1px solid black',display: 'flex',justifyContent: 'space-between'}}onClick={Handler_setShowRoomsList}>
-                                                <div>Room Type: {userSelectedRoomType || 'Not Selected'}</div>
-                                                <div>{showRoomsList ? '▲' : '▼'}</div>
-                                            </div>
-                                            {showRoomsList&&
-                                                <ul style={{padding: '0 15px'}}>
-                                                    <li onClick={() => HandlerSetUserSelectedRoomType('oneShare')} style={{marginBottom:'3px', cursor: 'pointer', background: userSelectedRoomType === 'oneShare' ? 'grey' : 'none' }}>
-                                                        oneShare
-                                                    </li>
-                                                    <li onClick={() => HandlerSetUserSelectedRoomType('twoShare')} style={{marginBottom:'3px', cursor: 'pointer', background: userSelectedRoomType === 'twoShare' ? 'grey' : 'none' }}>
-                                                        twoShare
-                                                    </li>
-                                                    <li onClick={() => HandlerSetUserSelectedRoomType('threeShare')} style={{marginBottom:'3px', cursor: 'pointer', background: userSelectedRoomType === 'threeShare' ? 'grey' : 'none' }}>
-                                                        threeShare
-                                                    </li>
-                                                    <li onClick={() => HandlerSetUserSelectedRoomType('fourShare')} style={{marginBottom:'3px', cursor: 'pointer', background: userSelectedRoomType === 'fourShare' ? 'grey' : 'none' }}>
-                                                        fourShare
-                                                    </li>
-                                                    <li onClick={() => HandlerSetUserSelectedRoomType('fiveShare')} style={{cursor: 'pointer', background: userSelectedRoomType === 'fiveShare' ? 'grey' : 'none' }}>
-                                                        fiveShare
-                                                    </li>
-                                                </ul>
-                                            }
-                                        </div>
-                                    
-                                </td>
-                            </tr>
-                        }
-
+                        <h3 style={{display:'flex',justifyContent:'center',alignItems:'center'}}>Find your desired hostels.</h3>
                         
-                        {!showHostelTypeList && !showRoomsList&&
-                            <tr>
-                                <td>
-                                        <div>Enter &#8377;/month:
-                                            <input className={homePageCss.ammountIn}  value={userSelectedPrice} placeholder={'Rs.'} type="text" onChange={(e)=>HandlerSetUserSelectedPrice(e.target.value)} />
-                                        </div>
-                                    
-                                </td>
-                            </tr>
-                        }
+                        <div style={{marginLeft:'8px'}}>
+                            <div style={{marginBottom:'10px'}}>
+                                <label>Hostel Type:</label>
+                                <div style={{marginLeft:'13px',display:'flex',justifyContent:'flex-start'}}>
+                                    <input
+                                        type='checkbox'
+                                        style={{height: '14px', width: '14px',cursor:'pointer'}}
+                                        checked={userSelectedHostelType === "Boys Hostel"}
+                                        onClick={() => handleHostelTypeSelect('Boys Hostel')}
+                                    />
+                                    Girls
+                                </div>
+                                <div style={{marginLeft:'10px',display:'flex',justifyContent:'flex-start'}}>
+                                    <input
+                                        type='checkbox'
+                                        style={{marginLeft:'6px',height: '14px', width: '14px' ,cursor:'pointer'}}
+                                        checked={userSelectedHostelType === "Girls Hostel"}
+                                        onClick={() => handleHostelTypeSelect('Girls Hostel')}
+                                    />
+                                    Boys
+                                </div>
+                            </div>
 
+                            <div style={{marginBottom:'10px'}}>
+                                <label>Room Type:</label>
+                            
+                                <table style={{display:'flex',flexDirection:'column',marginLeft:'10px'}}>
+                                    <tr>
+                                        <td>
+                                            <input
+                                                type='checkbox'
+                                                style={{height: '14px', width: '14px' ,cursor:'pointer'}}
+                                                checked={userSelectedRoomType === "oneShare"}
+                                                onClick={() => HandlerSetUserSelectedRoomType('oneShare')}
+                                            />
+                                        </td>
+                                        <td>
+                                            1-share
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>
+                                            <input
+                                                type='checkbox'
+                                                style={{ height: '14px', width: '14px' ,cursor:'pointer'}}
+                                                checked={userSelectedRoomType === "twoShare"}
+                                                onClick={() => HandlerSetUserSelectedRoomType('twoShare')}
+                                            />
+                                        </td>
+                                        <td>
+                                            2-share
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>
+                                            <input
+                                                type='checkbox'
+                                                style={{ height: '14px', width: '14px' ,cursor:'pointer'}}
+                                                checked={userSelectedRoomType === "threeShare"}
+                                                onClick={() => HandlerSetUserSelectedRoomType('threeShare')}
+                                            />
+                                        </td>
+                                        <td>
+                                            3-share
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>
+                                            <input
+                                                type='checkbox'
+                                                style={{ height: '14px', width: '14px' ,cursor:'pointer'}}
+                                                checked={userSelectedRoomType === "fourShare"}
+                                                onClick={() => HandlerSetUserSelectedRoomType('fourShare')}
+                                            />
+                                        </td>
+                                        <td>
+                                            4-share
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>
+                                            <input
+                                                type='checkbox'
+                                                style={{ height: '14px', width: '14px' ,cursor:'pointer'}}
+                                                checked={userSelectedRoomType === "fiveShare"}
+                                                onClick={() => HandlerSetUserSelectedRoomType('fiveShare')}
+                                            />   
+                                        </td>
+                                        <td>
+                                            5-share
+                                        </td>
+                                    </tr>
+                                </table>
+                            
+                            </div>
 
-                        {!showHostelTypeList && !showRoomsList&& headerHeight===23 &&
-                            <tr>
-                                <td>
-                                    <div style={{color:'darkblue',cursor:'pointer'}} onClick={setMoreFiltersHeights}>More filters</div>
-                                </td>
-                            </tr>
-                        }
+                            <div style={{marginBottom:'10px'}}>
+                                <div style={{display:'flex',flexDirection:'column'}}>
+                                    {userSelectedRoomType}  &#8377;/month:
+                                    <input className={homePageCss.filtersIn}  value={userSelectedPrice} placeholder={'Rs.'} type="text" onChange={(e)=>HandlerSetUserSelectedPrice(e.target.value)} />
+                                </div>
+                            </div>
 
-                        {!showHostelTypeList && !showRoomsList&& headerHeight===35 &&
-                            <tr>
-                                <td>
-                                    
-                                        <div>
-                                            <label>State Name:</label>
-                                            <input className={homePageCss.filtersIn} value={userSelectedStateName} placeholder={'Not Selected'} type="text" onClick={stateInputChangeHandler} onChange={stateInputChangeHandler} />
-                                        </div>
-                                    
-                                </td>
-                            </tr>
-                        }
+                            <div style={{marginBottom:'10px',display:'flex',flexDirection:'column'}}>
+                                <label>State Name:</label>
+                                <input className={homePageCss.filtersIn} value={userSelectedStateName} placeholder={'Not Selected'} type="text" onClick={()=>{setShowCitysList(false);setShowAreasList(false)}} onChange={stateInputChangeHandler} />
+                                {showStatesList&&
+                                    <div className={homePageCss.scaListShowTd}>
+                                        <label style={{fontSize:'small', color: '#800000',marginLeft:'10px'}}>Select State Name:</label>
+                                        <ul >
+                                            {Object.keys(stateNames).map((key) => (
+                                                <li className={homePageCss.scaListShowLi} key={stateNames[key]} onClick={() =>stateNames[key]!=="No Result" && handleStateSelect(stateNames[key])} >
+                                                    {stateNames[key]}
+                                                </li>
+                                            ))}
+                                        </ul>
+                                    </div>
+                                }
+                            </div>
 
-                        {!showHostelTypeList && !showRoomsList&& headerHeight===35 &&
-                            <tr>
-                                <td>
+                            <div style={{marginBottom:'10px',display:'flex',flexDirection:'column'}}>
+                                <label>City Name: </label>
+                                <input className={homePageCss.filtersIn} value={userSelectedCityName} placeholder={'Not Selected'} type="text" onClick={()=>{setShowStatesList(false);setShowAreasList(false)}} onChange={cityInputChangeHandler} />
+                            
+                                {showCitysList&&
+                                    <div className={homePageCss.scaListShowTd}>
+                                        <label style={{fontSize:'small', color: '#800000',marginLeft:'10px'}}>Select City Name:</label>
+                                        <ul >
+                                            {Object.keys(cityNames).map((key) => (
+                                                <li className={homePageCss.scaListShowLi} key={cityNames[key]} onClick={() =>cityNames[key]!=="No Result" && handleCitySelect(cityNames[key])} >
+                                                    {cityNames[key]}
+                                                </li>
+                                            ))}
+                                        </ul>
+                                    </div>
+                                }
+                            </div>
+
+                            <div style={{marginBottom:'10px',display:'flex',flexDirection:'column'}}>
+                                <label>Area Name:</label>
+                                <input className={homePageCss.filtersIn} value={userSelectedAreaName} placeholder={'Not Selected'} type="text" onClick={()=>{setShowStatesList(false);setShowCitysList(false)}} onChange={areaInputChangeHandler} />
+                            
+                                {showAreasList&&
+                                    <div className={homePageCss.scaListShowTd}>
+                                        <label style={{fontSize:'small', color: '#800000',marginLeft:'10px'}}>Select Area Name:</label>
+                                        <ul >
+                                            {Object.keys(areaNames).map((key) => (
+                                                <li className={homePageCss.scaListShowLi} key={areaNames[key]} onClick={() =>areaNames[key]!=="No Result" && handleAreaSelect(areaNames[key])} >
+                                                    {areaNames[key]}
+                                                </li>
+                                            ))}
+                                        </ul>
+                                    </div>
+                                }
+                            </div>
+
+                            <div style={{marginTop:'20px',display:'flex',flexDirection:'column',justifyContent:'center',alignItems:'center'}}>
+                                {formErr && <div  style={{color: 'maroon',marginBottom:'10px'}}>{errToPrint}</div>}
+                                <div style={{width:'100%',display:'flex',flexDirection:'column',justifyContent:'flex-start'}}>
+                                    <button style={{marginBottom:'15px'}} className={homePageCss.pgAndSearchButton} onClick={HandlerSearch}>Search</button>
+                                    <button  className={homePageCss.cancelButton} onClick={searchCancelHandler}>Cancel</button>
+                                </div>
+                            </div>
+                        </div>
+                    </header>
+                }
                 
-                                    <div >
-                                        <label>City Name:</label>
-                                        <input style={{marginLeft:'6px'}} className={homePageCss.filtersIn} value={userSelectedCityName} placeholder={'Not Selected'} type="text" onClick={cityInputChangeHandler} onChange={cityInputChangeHandler} />
-                                    </div>
-                                    
-                                </td>
-                            </tr>
-                        }
 
-                        {!showHostelTypeList && !showRoomsList&& headerHeight===35 &&
-                            <tr>
-                                <td>
-                                    <div>
-                                        <label>Area Name:</label>
-                                        <input className={homePageCss.filtersIn} value={userSelectedAreaName} placeholder={'Not Selected'} type="text" onClick={areaInputChangeHandler} onChange={areaInputChangeHandler} />
-                                    </div>
-                                </td>
-                            </tr>
-                        }
-
-                        {!showHostelTypeList && !showRoomsList&& headerHeight===35 &&
-                            <tr>
-                                <td>
-                                    <button style={{marginBottom:'10px'}} className={homePageCss.pgAndSearchButton} onClick={HandlerSearch}>Search</button>
-                                    <button style={{marginBottom:'10px',marginLeft:'18px'}} className={homePageCss.cancelButton} onClick={searchCancelHandler}>Cancel</button>
-                                    {formErr && !showStatesList && !showCitysList && !showAreasList && <div  style={{color: '#8B0000'}}>{errToPrint}</div>}
-                                </td>
-                            </tr>
-                        }
-
-                        </tbody>
-                    </table>
-    
-                </header>
-
-                <div style={{backgroundColor:'white',height: `${contentDivHeight}%`,width:'100%' }}>
+                <div style={{backgroundColor:'white',height:'94%',width:'100%' }}>
                     {loginDisplay &&
                         <div  className={homePageCss.loginDisplay} style={{ position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%, -50%)', zIndex: 999 }}>
                             <label className={homePageCss.cross} onClick={()=>setLoginDisplay(!loginDisplay)}>X</label>
@@ -649,7 +757,7 @@ const Home = () =>{
                         </div>
                     :
                         <div style={{width:'100%',height:'100%'}}>
-                            {loading?
+                            {loading && !userLoading && !userSearchLoading ?
                                 <div style={{width:'100%',height:'100%',display:'flex',flexDirection:'column',justifyContent:'center',alignItems:'center'}}>
                                     <Oval color="#00BFFF" height={60} width={60} />
                                     <div style={{marginTop:'8%'}}>
@@ -658,45 +766,49 @@ const Home = () =>{
                                 </div>
                             :
                                 <div style={{width:'100%',height:'100%'}}>
-                                    {countUserSearch===0 && pageUserSearch===1 &&  userSearchActivated?
+                                    {noDataFound ?
                                         <div style={{height:'100%',display:'flex',flexDirection:'column', justifyContent:'center',alignItems:'center'}}>
                                             <img src={noDataImage} alt="noDataImg"/>
                                             <div style={{color:'#B2BEB5',marginBottom:'8px'}}>Please do Change Filters Options.</div>
                                             <div style={{color:'#B2BEB5',marginBottom:'8px'}}>Or</div>
-                                            <div onClick={searchCancelHandler} style={{color:'blue',cursor:'pointer',marginBottom:'8px'}}>Click Here</div>
-                                            <label style={{color:'#B2BEB5'}}>to go home Page.</label>
+                                            <div onClick={searchCancelHandler} style={{color:'blue',cursor:'pointer',marginBottom:'8px'}}>'Click Here'<label style={{color:'#B2BEB5',marginLeft:'8px'}}>to go home Page.</label></div>
                                         </div>
                                     :
-                                        <div style={{backgroundColor: ' #E2D1F9',width:'100%',height:'100%',overflow:'auto',display:'flex', justifyContent:'center',alignItems:'center'}}>
+                                        <div id="your-container-id" ref={containerRef} onScroll={()=>{userSearchActivated?countUserSearch>0&& handleScroll():count>0 && handleScroll()}} style={{scrollBehavior:'smooth',backgroundColor: ' #E2D1F9',width:'100%',height:'100%',overflow:'auto',display:'flex', justifyContent:'center',alignItems:'center'}}>
                                             {totalHostelsDetailsHomePage&&
-                                                <div style={{width:'88%', height:'100%'}}>
+                                                <div  style={{width:'88%', height:'100%'}}>
                                                     {userSearchActivated?
-                                                        
-                                                        <div style={{marginTop:'20px',marginBottom:'20px'}}>
-                                                            <label onClick={searchCancelHandler} style={{color:'blue',cursor:'pointer'}}>'Click Here'</label> <label style={{marginLeft:'10px'}}>To Exit from Search Result.</label>
-                                                            <h2 style={{marginTop:'10px'}}>Search Result:</h2>
-                                                        </div>
-                                                    
-                                                    :
-                                                        <h2 style={{marginTop:'20px',marginBottom:'20px',}}>Hostels:</h2>
-                                                    }
-                                                        {Object.keys(totalHostelsDetailsHomePage).map((key) => (
-                                                           key!=="count" && <DisplayHostelsHomePage style={{marginBottom:'40px'}} key={key} data={totalHostelsDetailsHomePage[key]}/> 
-                                                        ))}
-
-                                                        {userSearchActivated?
-                                                             <div  style={{width: '100%', display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
-                                                                {pageUserSearch>1&&<AiFillCaretLeft size={20} style={{cursor:'pointer'}} onClick={() => { setOffSetUserSearch(offSet-5); setPageUserSearch(page-1);HandlerSearch('left')}}/>}
-                                                                <div style={{marginLeft:'8px',marginRight:'8px'}}>Page: {pageUserSearch}</div>
-                                                                {countUserSearch>0&&<AiFillCaretRight size={20} style={{cursor:'pointer'}}  onClick={() => { setOffSetUserSearch(offSet+5); setPageUserSearch(page+1);HandlerSearch('right')} }/>}
+                                                        <div>
+                                                            <div style={{marginTop:'20px',marginBottom:'20px'}}>
+                                                                <label onClick={searchCancelHandler} style={{color:'blue',cursor:'pointer'}}>'Click Here'</label> <label style={{marginLeft:'10px'}}>To Exit from Search Result.</label>
+                                                                <h2 style={{marginTop:'10px'}}>Search Result:</h2>
                                                             </div>
-                                                        :
+                                                            {Object.keys(totalHostelsDetailsHomePageUserSearch)
+                                                                .filter(key => key !== "count")
+                                                                .sort((a, b) => b.localeCompare(a))
+                                                                .map((key) => (
+                                                                    <DisplayHostelsHomePage style={{ marginBottom: '40px' }} key={key} data={totalHostelsDetailsHomePageUserSearch[key]}/>
+                                                                )
+                                                            )}
                                                             <div  style={{width: '100%', display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
-                                                                {page>1&&<AiFillCaretLeft size={20} style={{cursor:'pointer'}} onClick={() => { setOffSet(offSet-5); setPage(page - 1);HandlerToLoadHostels('left')}}/>}
-                                                                <div style={{marginLeft:'8px',marginRight:'8px'}}>Page: {page}</div>
-                                                                {count>0&&<AiFillCaretRight size={20} style={{cursor:'pointer'}}  onClick={() => { setOffSet(offSet+5); setPage(page + 1);HandlerToLoadHostels('right')} }/>}
+                                                                {countUserSearch>0?<button onClick={() => {HandlerSearch('user')}} disabled={userSearchLoading}>{userSearchLoading?<Oval width={15} height={15}/>:"load more"}</button>:<label>Results End</label>}
                                                             </div>
-                                                        }
+                                                        </div>
+                                                    :
+                                                        <div>
+                                                            <h2 style={{marginTop:'20px',marginBottom:'20px',}}>Hostels:</h2>
+                                                            {Object.keys(totalHostelsDetailsHomePage)
+                                                                .filter(key => key !== "count")
+                                                                .sort((a, b) => b.localeCompare(a))
+                                                                .map((key) => (
+                                                                    <DisplayHostelsHomePage style={{ marginBottom: '40px' }} key={key} data={totalHostelsDetailsHomePage[key]}/>
+                                                                )
+                                                            )}
+                                                            <div  style={{width: '100%', display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+                                                                {count>0?<Oval color="black" width={25} height={25}/>:<label>Results End</label>}
+                                                            </div>
+                                                        </div>
+                                                    }
                                                     <br/>
                                                 </div>
                                             }
@@ -706,7 +818,27 @@ const Home = () =>{
                             }
                         </div>
                     }
-                </div> 
+                </div>
+                <footer className={homePageCss.footer}>
+                    {show&&
+                        <div className={homePageCss.profilePicContainer}>
+                            <FiUser size={15} onClick={()=>{setLoginDisplay(!loginDisplay)}}/>
+                        </div>
+                    }
+
+                    <div style={{marginLeft:'30px',marginRight:'30px'}} className={homePageCss.profilePicContainer}>
+                        {show?
+                            <FiX size={15} onClick={()=>{setShow(!show)}}/>
+                        :
+                            <FiPlus size={15} onClick={()=>{setShow(!show)}} />
+                        }
+                    </div>
+                    {show&&
+                        <div className={homePageCss.profilePicContainer}>
+                            <FiSearch size={15} onClick={()=>{setShowFilters(!showFilters)}} />
+                        </div>   
+                    }            
+                </footer> 
             </div>
         </div>
 

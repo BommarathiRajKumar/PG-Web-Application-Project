@@ -17,6 +17,7 @@ body {
 }
 
 .mainContainer{
+    position: relative;
     background-color: #317773;
     background-color: black;
     height: 100%;
@@ -31,29 +32,21 @@ body {
     
 }
 
-.ammountIn{
-    text-align: center;
-    font-family:'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
-    background-color: rgb(177, 216, 216);
-    border-radius: 8px;
-    width:30%;
-    height:18px
-}
 
 .filtersIn{
     text-align: center;
     font-family:'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
     background-color: rgb(177, 216, 216);
     border-radius: 8px;
-    width:56.8%;
-    height:18px
+    width:72%;
+    height:23px
 }
 
 .pgAndSearchButton{
     background-color: #25d366;
     border-radius: 8px;
     height: 30px;
-    width: 100px;
+    width: 73%;
     cursor: pointer;
 
 
@@ -63,11 +56,11 @@ body {
     background-color: green;
     box-shadow: 4px 4px 4px black;
 }
-.cancelButton{
-    background-color: #317773;
+.cancelButton{ 
+    background-color:#317773;
     border-radius: 8px;
     height: 30px;
-    width: 100px;
+    width: 73%;
     cursor: pointer;
 }
 .cancelButton:hover{
@@ -78,8 +71,21 @@ body {
 
 .scaListShowTd{
     border-radius: 8px;
-    background-color: #317773;
+    background-color: #36454f;
     box-shadow: rgba(0, 0, 0, 0.6) 0px 5px 15px;
+    height:100px;
+
+
+    
+    overflow:auto;
+    display:flex;
+    flex-direction:column;
+    justify-content:center;
+    align-items:center;
+    margin-bottom: 10px;
+    margin-right: 10px;
+    margin-top: 10px;
+
 }
 .scaListShowTd:hover{
     box-shadow: rgba(0, 0, 0, 3) 0px 5px 15px;
@@ -150,13 +156,57 @@ body {
 
 
 .error{
-    color: #9b122d;
+    color: #E32636;
 }
 
+.headerDiv{
+    background-color:#317773;
+    position: absolute;
+    top: 0;
+    left: 0;
+    
+    height: 94%;
+    width: 50%;
+
+    display: flex;
+    flex-direction: column;
+    justify-content:flex-start;
+
+    overflow: auto;
 
 
+    border-top-right-radius:20px;
+  border-bottom-right-radius: 20px;
+}
 
+.footer{
+    background-color:#36454f;
+    height:6%;
+    width:100%;
 
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.profilePicContainer{
+
+    background-color:#36454f;
+    width:30px;
+    height:30px;
+    border-radius:50px;
+    cursor: pointer;
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    box-shadow: 1px 2px 5px rgba(147, 146, 146, 0.9);
+    
+}
+.profilePicContainer:hover{
+    box-shadow: 1px 2px 3px rgba(0, 0, 0, 1);
+}
 
 
 
