@@ -3,6 +3,7 @@ body {
     padding: 0;
     height: 100vh;
     width: 100vw;
+    background-color:#36454f;
 }
 
 .mainDiv {
@@ -29,22 +30,25 @@ body {
 
 
 
-input{
+.input{
     font-family:'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
     background-color: rgb(177, 216, 216);
     border-radius: 8px;
-    width:100%;
-    height:33px;
+    width:65%;
+    height:30px;
 
     margin-bottom: 20px;
     margin-top: 3px;
+    border: 1px solid black;
 }
 
 .label{
-    width:100%;
-    height:35px;
+    width:66.5%;
+    height:33px;
     border-radius: 8px;
     background-color: rgb(177, 216, 216);
+
+    border: 1px solid black;
    
     display: flex;
     justify-content: center;
@@ -59,72 +63,60 @@ div{
     background-color: #25d366;
     border-radius: 8px;
     
-    width:100%;
-    height:45px;
+    width:67%;
+    height:43px;
     cursor: pointer;
     font-size: 15px;
 margin-top: 30px;
-margin-bottom: 30px;
+margin-bottom: 50px;
 
     display: flex;
     align-items: center;
     justify-content: center;
+border: 1.5px solid black;
+box-shadow: rgba(0, 0, 0, 3) 5px 5px 5px;
     
 }
 
 .submitBut:hover{
     font-weight: bolder;
     background-color: green;
-    box-shadow: 4px 4px 4px black;
+    box-shadow: 1px 2px 3px rgba(0, 0, 0, 1);
 
 }
 
 
-.homeBut{
-    background-color:#317773;
-    font-size: 15px;
-   
-    width:100%;
-    height:45px;
-    border-radius: 8px;
-    cursor: pointer;
-
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
-
-.homeBut:hover{
-    font-weight: bolder;
-    background-color: #1c6c68;
-    box-shadow: 3px 3px 3px black;
-
-}
 
 .buttonValidate{
     background-color: #25d366;
     border-radius: 8px;
-    height: 35px;
-    width: 285px;
+    
+    width:67%;
+    height:43px;
     cursor: pointer;
     font-weight: bold;
 
-    margin-top: 5%;
+    margin-top: 10px;
+    margin-bottom: 50px;
 
     display: flex;
     align-items: center;
     justify-content: center;
+    
+box-shadow: rgba(0, 0, 0, 3) 5px 5px 5px;
 }
 .buttonValidate:hover{
     font-weight: bolder;
     background-color: green;
-    box-shadow: 4px 4px 4px black;
+    box-shadow: 1px 2px 3px rgba(0, 0, 0, 1);
 }
 
 .error{
     color: #9b122d;
-    width: 95%;
+    width: 65%;
     height: 33px;
+
+    margin-bottom: 10px;
 }
 
 
@@ -132,27 +124,29 @@ margin-bottom: 30px;
     .mainContainer{
         width:30%;
     }
-    input{
-        height: 22px;
-        width: 230px;
-    }
-    .label{
-        height: 30px;
-        width: 235px;
-        font-size: 13px;
-    }
+}
 
-    div{
-        font-size: 13px;
-    }
+.form{
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    background-color:#317773;
+    overflow: auto;
 
-    .submitBut{
-        height: 35px;
-        width: 235px;
-    }
-    .homeBut{
-        height: 35px;
-        width: 235px;
-    }
+
+    width: 100%;
+    height: 100%;
     
+    border-radius:8px;
+    box-shadow: rgba(0, 0, 0, 0.6) 0px 5px 15px;
+    
+
+
+    
+    
+}
+
+.form:hover{
+    box-shadow: rgba(0, 0, 0, 3) 0px 5px 15px;
 }

@@ -3,6 +3,7 @@ body {
     padding: 0;
     height: 100vh;
     width: 100vw;
+    
 }
 
 .mainDiv {
@@ -135,7 +136,7 @@ span{
 
 
 
-.editAndDeleteButton{
+.editButton{
     position: relative;
     left: 22px;
     background-color: rgb(17, 16, 16);
@@ -144,13 +145,50 @@ span{
     width: 100px;
     cursor: pointer;
     color: white;
-    box-shadow: rgba(0, 0, 0, 3) 5px 5px 15px;
-
+    font-size: 10px;
     margin-bottom:7px;
 
     display: flex;
     justify-content: center;
     justify-items: center;
+    
+    box-shadow: rgba(0, 0, 0, 3) 5px 5px 5px;
+    border: 1.5px solid black;
+}
+
+.editButton:hover{
+    background-color: black;
+    box-shadow: 1px 2px 3px rgba(0, 0, 0, 1);
+    font-size: 13px;
+
+}
+
+.deleteButton{
+    background-color: #ef5350;
+    position: relative;
+    left: 22px;
+    background-color: rgb(17, 16, 16);
+    border-radius: 8px;
+    height: 30px;
+    width: 100px;
+    cursor: pointer;
+    color: white;
+    font-size: 10px;
+
+    margin-bottom:7px;
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    
+    box-shadow: rgba(0, 0, 0, 3) 5px 5px 5px;
+    border: 1.5px solid black;
+}
+
+.deleteButton:hover{
+    box-shadow: 1px 2px 3px rgba(0, 0, 0, 1);
+    font-size: 13px;
+
 }
 
 
@@ -162,33 +200,57 @@ span{
     border-style: none;
     height: 17px;
     width: 93%;
+    border-radius: 5px;
 
     border-style:dotted;
 }
 
 .updateAndCancelButton{
-    background-color: rgb(17, 16, 16);
+    background-color: rgb(44, 43, 43);
     border-radius: 8px;
     height: 30px;
     width: 100px;
     cursor: pointer;
     color: white;
-    box-shadow: rgba(0, 0, 0, 3) 5px 5px 15px;
-
+    box-shadow: rgba(0, 0, 0, 3) 5px 5px 5px;
+    border-radius: 1.5px solid black;
+font-size: 10px;
     margin-Top: 5px;
+
+}
+.updateAndCancelButton:hover{
+    background-color: black;
+    font-weight: bold;
+    box-shadow: 1px 2px 3px rgba(0, 0, 0, 1);
+    font-size: 13px;
 
 }
 
 .imgInputContainer{
     border-radius:8px;
-    width:90%;
+    width:86%;
     margin-top: 12px;
     margin-bottom: 12px;
     cursor: pointer;
     padding: 3px;
-    border: 1px solid black;
     display: flex;
     align-items: center;
     justify-content: space-between;
 
+}
+
+.label{
+    height: 33px;
+
+    border-radius: 8px;
+    background-color: rgb(177, 216, 216);
+
+    cursor: pointer;
+   border: 1px solid black;
+    font-size: 13px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    border-radius: 1px solid black;
 }

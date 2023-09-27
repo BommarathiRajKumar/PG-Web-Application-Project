@@ -3,6 +3,7 @@ body {
     padding: 0;
     height: 100vh;
     width: 100vw;
+    background-color:#36454f;
 }
 
 .mainDiv {
@@ -18,8 +19,7 @@ body {
 
 .mainContainer{
     position: relative;
-    background-color: #317773;
-    background-color: black;
+    background-color:#36454f;
     height: 100%;
     width: 100%;
 
@@ -39,7 +39,8 @@ body {
     background-color: rgb(177, 216, 216);
     border-radius: 8px;
     width:72%;
-    height:23px
+    height:23px;
+    border:1px solid black;
 }
 
 .pgAndSearchButton{
@@ -49,29 +50,42 @@ body {
     width: 73%;
     cursor: pointer;
 
+    font-weight: 200;
+    border: 1.5px solid black;
+
+    box-shadow: rgba(0, 0, 0, 3) 5px 5px 5px;
 
 }
 .pgAndSearchButton:hover{
     font-weight: bold;
     background-color: green;
-    box-shadow: 4px 4px 4px black;
+    box-shadow: rgba(0, 0, 0, 10) 5px 5px 15px;
 }
 .cancelButton{ 
-    background-color:#317773;
+    
+    background-color: rgb(17, 16, 16);
     border-radius: 8px;
     height: 30px;
     width: 73%;
     cursor: pointer;
+    font-weight: 200;
+    color: white;
+
+    margin-bottom: 5px;
+    border: 1.5px solid black;
+    
+    box-shadow: rgba(0, 0, 0, 3) 5px 5px 5px;
 }
 .cancelButton:hover{
+    background-color:  black;
     font-weight: bold;
-    box-shadow: 4px 4px 4px black;
+    box-shadow: rgba(0, 0, 0, 10) 5px 5px 15px;
 }
 
 
 .scaListShowTd{
     border-radius: 8px;
-    background-color: #36454f;
+    background-color: #317773;
     box-shadow: rgba(0, 0, 0, 0.6) 0px 5px 15px;
     height:100px;
 
@@ -128,9 +142,21 @@ body {
     right: 12px;
     top:9px;
     cursor: pointer;
+
+    width:20px;
+    height:20px;
+    border-radius:50px;
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    box-shadow: 1px 2px 5px rgba(0, 0, 0, 0.9);
 }
 .cross:hover{
-    font-size: 17px;
+    font-size: 20px;
+
+    box-shadow: 1px 2px 3px rgba(0, 0, 0, 1);
 }
 .loginAndSignupButton{
     background-color: rgb(17, 16, 16);
@@ -142,7 +168,7 @@ body {
     color: white;
 
     margin-bottom: 5px;
-
+border: 1.5px solid black;
     
     box-shadow: rgba(0, 0, 0, 3) 5px 5px 15px;
 

@@ -577,96 +577,80 @@ const [reachedBottom, setReachedBottom] = useState(false);
                         <div style={{marginLeft:'8px'}}>
                             <div style={{marginBottom:'10px'}}>
                                 <label>Hostel Type:</label>
-                                <div style={{marginLeft:'13px',display:'flex',justifyContent:'flex-start'}}>
-                                    <input
-                                        type='checkbox'
-                                        style={{height: '14px', width: '14px',cursor:'pointer'}}
-                                        checked={userSelectedHostelType === "Boys Hostel"}
-                                        onClick={() => handleHostelTypeSelect('Boys Hostel')}
-                                    />
-                                    Girls
-                                </div>
-                                <div style={{marginLeft:'10px',display:'flex',justifyContent:'flex-start'}}>
+                                <div style={{marginLeft:'8px',display:'flex',justifyContent:'flex-start'}}>
                                     <input
                                         type='checkbox'
                                         style={{marginLeft:'6px',height: '14px', width: '14px' ,cursor:'pointer'}}
                                         checked={userSelectedHostelType === "Girls Hostel"}
                                         onClick={() => handleHostelTypeSelect('Girls Hostel')}
                                     />
-                                    Boys
+                                    &nbsp;Girls
+                                </div>
+                                <div style={{marginLeft:'10px',display:'flex',justifyContent:'flex-start'}}>
+                                    <input
+                                        type='checkbox'
+                                        style={{height: '14px', width: '14px',cursor:'pointer'}}
+                                        checked={userSelectedHostelType === "Boys Hostel"}
+                                        onClick={() => handleHostelTypeSelect('Boys Hostel')}
+                                    />
+                                    &nbsp;Boys
                                 </div>
                             </div>
 
                             <div style={{marginBottom:'10px'}}>
                                 <label>Room Type:</label>
-                            
-                                <table style={{display:'flex',flexDirection:'column',marginLeft:'10px'}}>
-                                    <tr>
-                                        <td>
-                                            <input
-                                                type='checkbox'
-                                                style={{height: '14px', width: '14px' ,cursor:'pointer'}}
-                                                checked={userSelectedRoomType === "oneShare"}
-                                                onClick={() => HandlerSetUserSelectedRoomType('oneShare')}
-                                            />
-                                        </td>
-                                        <td>
-                                            1-share
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td>
-                                            <input
-                                                type='checkbox'
-                                                style={{ height: '14px', width: '14px' ,cursor:'pointer'}}
-                                                checked={userSelectedRoomType === "twoShare"}
-                                                onClick={() => HandlerSetUserSelectedRoomType('twoShare')}
-                                            />
-                                        </td>
-                                        <td>
-                                            2-share
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td>
-                                            <input
-                                                type='checkbox'
-                                                style={{ height: '14px', width: '14px' ,cursor:'pointer'}}
-                                                checked={userSelectedRoomType === "threeShare"}
-                                                onClick={() => HandlerSetUserSelectedRoomType('threeShare')}
-                                            />
-                                        </td>
-                                        <td>
-                                            3-share
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td>
-                                            <input
-                                                type='checkbox'
-                                                style={{ height: '14px', width: '14px' ,cursor:'pointer'}}
-                                                checked={userSelectedRoomType === "fourShare"}
-                                                onClick={() => HandlerSetUserSelectedRoomType('fourShare')}
-                                            />
-                                        </td>
-                                        <td>
-                                            4-share
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td>
-                                            <input
-                                                type='checkbox'
-                                                style={{ height: '14px', width: '14px' ,cursor:'pointer'}}
-                                                checked={userSelectedRoomType === "fiveShare"}
-                                                onClick={() => HandlerSetUserSelectedRoomType('fiveShare')}
-                                            />   
-                                        </td>
-                                        <td>
-                                            5-share
-                                        </td>
-                                    </tr>
-                                </table>
+                                <div style={{display:'flex',flexDirection:'column',justifyContent:'center',marginLeft:'10px'}}>
+
+                                            <label style={{display:'flex',justifyContent:'flex-start',alignItems:'center'}}>
+                                                <input
+                                                    type='checkbox'
+                                                    style={{height: '14px', width: '14px' ,cursor:'pointer'}}
+                                                    checked={userSelectedRoomType === "oneShare"}
+                                                    onClick={() => HandlerSetUserSelectedRoomType('oneShare')}
+                                                />
+                                                &nbsp;1-share
+                                            </label>
+
+                                            <label style={{display:'flex',justifyContent:'flex-start',alignItems:'center'}}>
+                                                <input
+                                                    type='checkbox'
+                                                    style={{ height: '14px', width: '14px' ,cursor:'pointer'}}
+                                                    checked={userSelectedRoomType === "twoShare"}
+                                                    onClick={() => HandlerSetUserSelectedRoomType('twoShare')}
+                                                />
+                                                &nbsp;2-share
+                                            </label>
+
+                                            <label style={{display:'flex',justifyContent:'flex-start',alignItems:'center'}}>
+                                                <input
+                                                    type='checkbox'
+                                                    style={{ height: '14px', width: '14px' ,cursor:'pointer'}}
+                                                    checked={userSelectedRoomType === "threeShare"}
+                                                    onClick={() => HandlerSetUserSelectedRoomType('threeShare')}
+                                                />
+                                                &nbsp;3-share
+                                            </label>
+
+                                            <label style={{display:'flex',justifyContent:'flex-start',alignItems:'center'}}>
+                                                <input
+                                                    type='checkbox'
+                                                    style={{ height: '14px', width: '14px' ,cursor:'pointer'}}
+                                                    checked={userSelectedRoomType === "fourShare"}
+                                                    onClick={() => HandlerSetUserSelectedRoomType('fourShare')}
+                                                />
+                                                &nbsp;4-share
+                                            </label>
+
+                                            <label style={{display:'flex',justifyContent:'flex-start',alignItems:'center'}}>
+                                                <input
+                                                    type='checkbox'
+                                                    style={{ height: '14px', width: '14px' ,cursor:'pointer'}}
+                                                    checked={userSelectedRoomType === "fiveShare"}
+                                                    onClick={() => HandlerSetUserSelectedRoomType('fiveShare')}
+                                                />
+                                                &nbsp;5-share
+                                            </label>
+                                    </div>
                             
                             </div>
 
@@ -748,7 +732,7 @@ const [reachedBottom, setReachedBottom] = useState(false);
                             <label className={homePageCss.cross} onClick={()=>setLoginDisplay(!loginDisplay)}>X</label>
                             
                             <button className={homePageCss.loginAndSignupButton} onClick={() => navigate('/login')}>Login</button>
-                            <button style={{marginTop:'8px'}} className={homePageCss.loginAndSignupButton} onClick={() => navigate('/signup')}>Signup</button>
+                            <button style={{marginTop:'12px'}} className={homePageCss.loginAndSignupButton} onClick={() => navigate('/signup')}>Signup</button>
                         </div>
                     } 
                     { serverError || connectionRefuseError ?

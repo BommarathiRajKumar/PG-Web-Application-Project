@@ -3,6 +3,8 @@ body {
     padding: 0;
     height: 100vh;
     width: 100vw;
+    
+    background-color:#36454f;
 }
 
 .mainDiv {
@@ -108,17 +110,22 @@ footer{
     width:50%;
     height:25px; 
     border-radius: 5px;
-    margin-top:10px;
     cursor: pointer;
     font-size: 10px;
-    box-shadow: 0px 0px 5px rgba(0, 0, 0, 0.5);
+    box-shadow: rgba(0, 0, 0, 3) 5px 5px 5px;
 
     text-align: center;
     vertical-align: middle;
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    border: 1.5px solid black;
 }
 .headerButtons:hover{
     background-color: green;
-    box-shadow: 0px 0px 5px rgba(0, 0, 0, 1);
+    box-shadow: 1px 2px 3px rgba(0, 0, 0, 1);
     font-size: 13px;
 
 }
@@ -176,7 +183,9 @@ footer{
     cursor: pointer;
     font-size: 12px;
     
-    box-shadow: 1px 1px 1px black;
+    box-shadow: rgba(0, 0, 0, 3) 5px 5px 5px;
+    border-radius: 8px;
+    border:1.5px solid black;
 
     display: flex;
     justify-content: center;
@@ -184,21 +193,53 @@ footer{
 }
 .formButtons:hover{
     background-color: green;
-    box-shadow: 3px 3px 3px black;
+    box-shadow: 1px 2px 3px rgba(0, 0, 0, 1);
     font-size: 13px;
+    font-weight: bold;
 
 }
 
+.profileCancelButton{ 
+    
+    background-color: rgb(17, 16, 16);
+    border-radius: 8px;
+    height: 30px;
+    width:30%;
+    cursor: pointer;
+    font-weight: 200;
+    color: white;
+
+    margin-bottom: 5px;
+    border: 1.5px solid black;
+    
+    box-shadow: rgba(0, 0, 0, 3) 5px 5px 5px;
+}
+.profileCancelButton:hover{
+    background-color:  black;
+    font-weight: bold;
+    box-shadow: 1px 2px 3px rgba(0, 0, 0, 1);
+}
+
 .label{
-    height: 35px;
+    height: 30px;
     width: 50%;
     border-radius: 8px;
     background-color: rgb(177, 216, 216);
 
     cursor: pointer;
-   
+   border: 1px solid black;
     font-size: 13px;
     display: flex;
     justify-content: center;
     align-items: center;
+}
+
+
+.input{
+    font-family:'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
+    background-color: rgb(177, 216, 216);
+    border-radius: 8px;
+    width:55%;
+    height:30px;
+    border: 1px solid black;
 }

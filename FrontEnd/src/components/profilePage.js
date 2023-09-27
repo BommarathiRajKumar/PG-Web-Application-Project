@@ -12,8 +12,15 @@ import DisplayHostelsProfilePage from './displayHostelsProfilePage.js';
 
 
 import {AiOutlineUser} from "react-icons/ai";
-import {AiFillMobile} from "react-icons/ai";
+import {AiOutlineMobile} from "react-icons/ai";
 import {AiFillBackward} from "react-icons/ai";
+
+import {AiOutlineLogout} from "react-icons/ai";
+import {AiOutlineDelete} from "react-icons/ai";
+import {AiOutlinePlusCircle} from "react-icons/ai";
+
+
+
 
 
 
@@ -109,9 +116,16 @@ const[count,setCount]=useState();
 
     useEffect(()=>{
         if(localStorage.getItem("token") === null) {
-            logOut()
+            navigate('/')
         }
     },[]);
+    
+    const logOut = () => {
+        setUserData('')
+        setTotalHostelsDetailsProfilePage('')
+        localStorage.removeItem('token');
+        navigate('/login')
+    }
 
     useEffect(()=>{
         setServerErr(false);
@@ -473,11 +487,6 @@ const[count,setCount]=useState();
         }));
     }
 
-    const logOut = () => {
-        setUserData('')
-        localStorage.removeItem('token');
-        navigate('/login')
-    }
 
     const[showProfile,setShowProfile]=useState(false);
     const[mainHeight,setMainHeight]=useState(94);
@@ -652,18 +661,19 @@ const [reachedBottom, setReachedBottom] = useState(false);
                                             alt="profile"
                                         />
                                         <div style={{fontSize:'120%',marginBottom:'5px'}}>{userData.ownerName}</div>
-                                        <div style={{fontSize:'120%'}}><span><AiFillMobile/>{userData.mobileNumber}</span></div>
-                                        <button className={profilePageCss.headerButtons} onClick={()=>{setAddHostelControl(!addHostelControl);setShowFormErr(false)}}>Add Hostle</button>
-                                        <button className={profilePageCss.headerButtons} onClick={logOut}>Log Out</button>
+                                        <div style={{fontSize:'120%'}}><span><AiOutlineMobile/>{userData.mobileNumber}</span></div>
+                                        <button style={{marginTop:'25px',marginBottom:'16px'}} className={profilePageCss.headerButtons} onClick={()=>{setAddHostelControl(!addHostelControl);setShowFormErr(false)}}><label style={{display:'flex',justifyContent:'center',alignItems:'center'}}><AiOutlinePlusCircle/>&nbsp;Add Hostle</label></button>
+                                        <button className={profilePageCss.headerButtons} onClick={logOut}><AiOutlineLogout/>&nbsp;Log Out</button>
 
                                         {!otpGen?
-                                            <button style={{backgroundColor:'#ef5350',marginTop:'18px'}}className={profilePageCss.headerButtons} onClick={HandlerToGenOtpToDeleteAccount} disabled={deleteLoading}>{deleteLoading?<label style={{display:'flex',justifyContent:'center'}}><Oval width={16} height={16} color='black'/></label>:"Delete Account"}</button>
+                                            <button style={{backgroundColor:'#ef5350',marginTop:'30px'}}className={profilePageCss.headerButtons} onClick={HandlerToGenOtpToDeleteAccount} disabled={deleteLoading}>{deleteLoading?<Oval color={"black"} width={20} height={20}/>:<span style={{display:'flex',justifyContent:'center',alignItems:'center'}}><AiOutlineDelete /><label style={{cursor:'pointer',marginLeft:'6px'}}>Account</label></span>}</button>
+                                            
                                         :
                                             <div style={{height:'100px',marginTop:'50px',textAlign:'center'}}>
-                                                <label>Enter Otp recevied by your Mobile:</label>
+                                                <label>Enter 6-Digit OTP:</label>
                                                 {showOtpError && <div style={{color:'#9b122d'}}>Invalid Otp.</div>}
-                                                <input onChange={(e)=>{setOtp(e.target.value)}} placeholder='OTP' style={{width:'130px',textAlign:'center',marginTop:'10px'}}/>
-                                                <div>
+                                                <input onChange={(e)=>{setOtp(e.target.value)}} placeholder='OTP' style={{width:'68%',height:'25px', borderRadius:'8px',border:'1px solid black',backgroundColor:'rgb(177, 216, 216)',textAlign:'center',marginTop:'10px',marginBottom:'10px'}}/>
+                                                <div style={{display:'flex',justifyContent:'center',alignItems:'center'}}>
                                                     <button style={{ width: '60px' }} className={profilePageCss.headerButtons} onClick={()=>{HandlerToOtpValidateToDeleteAccount('cancel')}}>Cancel</button>
                                                     <button style={{width:'60px',backgroundColor:'#ef5350',marginLeft:'12px'}} onClick={()=>{HandlerToOtpValidateToDeleteAccount('submit')}} className={profilePageCss.headerButtons} disabled={submitLoading}>{submitLoading?<label style={{display:'flex',justifyContent:'center'}}><Oval width={16} height={16} color='black'/></label>:"Submit"}</button>
                                                 </div>
@@ -721,9 +731,9 @@ const [reachedBottom, setReachedBottom] = useState(false);
                             <form className={profilePageCss.addNewHostelForm}>
                                 <div style={{fontSize:'75%',height:'100%',width:'100%',marginLeft:'3%', marginTop:'4%'}}> 
                                     <div>Hostel Name.<label style={{color:'red'}}>*</label></div>
-                                    <input style={{width:'50%'}} type='text' name="hostelName" value={hostelDetails.hostelName} onChange={hostelDetailsUpdateHandler}/>
+                                    <input className={profilePageCss.input} type='text' name="hostelName" value={hostelDetails.hostelName} onChange={hostelDetailsUpdateHandler}/>
 
-                                    <div style={{marginBottom:'4%' ,marginTop:'30px'}}>
+                                    <div style={{marginBottom:'15px' ,marginTop:'30px'}}>
                                         <div className={profilePageCss.oneShareDiv}>
                                             <label>1-Share rooms:</label>
                                             <input type="checkbox" name="oneShareApplicable" onClick={hostelDetailsUpdateHandler} checked={hostelDetails.oneShareApplicable===true}  style={{ width: '5%', height: '5%',cursor:'pointer'}} />
@@ -733,7 +743,7 @@ const [reachedBottom, setReachedBottom] = useState(false);
                                         {hostelDetails.oneShareApplicable&&
                                             <div className={profilePageCss.secShareDiv}>
                                                 <label> &#8377;/month :
-                                                    <input style={{height:'25px',width:'20%',textAlign:'center'}} placeholder='RS.'  type='text' name="oneShareCost" value={hostelDetails.oneShareCost} onChange={hostelDetailsUpdateHandler}/>
+                                                    <input style={{height:'25px',width:'20%',textAlign:'center',borderRadius:'8px',border:'1px solid black', backgroundColor:'rgb(177, 216, 216)'}} placeholder='RS.'  type='text' name="oneShareCost" value={hostelDetails.oneShareCost} onChange={hostelDetailsUpdateHandler}/>
                                                 </label>
 
                                                 <div style={{display:'flex',justifyContent:'flex-start',alignItems:'center'}}>
@@ -761,7 +771,7 @@ const [reachedBottom, setReachedBottom] = useState(false);
                                         {hostelDetails.twoShareApplicable&&
                                             <div className={profilePageCss.secShareDiv}>
                                                 <label> &#8377;/month :
-                                                    <input style={{height:'25px',width:'20%',textAlign:'center'}} placeholder='RS.'  type='text' name="twoShareCost" value={hostelDetails.twoShareCost} onChange={hostelDetailsUpdateHandler}/>
+                                                    <input style={{height:'25px',width:'20%',textAlign:'center',borderRadius:'8px',border:'1px solid black', backgroundColor:'rgb(177, 216, 216)'}} placeholder='RS.'  type='text' name="twoShareCost" value={hostelDetails.twoShareCost} onChange={hostelDetailsUpdateHandler}/>
                                                 </label>
                                                 
                                                 <div style={{display:'flex',justifyContent:'flex-start',alignItems:'center'}}>
@@ -785,7 +795,7 @@ const [reachedBottom, setReachedBottom] = useState(false);
                                         {hostelDetails.threeShareApplicable&&
                                             <div className={profilePageCss.secShareDiv}>
                                                 <label> &#8377;/month :
-                                                    <input style={{height:'25px',width:'20%',textAlign:'center'}} placeholder='RS.'  type='text' name="threeShareCost" value={hostelDetails.threeShareCost} onChange={hostelDetailsUpdateHandler}/>
+                                                    <input style={{height:'25px',width:'20%',textAlign:'center',borderRadius:'8px',border:'1px solid black', backgroundColor:'rgb(177, 216, 216)'}} placeholder='RS.'  type='text' name="threeShareCost" value={hostelDetails.threeShareCost} onChange={hostelDetailsUpdateHandler}/>
                                                 </label>
                                                 <div style={{display:'flex',justifyContent:'flex-start',alignItems:'center'}}>
                                                     <label>Rooms Available:<label style={{color:'red'}}>*</label></label>
@@ -808,7 +818,7 @@ const [reachedBottom, setReachedBottom] = useState(false);
                                         {hostelDetails.fourShareApplicable&&
                                             <div className={profilePageCss.secShareDiv}>
                                                 <label> &#8377;/month :
-                                                    <input style={{height:'25px',width:'20%',textAlign:'center'}} placeholder='RS.'  type='text' name="fourShareCost" value={hostelDetails.fourShareCost} onChange={hostelDetailsUpdateHandler}/>
+                                                    <input style={{height:'25px',width:'20%',textAlign:'center',borderRadius:'8px',border:'1px solid black', backgroundColor:'rgb(177, 216, 216)'}} placeholder='RS.'  type='text' name="fourShareCost" value={hostelDetails.fourShareCost} onChange={hostelDetailsUpdateHandler}/>
                                                 </label>
                                                 <div style={{display:'flex',justifyContent:'flex-start',alignItems:'center'}}>
                                                     <label>Rooms Available:<label style={{color:'red'}}>*</label></label>
@@ -831,7 +841,7 @@ const [reachedBottom, setReachedBottom] = useState(false);
                                         {hostelDetails.fiveShareApplicable&&
                                             <div className={profilePageCss.secShareDiv}>
                                                 <label> &#8377;/month :
-                                                    <input style={{height:'25px',width:'20%',textAlign:'center'}} placeholder='RS.'  type='text' name="fiveShareCost" value={hostelDetails.fiveShareCost} onChange={hostelDetailsUpdateHandler}/>
+                                                    <input style={{height:'25px',width:'20%',textAlign:'center',borderRadius:'8px',border:'1px solid black', backgroundColor:'rgb(177, 216, 216)'}} placeholder='RS.'  type='text' name="fiveShareCost" value={hostelDetails.fiveShareCost} onChange={hostelDetailsUpdateHandler}/>
                                                 </label>
                                                 <div style={{display:'flex',justifyContent:'flex-start',alignItems:'center'}}>
                                                     <label>Rooms Available:<label style={{color:'red'}}>*</label></label>
@@ -846,7 +856,7 @@ const [reachedBottom, setReachedBottom] = useState(false);
 
                                     <div style={{marginTop:'30px',marginBottom:'5px'}}>Upload any 3 Rooms Images.<label style={{color:'red'}}>*</label></div>
 
-                                    <input  id="imageOne" name='imageOne' type='file' style={{display:'none'}}  accept="image/*" onChange={hostelDetailsUpdateHandler}/>
+                                    <input  id="imageOne" name='imageOne' type='file' style={{display:'none'}}   accept="image/*" onChange={hostelDetailsUpdateHandler}/>
                                     <label for="imageOne"  className={profilePageCss.label}><CiImageOn/>&nbsp;&nbsp;&nbsp;{hostelDetails.imageOne.name || "Choose Image One"}</label><br/>
 
                                     
@@ -860,13 +870,13 @@ const [reachedBottom, setReachedBottom] = useState(false);
 
                                     <div style={{marginTop:'30px',marginBottom:'5px'}}>Hostel Address:</div>
                                     <div>State Name.<label style={{color:'red'}}>*</label></div>
-                                    <input style={{marginBottom:'3%',width: '50%',}} type='text' name="stateName" value={hostelDetails.stateName} onChange={hostelDetailsUpdateHandler}/>
+                                    <input className={profilePageCss.input} style={{marginBottom:'3%',width: '50%',}} type='text' name="stateName" value={hostelDetails.stateName} onChange={hostelDetailsUpdateHandler}/>
                                     <div>City Name.<label style={{color:'red'}}>*</label></div>
-                                    <input style={{marginBottom:'3%',width: '50%'}} type='text' name="cityName" value={hostelDetails.cityName} onChange={hostelDetailsUpdateHandler}/>
+                                    <input className={profilePageCss.input} style={{marginBottom:'3%',width: '50%'}} type='text' name="cityName" value={hostelDetails.cityName} onChange={hostelDetailsUpdateHandler}/>
                                     <div>Area Name.<label style={{color:'red'}}>*</label></div>
-                                    <input style={{marginBottom:'3%',width: '50%'}} type='text' name="areaName" value={hostelDetails.areaName} onChange={hostelDetailsUpdateHandler}/>
+                                    <input className={profilePageCss.input} style={{marginBottom:'3%',width: '50%'}} type='text' name="areaName" value={hostelDetails.areaName} onChange={hostelDetailsUpdateHandler}/>
                                     <div>Land Mark.<label style={{color:'red'}}>*</label></div>
-                                    <textarea style={{width: '50%', height: '80px', overflow: 'auto',resize: 'none'}} type='text' name="landMark" value={hostelDetails.landMark} onChange={hostelDetailsUpdateHandler}/><br/><br/>
+                                    <textarea style={{width: '50%', height: '80px', overflow: 'auto',resize: 'none',borderRadius:'8px',backgroundColor:'rgb(177, 216, 216)',border:'1px solid black'}} type='text' name="landMark" value={hostelDetails.landMark} onChange={hostelDetailsUpdateHandler}/><br/><br/>
                                         
                                     <div style={{marginTop:'30px'}}>Hostel type.<label style={{color:'red'}}>*</label></div>
                                     <div className={profilePageCss.facilitiesDivs}>
@@ -908,7 +918,7 @@ const [reachedBottom, setReachedBottom] = useState(false);
 
                                     <div style={{display:'flex',flexDirection:'column',justifyContent:'center',alignItems:'center'}}>
                                         <button className={profilePageCss.formButtons} onClick={handlerToUploadNewHostel} disabled={hostelSubmitLoading}>{hostelSubmitLoading?<Oval color='black' width={20} height={20}/>:<span style={{height:'100%',display:'flex',justifyContent:'center',justifyItems:'center'}}>Add Hostel</span>}</button>
-                                        <button className={profilePageCss.formButtons} style={{marginTop:'15px', marginBottom:'30px'}} onClick={()=>setAddHostelControl(!addHostelControl)}><span style={{height:'100%',display:'flex',justifyContent:'center',justifyItems:'center'}}>Cancel</span></button>
+                                        <button className={profilePageCss.profileCancelButton} style={{marginTop:'15px', marginBottom:'30px'}} onClick={()=>setAddHostelControl(!addHostelControl)}><span style={{height:'100%',display:'flex',justifyContent:'center',justifyItems:'center'}}>Cancel</span></button>
                                     </div>
                                 </div>
                             </form>   

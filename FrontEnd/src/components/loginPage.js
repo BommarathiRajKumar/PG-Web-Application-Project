@@ -9,6 +9,9 @@ import loginPageCss from "../css/loginPage.module.css";
 
 import ServerError from "../components/serverErrorPage"
 import ConnectionRefuse from "../components/connectionRefusePage";
+import { AiFillLock } from "react-icons/ai";
+import { AiOutlineLogin } from "react-icons/ai";
+
 
 
 
@@ -108,28 +111,31 @@ const Login = () => {
                         {serverErr ? <ServerError/>:<ConnectionRefuse />}
                     </div>
                 :
-                    <form onSubmit={userCredentialsSubmitHandler} autoComplete="of">
-        
-                        <h3>Well Come Back To Best PG's.</h3>
-                        {credentialsErr &&<div className={loginPageCss.error}>Invalid Credentails Please check the <br/>Mobile Number and password.</div>}
+                <div style={{width:'80%'}}>
+                    <form className={loginPageCss.form} onSubmit={userCredentialsSubmitHandler} autoComplete="of">
+                        <h3 style={{marginTop:'50px',width:'65%'}}>Well Come Back To Best PG's.</h3>
+                        {credentialsErr &&<div className={loginPageCss.error}>Invalid Credentails.</div>}
                         
-                        <div style={{marginTop:'3%'}} >Mobile Number</div>
-                        <input style={{width:'95%',height:'33px'}} type="text" name="mobileNumber" value={mobileNumber} onChange={updateHandler} />
+                        <div style={{width:'65%'}}>Mobile Number</div>
+                        <input className={loginPageCss.input} type="text" name="mobileNumber" value={mobileNumber} onChange={updateHandler} />
                         
                         <div className={loginPageCss.passwordDiv}>
                             <span>Password</span>
-                            <a style={{textDecoration:'none',color: '#9b122d', cursor: 'pointer'}} onClick={()=>{navigate('/forgotPassword')}}>Forgot Password?</a>
+                            <a style={{textDecoration:'none',color: '#9b122d', cursor: 'pointer',display:'flex',justifyContent:'center',alignItems:'center'}} onClick={()=>{navigate('/forgotPassword')}}><AiFillLock style={{marginRight:'2px'}}/> Forgot ?</a>
                         </div>
 
-                        <input style={{width:'95%',height:'33px'}} type="password" name="password" value={password} onChange={updateHandler}/><br/>
-                        <button className={loginPageCss.loginBut}   disabled={loading}>{loading ? <Oval color="black" height={30} width={30}/>:<span>Login</span>}</button>
+                        <input className={loginPageCss.input} type="password" name="password" value={password} onChange={updateHandler}/><br/>
+                        <button className={loginPageCss.loginBut}   disabled={loading}>{loading ? <Oval color="black" height={30} width={30}/>:<span><AiOutlineLogin/>&nbsp;Login</span>}</button>
                         
-                        <div style={{marginLeft:'8%'}}>---------------  New User?  ---------------</div>
+                        <div style={{ width: '65%', borderBottom: '1px dotted', display: 'flex', justifyContent: 'center'}}>
+                            New User?
+                        </div>
+
                 
                         <button  className={loginPageCss.createActBut} disabled={loading} onClick={()=>navigate('/signup')}>Create an Account</button>
                         
-                        <button className={loginPageCss.homeBut} onClick={()=>navigate('/')}>Home</button>
                     </form>
+                    </div>
                 }
             </div>
         </div>

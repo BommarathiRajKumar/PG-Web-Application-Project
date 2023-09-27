@@ -436,8 +436,8 @@ const DisplayHostelsProfilePage=({data,style,edited, deleted})=>{
                         <AiOutlineMore size={'23px'} color={aioutlinemore?"red":"black"}  onClick={()=>{setAiOutlineMore(!aioutlinemore)}} style={{cursor:'pointer', position: 'absolute', top: 0, right: 0 }}/>
                         {aioutlinemore&&
                             <div style={{display:'flex',flexDirection:'column',justifyContent:'center',justifyContent:'center',borderRadius:'8px',backgroundColor:'#317773',boxShadow:'rgba(0, 0, 0, 0.6) 0px 5px 15px',height:'150px',width:'150px', position: 'absolute',top:'21px',right:'13px'}}>
-                                <button  className={displayHostelsProfilePage.editAndDeleteButton} onClick={()=>{setEditPost(!editPost)}}><span><AiFillEdit /><label style={{cursor:'pointer',marginLeft:'6px'}}>Edit Post</label></span></button>
-                                <button style={{marginTop:'6px',backgroundColor:'red'}}  className={displayHostelsProfilePage.editAndDeleteButton} onClick={HandlerToDeletePost} disabled={deleteLoading}>{deleteLoading?<Oval color={"black"} width={20} height={20}/>:<span><AiFillDelete /><label style={{cursor:'pointer',marginLeft:'6px'}}>Delete</label></span>}</button>
+                                <button  className={displayHostelsProfilePage.editButton} onClick={()=>{setEditPost(!editPost)}}><span><AiFillEdit /><label style={{cursor:'pointer',marginLeft:'6px'}}>Edit Post</label></span></button>
+                                <button style={{marginTop:'8px',backgroundColor:'#ef5350'}}  className={displayHostelsProfilePage.deleteButton} onClick={HandlerToDeletePost} disabled={deleteLoading}>{deleteLoading?<Oval color={"black"} width={20} height={20}/>:<span><AiFillDelete /><label style={{cursor:'pointer',marginLeft:'6px'}}>Delete</label></span>}</button>
                             </div>
                         }
                     </div>
@@ -541,19 +541,19 @@ const DisplayHostelsProfilePage=({data,style,edited, deleted})=>{
                         {currentImgNumber==1&&
                             <label style={{width:'100%'}}>
                                 <input  id="imageOne" name='imageOne' type='file' style={{display:'none'}}  accept="image/*" onChange={hostelDetailsUpdateHandler}/>
-                                <label for="imageOne"  className={profilePageCss.label}>1.&nbsp;<CiImageOn/>&nbsp;&nbsp;&nbsp;{hostelDetails.imageOne.name || <label for="imageOne" style={{color:'blue',cursor:'pointer'}}>Update Image?</label>}</label>
+                                <label for="imageOne"  className={displayHostelsProfilePage.label}>1.&nbsp;<CiImageOn/>&nbsp;&nbsp;&nbsp;{hostelDetails.imageOne.name || <label for="imageOne" style={{color:'blue',cursor:'pointer'}}>Update Image?</label>}</label>
                             </label>
                         }
                         {currentImgNumber==2&&
                             <label style={{width:'100%'}}>
                                 <input  id="imageTwo" name='imageTwo' type='file' style={{display:'none'}}  accept="image/*" onChange={hostelDetailsUpdateHandler}/>
-                                <label for="imageTwo"  className={profilePageCss.label}>2.&nbsp;<CiImageOn/>&nbsp;&nbsp;&nbsp;{hostelDetails.imageTwo.name ||  <label for="imageOne" style={{color:'blue',cursor:'pointer'}}>Update Image?</label>}</label>
+                                <label for="imageTwo"  className={displayHostelsProfilePage.label}>2.&nbsp;<CiImageOn/>&nbsp;&nbsp;&nbsp;{hostelDetails.imageTwo.name ||  <label for="imageOne" style={{color:'blue',cursor:'pointer'}}>Update Image?</label>}</label>
                             </label>
                         }
                         {currentImgNumber==3&&
                             <label style={{width:'100%'}}>
                                 <input  id="imageThree" name='imageThree' type='file' style={{display:'none'}}  accept="image/*" onChange={hostelDetailsUpdateHandler}/>
-                                <label for="imageThree"  className={profilePageCss.label}>3.&nbsp;<CiImageOn/>&nbsp;&nbsp;&nbsp;{hostelDetails.imageThree.name ||  <label for="imageOne" style={{color:'blue',cursor:'pointer'}}>Update Image?</label>}</label>
+                                <label for="imageThree"  className={displayHostelsProfilePage.label}>3.&nbsp;<CiImageOn/>&nbsp;&nbsp;&nbsp;{hostelDetails.imageThree.name ||  <label for="imageOne" style={{color:'blue',cursor:'pointer'}}>Update Image?</label>}</label>
                             </label>
                         }
                     </div>

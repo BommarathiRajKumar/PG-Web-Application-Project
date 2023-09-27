@@ -137,27 +137,27 @@ const ForgotPassword=()=>{
                         {serverErr ? <ServerError/> : <ConnectionRefuse/>}
                     </div>
                 :
-                    <form>
+                <div style={{width:'80%'}}>
+                    <form className={forgotPasswordPageCss.form}>
                         {showErr&&<div className={forgotPasswordPageCss.error}>{err}</div>}
-                        <div>Enter your Mobile Number:</div>
+                        <div style={{width:'65%',marginTop:'30px'}} >Enter your Mobile Number:</div>
                         
-                        <input name="mobileNumber" value={details.mobileNumber} className={forgotPasswordPageCss.mobInput} onChange={HandlerToUpdateDetails}/>
-                        <button className={forgotPasswordPageCss.validBut} onClick={sendOtpHandler} disabled={otpReqLoading || lock}>{otpReqLoading?<Oval color="black" height={20} width={20}/> :<span>Req OTP</span>}</button>
+                        <input  name="mobileNumber" value={details.mobileNumber} className={forgotPasswordPageCss.input} onChange={HandlerToUpdateDetails}/>
+                        <button style={{height:'30px'}} className={forgotPasswordPageCss.but} onClick={sendOtpHandler} disabled={otpReqLoading || lock}>{otpReqLoading?<Oval color="black" height={20} width={20}/> :<span>Req OTP</span>}</button>
                     
+                        <div style={{width:'65%'}}>Enter OTP:</div>
+                        <input name="otp" value={details.otp} className={forgotPasswordPageCss.input} style={{textAlign:'center'}} placeholder="OTP" onChange={HandlerToUpdateDetails}/>
 
-                            
-                        <div className={forgotPasswordPageCss.div}>Enter OTP:</div>
-                        <input name="otp" value={details.otp} className={forgotPasswordPageCss.Input} placeholder="OTP" onChange={HandlerToUpdateDetails}/>
-
-                        <div className={forgotPasswordPageCss.div}>New-Password</div>
-                        <input name="newPassword" value={details.newPassword} type="password" className={forgotPasswordPageCss.Input} onChange={HandlerToUpdateDetails}/>
+                        <div style={{width:'65%'}}>New-Password</div>
+                        <input name="newPassword" value={details.newPassword} type="password" className={forgotPasswordPageCss.input} onChange={HandlerToUpdateDetails}/>
 
                         
-                        <div className={forgotPasswordPageCss.div}>Confirm New-Password</div>
-                        <input name="confirmNewPassword" value={details.confirmNewPassword} type="password" className={forgotPasswordPageCss.Input} onChange={HandlerToUpdateDetails}/><br/>
+                        <div style={{width:'65%'}}>Confirm New-Password</div>
+                        <input name="confirmNewPassword" value={details.confirmNewPassword} type="password" className={forgotPasswordPageCss.input} onChange={HandlerToUpdateDetails}/>
 
-                        <button className={forgotPasswordPageCss.subBut} onClick={validateOtpAndUpdatePassword} disabled={validateLoading || !lock}>{validateLoading?<Oval color="black" height={30} width={30}/> :<span>Submit</span>}</button>
+                        <button style={{marginBottom:'50px'}} className={forgotPasswordPageCss.but} onClick={validateOtpAndUpdatePassword} disabled={validateLoading || !lock}>{validateLoading?<Oval color="black" height={30} width={30}/> :<span>Submit</span>}</button>
                     </form>
+                </div>
                 }
             </div>
         </div>
