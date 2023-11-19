@@ -243,3 +243,33 @@ footer{
     height:30px;
     border: 1px solid black;
 }
+
+
+
+.addNewHostelForm::-webkit-scrollbar {
+    width: 5px;
+    height: 5px;
+}
+  
+.addNewHostelForm::-webkit-scrollbar-thumb {
+background-color: #555555;
+border-radius: 8px;
+}
+
+.addNewHostelForm::-webkit-scrollbar-track {
+background-color: #9b9b9b;
+}
+
+.hostelsContainer::-webkit-scrollbar {
+    width: 5px;
+    height: 5px;
+}
+  
+.hostelsContainer::-webkit-scrollbar-thumb {
+background-color: #555555;
+border-radius: 8px;
+}
+
+.hostelsContainer::-webkit-scrollbar-track {
+background-color: #9b9b9b;
+}

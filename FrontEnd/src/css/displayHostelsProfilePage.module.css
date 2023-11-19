@@ -10,9 +10,7 @@ body {
     background-color:#53ad7a;
     box-shadow: rgba(0, 0, 0, 5) 0px 5px 15px;
     border-radius: 8px;
-
     width: 100%;
-
     display: flex;
     flex-direction: column;
     justify-content: center;
@@ -23,42 +21,68 @@ body {
     background-color:#53ad7a;
     box-shadow: rgba(0, 0, 0, 5) 0px 5px 15px;
     border-radius: 8px;
-
     width: 100%;
-
     display: flex;
     flex-direction: column;
     justify-content: center;
     align-items: center;
-
 }
 
-
-.Images{
-    width: 85%;
-    height: 200px;
-    border-radius: 8px;
-    border: 1px solid black;
-
-    margin-top: 5%;
-
-    box-shadow: rgba(0, 0, 0, 1) 0px 5px 15px;
+.table {
+    width: 100%;
+    table-layout: fixed;
+    padding: 6px;
+    border-radius: 2px solid black;
 }
 
-.changeImagesButtons{
-    margin-bottom: 12px;
+.th {
+    background-color: #e0a173;
+    border-radius: 5px;
+}
+
+.th1 {
+    background-color: #cac7cd;
+    border-radius: 5px;
+}
+
+.td {
+    padding: 6px;
+    overflow: auto;
+    white-space: nowrap; 
+    border-radius: 5px;
+    background-color:#e0e0e0;
+}
+
+.updateInputs {
+    overflow: auto;
+    background-color:#e0e0e0;
+    text-align: center;
+    border-style: none;
+    height: 17px;
+    width: 93%;
+    border-radius: 5px;
+    border-style:dotted;
+}
+
+.label{
+    height: 33px;
     border-radius: 8px;
+    background-color: rgb(177, 216, 216);
     cursor: pointer;
-    background-color: aliceblue;
-    font-weight: 200;
-    box-shadow: rgba(0, 0, 0, 0.5) 0px 5px 15px;
-}
-.changeImagesButtons:hover {
-    background-color: #2980b9;
-    font-weight:900;
-    box-shadow: rgba(0, 0, 0, 5) 5px 5px 15px;
+    border: 1px solid black;
+    font-size: 13px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border-radius: 1px solid black;
 }
 
+span{
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
 
 .detailsContainer{
     border-radius:8px;
@@ -82,148 +106,12 @@ body {
     color: white;
     padding: 10px;
     font-weight: 100;
-    
-
-    
     box-shadow: rgba(0, 0, 0, 0.5) 0px 5px 15px;
 }
 
 .detailsButton:hover{
-
     background-color: black;
     font-weight: bolder;
-}
-
-
-
-.table {
-    width: 100%;
-    table-layout: fixed;
-    padding: 6px;
-    
-
-    border-radius: 2px solid black;
-    
-}
-
-.th {
-    background-color: #e0a173;
-    border-radius: 5px;
-    
-}
-
-.th1 {
-    background-color: #cac7cd;
-    border-radius: 5px;
-
-}
-
-.td {
-    padding: 6px;
-    overflow: auto;
-    white-space: nowrap; 
-    border-radius: 5px;
-    background-color:#e0e0e0;
-
-}
-
-span{
-    height: 100%;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-}
-
-
-
-.editButton{
-    position: relative;
-    left: 22px;
-    background-color: rgb(17, 16, 16);
-    border-radius: 8px;
-    height: 30px;
-    width: 100px;
-    cursor: pointer;
-    color: white;
-    font-size: 10px;
-    margin-bottom:7px;
-
-    display: flex;
-    justify-content: center;
-    justify-items: center;
-    
-    box-shadow: rgba(0, 0, 0, 3) 5px 5px 5px;
-    border: 1.5px solid black;
-}
-
-.editButton:hover{
-    background-color: black;
-    box-shadow: 1px 2px 3px rgba(0, 0, 0, 1);
-    font-size: 13px;
-
-}
-
-.deleteButton{
-    background-color: #ef5350;
-    position: relative;
-    left: 22px;
-    background-color: rgb(17, 16, 16);
-    border-radius: 8px;
-    height: 30px;
-    width: 100px;
-    cursor: pointer;
-    color: white;
-    font-size: 10px;
-
-    margin-bottom:7px;
-
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    
-    box-shadow: rgba(0, 0, 0, 3) 5px 5px 5px;
-    border: 1.5px solid black;
-}
-
-.deleteButton:hover{
-    box-shadow: 1px 2px 3px rgba(0, 0, 0, 1);
-    font-size: 13px;
-
-}
-
-
-
-.updateInputs {
-    overflow: auto;
-    background-color:#e0e0e0;
-    text-align: center;
-    border-style: none;
-    height: 17px;
-    width: 93%;
-    border-radius: 5px;
-
-    border-style:dotted;
-}
-
-.updateAndCancelButton{
-    background-color: rgb(44, 43, 43);
-    border-radius: 8px;
-    height: 30px;
-    width: 100px;
-    cursor: pointer;
-    color: white;
-    box-shadow: rgba(0, 0, 0, 3) 5px 5px 5px;
-    border-radius: 1.5px solid black;
-font-size: 10px;
-    margin-Top: 5px;
-
-}
-.updateAndCancelButton:hover{
-    background-color: black;
-    font-weight: bold;
-    box-shadow: 1px 2px 3px rgba(0, 0, 0, 1);
-    font-size: 13px;
-
 }
 
 .imgInputContainer{
@@ -239,18 +127,94 @@ font-size: 10px;
 
 }
 
-.label{
-    height: 33px;
-
+.Images{
+    width: 85%;
+    height: 200px;
     border-radius: 8px;
-    background-color: rgb(177, 216, 216);
+    border: 1px solid black;
+    margin-top: 5%;
+    box-shadow: rgba(0, 0, 0, 1) 0px 5px 15px;
+}
 
+.changeImagesButtons{
+    margin-bottom: 12px;
+    border-radius: 8px;
     cursor: pointer;
-   border: 1px solid black;
+    background-color: aliceblue;
+    font-weight: 200;
+    box-shadow: rgba(0, 0, 0, 0.5) 0px 5px 15px;
+}
+.changeImagesButtons:hover {
+    background-color: #2980b9;
+    font-weight:900;
+    box-shadow: rgba(0, 0, 0, 5) 5px 5px 15px;
+}
+
+.editButton{
+    position: relative;
+    left: 22px;
+    background-color: rgb(17, 16, 16);
+    border-radius: 8px;
+    height: 30px;
+    width: 100px;
+    cursor: pointer;
+    color: white;
+    font-size: 10px;
+    margin-bottom:7px;
+    display: flex;
+    justify-content: center;
+    justify-items: center;
+    box-shadow: rgba(0, 0, 0, 3) 5px 5px 5px;
+    border: 1.5px solid black;
+}
+
+.editButton:hover{
+    background-color: black;
+    box-shadow: 1px 2px 3px rgba(0, 0, 0, 1);
     font-size: 13px;
+}
+
+.deleteButton{
+    background-color: #ef5350;
+    position: relative;
+    left: 22px;
+    background-color: rgb(17, 16, 16);
+    border-radius: 8px;
+    height: 30px;
+    width: 100px;
+    cursor: pointer;
+    color: white;
+    font-size: 10px;
+    margin-bottom:7px;
     display: flex;
     justify-content: center;
     align-items: center;
+    box-shadow: rgba(0, 0, 0, 3) 5px 5px 5px;
+    border: 1.5px solid black;
+}
 
-    border-radius: 1px solid black;
+.deleteButton:hover{
+    box-shadow: 1px 2px 3px rgba(0, 0, 0, 1);
+    font-size: 13px;
+}   
+
+.updateAndCancelButton{
+    background-color: rgb(44, 43, 43);
+    border-radius: 8px;
+    height: 30px;
+    width: 100px;
+    cursor: pointer;
+    color: white;
+    box-shadow: rgba(0, 0, 0, 3) 5px 5px 5px;
+    border-radius: 1.5px solid black;
+    font-size: 10px;
+    margin-Top: 5px;
+
+}
+
+.updateAndCancelButton:hover{
+    background-color: black;
+    font-weight: bold;
+    box-shadow: 1px 2px 3px rgba(0, 0, 0, 1);
+    font-size: 13px;
 }

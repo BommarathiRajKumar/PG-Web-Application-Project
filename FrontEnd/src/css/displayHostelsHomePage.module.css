@@ -9,97 +9,27 @@ body {
     background-color:#53ad7a;
     box-shadow: rgba(0, 0, 0, 5) 0px 5px 15px;
     border-radius: 8px;
-
     display: flex;
     flex-direction: column;
     justify-content: center;
     align-items: center;
 }
 
-
-.Images{
-    width: 85%;
-    height: 200px;
-    border-radius: 8px;
-    border: 1px solid black;
-
-    margin-top: 5%;
-
-    box-shadow: rgba(0, 0, 0, 1) 0px 5px 15px;
-}
-
-.changeImagesButtons{
-    margin-top: 15%;
-    margin-bottom: 15%;
-    border-radius: 8px;
-    cursor: pointer;
-    background-color: aliceblue;
-    font-weight: 200;
-    box-shadow: rgba(0, 0, 0, 0.5) 0px 5px 15px;
-}
-.changeImagesButtons:hover {
-    background-color: #2980b9;
-    font-weight:900;
-    box-shadow: rgba(0, 0, 0, 5) 5px 5px 15px;
-}
-
-
-.detailsContainer{
-    border-radius:8px;
-    width:90%;
-    margin-bottom:3.5%;
-    cursor: pointer;
-    padding: 3px;
-    border: 1px solid black;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    
-}
-
-.detailsButton{
-    width:100%;
-    border-radius: 6px;
-    display: flex;
-    justify-content: center;
-    background-color: rgb(48, 46, 46); 
-    color: white;
-    padding: 10px;
-    font-weight: 100;
-    
-
-    
-    box-shadow: rgba(0, 0, 0, 0.5) 0px 5px 15px;
-}
-
-.detailsButton:hover{
-
-    background-color: black;
-    font-weight: bolder;
-}
-
-
-
 .table {
     width: 100%;
     table-layout: fixed;
     padding: 6px;
-    
-
     border-radius: 2px solid black;
-    
 }
 
 .th {
     background-color: #e0a173;
     border-radius: 5px;
-    
 }
 
 .th1 {
     background-color: #cac7cd;
     border-radius: 5px;
-
 }
 
 .td {
@@ -119,4 +49,57 @@ span{
 
 .lightBlack{
     color: rgba(0, 0, 0, 0.3);
+}
+
+.Images{
+    width: 85%;
+    height: 200px;
+    border-radius: 8px;
+    border: 1px solid black;
+    margin-top: 5%;
+    box-shadow: rgba(0, 0, 0, 1) 0px 5px 15px;
+}
+
+.changeImagesButtons{
+    margin-top: 15%;
+    margin-bottom: 15%;
+    border-radius: 8px;
+    cursor: pointer;
+    background-color: aliceblue;
+    font-weight: 200;
+    box-shadow: rgba(0, 0, 0, 0.5) 0px 5px 15px;
+}
+.changeImagesButtons:hover {
+    background-color: #2980b9;
+    font-weight:900;
+    box-shadow: rgba(0, 0, 0, 5) 5px 5px 15px;
+}
+
+.detailsContainer{
+    border-radius:8px;
+    width:90%;
+    margin-bottom:3.5%;
+    cursor: pointer;
+    padding: 3px;
+    border: 1px solid black;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.detailsButton{
+    width:100%;
+    border-radius: 6px;
+    display: flex;
+    justify-content: center;
+    background-color: rgb(48, 46, 46); 
+    color: white;
+    padding: 10px;
+    font-weight: 100;
+    box-shadow: rgba(0, 0, 0, 0.5) 0px 5px 15px;
+}
+
+.detailsButton:hover{
+    background-color: black;
+    font-weight: bolder;
 }

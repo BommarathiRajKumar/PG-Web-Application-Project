@@ -64,13 +64,20 @@ public class Profile extends HttpServlet{
 							    res.getWriter().println(userDetails.toString());
 							    res.setStatus(HttpServletResponse.SC_OK);
 							    
-							}else if(state.equals("userHostelsLoad")) {
-
-			                    
-			                   String query="select * from hostelsDetails where mobileNumber=? ORDER BY hostelID DESC limit 5 offset ?";
-			                   pStmt=con.prepareStatement(query);
-			                   pStmt.setString(1, mob);
-			   			    	pStmt.setInt(2, Integer.valueOf(req.getParameter("offSet")));
+							}else if(state.equals("userHostelsLoad") || state.equals("updatedSucess")) {
+									
+			                   String query="";
+			                   if(state.equals("userHostelsLoad")) {
+			                	   query="select * from hostelsDetails where mobileNumber=? ORDER BY hostelID DESC limit 5 offset ?";
+				                   pStmt=con.prepareStatement(query);
+				                   pStmt.setString(1, mob);
+				                   pStmt.setInt(2, Integer.valueOf(req.getParameter("offSet")));
+			                   }else if(state.equals("updatedSucess")) {
+			                	   query="select * from hostelsDetails where mobileNumber=? and hostelId=?";
+			                	   pStmt=con.prepareStatement(query);
+				                   pStmt.setString(1, mob);
+				                   pStmt.setInt(2, Integer.valueOf(req.getParameter("id")));
+			                   }
 			                   resultSet= pStmt.executeQuery();
 			                   
 			       			
@@ -104,7 +111,7 @@ public class Profile extends HttpServlet{
 			                    	singleHostelDetails.put("wifi", resultSet.getString("wifi"));
 			                    	singleHostelDetails.put("laundry", resultSet.getString("laundry"));
 			                    	singleHostelDetails.put("hotWater", resultSet.getString("hotWater"));
-			                    	singleHostelDetails.put("hostelId", resultSet.getInt("hostelId"));
+			                    	singleHostelDetails.put("hostelID", resultSet.getInt("hostelID"));
 			                    	
 			                    	byte[] imageOne = resultSet.getBytes("imageOne");
 			                        if (imageOne != null) {
@@ -129,23 +136,22 @@ public class Profile extends HttpServlet{
 			                    	singleHostelDetails.put("areaName", resultSet.getString("areaName"));
 			                    	singleHostelDetails.put("landMark", resultSet.getString("landMark"));
 			                    	i++;
-			                        hostelsDetails.put(resultSet.getInt("hostelID")+"",singleHostelDetails);
-			                        
+			                        hostelsDetails.put(resultSet.getInt("hostelID")+"",singleHostelDetails);   
 			                    }
 			                    
-			                   query="SELECT COUNT(*) FROM (SELECT '' FROM hostelsDetails WHERE mobileNumber=? ORDER BY hostelID DESC LIMIT 5 OFFSET ? ) AS subquery";
-			                   pStmt=con.prepareStatement(query);
-			                   pStmt.setString(1, mob);
-			   			       pStmt.setInt(2, Integer.valueOf(req.getParameter("offSet"))+5);
-			                   resultSet= pStmt.executeQuery();
-			                
-			                   
-			                   if(resultSet.next()) {
-			                	   hostelsDetails.put("count",resultSet.getInt(1));
-			                   }else {
-			                	   hostelsDetails.put("count",0);
+			                   if(state.equals("userHostelsLoad")) {
+				                   query="SELECT hostelID FROM hostelsDetails WHERE mobileNumber=? ORDER BY hostelID DESC LIMIT 1 OFFSET ? ";
+				                   pStmt=con.prepareStatement(query);
+				                   pStmt.setString(1, mob);
+				   			       pStmt.setInt(2, Integer.valueOf(req.getParameter("offSet"))+5);
+				                   resultSet= pStmt.executeQuery();
+				              
+				                   if(resultSet.next()) {
+				                	   hostelsDetails.put("count",1);
+				                   }else {
+				                	   hostelsDetails.put("count",0);
+				                   }
 			                   }
-			                   
 			                   
 			                    res.setContentType("application/json");
 							    if(i!=0) {
@@ -203,7 +209,6 @@ public class Profile extends HttpServlet{
 		                        
 		                        pStmt.executeUpdate();
 							
-								
 		                        res.setStatus(HttpServletResponse.SC_OK);
 		                    }else if(state.equals("updateHostelDetails")){
 		                    	

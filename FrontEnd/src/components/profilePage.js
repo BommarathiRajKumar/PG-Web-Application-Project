@@ -21,10 +21,6 @@ import {AiOutlinePlusCircle} from "react-icons/ai";
 
 
 
-
-
-
-
 import ServerError from './serverErrorPage';
 import ConnectionRefuse from './connectionRefusePage';
 
@@ -33,13 +29,10 @@ const Profile = ()=>{
 
     const navigate= useNavigate();
     
-const[noDataFound, setNoDataFound]=useState(false);
+    const[noDataFound, setNoDataFound]=useState(false);
 
-
-const[offSet,setOffSet]=useState(0);
-const[count,setCount]=useState();
-
-
+    const[offSet,setOffSet]=useState(0);
+    const[count,setCount]=useState();
 
     const [userData,setUserData] = useState();
     const [totalHostelsDetailsProfilePage, setTotalHostelsDetailsProfilePage] = useState();
@@ -171,20 +164,68 @@ const[count,setCount]=useState();
         HandlerToLoadHostels('added');
         setOffSet(0)
     }
+    function edited(a){
+        setTotalHostelsDetailsProfilePage(prevHostelDetails => {
+            const updatedHostelDetails = { ...prevHostelDetails };
+            delete updatedHostelDetails[a];
+            return updatedHostelDetails;
+        })
+        axios.post(apiUrl+"profile?state=updatedSucess&id="+a, {}, {
+            headers: {
+              'Authorization': `Bearer ${localStorage.getItem("token")}`
+            }
+          }).then(
+            res => {
+                if (res.status === 200) {    
+                    setTotalHostelsDetailsProfilePage(prevHostelDetails => {
+                        const updatedHostelDetails = { ...prevHostelDetails };
+                        Object.keys(res.data).forEach(key => {
+                        if (!(key in updatedHostelDetails)) {
+                            updatedHostelDetails[key] = res.data[key];
+                        }
+                        });
+                        return updatedHostelDetails;
+                    })
+                    setCount(res.data.count)
+                    HandlerToSetFirstHeight();
+                }else if(res.status ===204){
+                    setNoDataFound(true);
+                }else{
+                    alert("your session expired do login again and login .")
+                    logOut();
+                }
+            }
+        ).catch((err)=>{
+            if(err.response){
+                if(err.response.status===500){
+                    setServerErr(true)
+                }else if(err.response.status===400){
+                    alert("Bad Request do login again.");
+                    logOut();
+                }else{
+                    alert("your session expired do login again.")
+                    logOut();
+                }
+            }else{
+                setConnectionRefuseErr(true);
+            }
+        })
 
-    function edited(){
-        HandlerToLoadHostels('edited');
     }
     function deleted(a){
-        HandlerToLoadHostels('deleted',a);
-
+        setTotalHostelsDetailsProfilePage(prevHostelDetails => {
+            const updatedHostelDetails = { ...prevHostelDetails };
+            delete updatedHostelDetails[a];
+            return updatedHostelDetails;
+        });
     }
     
     useEffect(() => {
         HandlerToLoadHostels();
     }, []);
 
-    const HandlerToLoadHostels=(event,action)=>{
+
+    const HandlerToLoadHostels=(event)=>{
         let updated=0;
         if(event==="user"){
             setUserLoading(true)
@@ -193,20 +234,17 @@ const[count,setCount]=useState();
            
         }else if(event==="added"){
             setLoading(true);
+            setFirstHeight(0);
             updated=0;
-        }else if(event==="edited" || event== "deleted"){
-            updated=offSet;
-        }
-        else{
+        }else{
             setLoading(true);
             updated=0;
-            setOffSet(offSet+5)
-            
         }
         setServerErr(false);
         setConnectionRefuseErr(false);
         setNoDataFound(false)
 
+        console.log("offset:- "+updated)
 
         axios.post(apiUrl+"profile?state=userHostelsLoad&offSet="+updated, {}, {
             headers: {
@@ -214,55 +252,25 @@ const[count,setCount]=useState();
             }
           }).then(
             res => {
-                if (res.status === 200) {
-                    if(event==="deleted"){
-                        setTotalHostelsDetailsProfilePage(prevHostelDetails => {
-                            const updatedHostelDetails = { ...prevHostelDetails };
-                             
-                    
-                            
-                              delete updatedHostelDetails[action];
-                            
-                    
-                            Object.keys(res.data).forEach(key => {
-                              updatedHostelDetails[key] = res.data[key];
-                            });
-                    
-                            return updatedHostelDetails;
-                        });
-                        console.log(action);
-                        console.log(totalHostelsDetailsProfilePage)
-                    }else{
-                        setTotalHostelsDetailsProfilePage(prevHostelDetails => {
-                            const updatedHostelDetails = { ...prevHostelDetails };
-                            Object.keys(res.data).forEach(key => {
-                            if (!(key in updatedHostelDetails)) {
+                if (res.status === 200) {    
+                    setTotalHostelsDetailsProfilePage(prevHostelDetails => {
+                        const updatedHostelDetails = { ...prevHostelDetails };
+                        Object.keys(res.data).forEach(key => {
+                            if (!(key in updatedHostelDetails) && key!="count") {
                                 updatedHostelDetails[key] = res.data[key];
                             }
-                            });
-                            return updatedHostelDetails;
                         });
-                    }
+                        return updatedHostelDetails;
+                    })
                     setCount(res.data.count)
-                } else if(res.status ===204){
-                    if(event==="deleted"){
-                        setTotalHostelsDetailsProfilePage(prevHostelDetails => {
-                            const updatedHostelDetails = { ...prevHostelDetails };
-                              delete updatedHostelDetails[action];
-                              
-                    
-                            Object.keys(res.data).forEach(key => {
-                                updatedHostelDetails[key] = res.data[key];
-                              });
-                            return updatedHostelDetails;
-                        });
-                    }else{
-                    
-                    setNoDataFound(true);}
+                    HandlerToSetFirstHeight();
+                }else if(res.status === 204){
+                    setNoDataFound(true)  
                 }else{
                     alert("your session expired do login again and login .")
                     logOut();
                 }
+                console.log("count:- "+res.data.count)
             }
         ).catch((err)=>{
             if(err.response){
@@ -283,8 +291,7 @@ const[count,setCount]=useState();
                 setUserLoading(false)
             }else if(event=="added"){
                 setLoading(false);
-            }else if(event==="edited" || event==="deleted"){}
-            else{
+            }else{
                 setLoading(false);
             }
         })
@@ -489,7 +496,6 @@ const[count,setCount]=useState();
 
 
     const[showProfile,setShowProfile]=useState(false);
-    const[mainHeight,setMainHeight]=useState(94);
     const[deleteLoading,setDeleteLoading]=useState(false);
     const[otpGen,setOtpGen]=useState(false)
 
@@ -601,41 +607,43 @@ const[count,setCount]=useState();
 
 
     const containerRef = useRef(null);
-    const[firstHeight, setFirstHeight]=useState();
+    const[firstHeight, setFirstHeight]=useState(0);
 
-    useEffect(() => {
+    const HandlerToSetFirstHeight=()=>{
         if (containerRef.current) {
-          setFirstHeight(document.getElementById('your-container-id').scrollHeight);
+            const container = document.getElementById('your-container-id');
+            setFirstHeight(container.scrollHeight);
         }
-    },[]);
- 
+    }
+
     useEffect(() => {
         if (containerRef.current) {
           const container = document.getElementById('your-container-id');
-          const scrollPosition = container.scrollHeight-firstHeight*2;
-
+          const scrollPosition = firstHeight;
+          
           container.scrollTo({
             top: scrollPosition,
-            behavior: 'smooth', 
+            behavior: 'smooth',
           });
         }
-    }, [totalHostelsDetailsProfilePage]);
+    }, [firstHeight]);
 
+    const [reachedBottom, setReachedBottom] = useState(false);
+    const handleScroll = () => {
+        const container = containerRef.current;
+        if (container.scrollTop + container.clientHeight+10 >= container.scrollHeight && count>0) {
+            if (!reachedBottom  ) {
+                HandlerToLoadHostels('user');
+                setReachedBottom(true);
+            }
+        }else {
+            setReachedBottom(false);
+        }
+    };
 
-
-const [reachedBottom, setReachedBottom] = useState(false);
-
-  const handleScroll = () => {
-    const container = containerRef.current;
-    if (container.scrollTop + container.clientHeight+10 >= container.scrollHeight && count>0) {
-      if (!reachedBottom) {
-        HandlerToLoadHostels('user')
-        setReachedBottom(true); 
-      }
-    } else {
-      setReachedBottom(false);
+    function profile(){
+        setShowProfile(false)
     }
-  };
 
     return(
  
@@ -652,9 +660,9 @@ const [reachedBottom, setReachedBottom] = useState(false);
                     {addHostelControl ?
                         <div style={{width:'100%',height:'100%'}}>  
                             <main style={{height:'94%',width:'100%'}}>
-                                {userData && showProfile && 
+                                {userData && showProfile&& 
                                     <header className={profilePageCss.headerDiv}>
-                                        <AiFillBackward size={25} style={{cursor:'pointer',position:'absolute',top:'10px',right:'10px'}} onClick={()=>{setShowProfile(!showProfile);setMainHeight(94)}}/>
+                                        <AiFillBackward size={25} style={{cursor:'pointer',position:'absolute',top:'10px',right:'10px'}} onClick={()=>{setShowProfile(!showProfile)}}/>
                                         <img
                                             className={profilePageCss.profilePhoto}
                                             src={`data:image/jpeg;base64,${userData.ownerImage}`}
@@ -690,28 +698,32 @@ const [reachedBottom, setReachedBottom] = useState(false);
                                     </div>
                                 :
                                 <div style={{width:'100%',height:'100%'}}>
+
                                 {noDataFound?
                                     <div style={{width:'100%',height:'100%',display:'flex',flexDirection:'column',justifyContent:'center',alignItems:'center'}}>
-                                    <div style={{color:'rgba(0, 0, 0, 0.5)',marginBottom:'3%'}}>You didn't added your hostels yet.</div>
-                                    <div style={{color:'rgba(0, 0, 0, 0.5)'}}><label style={{color:'blue',cursor:'pointer',fontWeight:'bolder'}} onClick={()=>{setAddHostelControl(!addHostelControl)}}>'Click Here'</label> to Add hostel</div>
-
+                                        <div style={{color:'rgba(0, 0, 0, 0.5)',marginBottom:'3%'}}>You didn't added your hostels yet.</div>
+                                        <div style={{color:'rgba(0, 0, 0, 0.5)'}}><label style={{color:'blue',cursor:'pointer',fontWeight:'bolder'}} onClick={()=>{setAddHostelControl(!addHostelControl)}}>'Click Here'</label> to Add hostel</div>
                                     </div>
                                 :
-                                    <div id="your-container-id" ref={containerRef} onScroll={()=>{count>0 && handleScroll()}} style={{scrollBehavior: 'smooth',backgroundColor: ' #E2D1F9',width:'100%',height:'100%',overflow:'auto',display:'flex', justifyContent:'center',alignItems:'center'}}>
+                                    <div id="your-container-id" ref={containerRef} onScroll={()=>{count===1 && handleScroll()}} style={{scrollBehavior: 'smooth',backgroundColor: ' #E2D1F9',width:'100%',height:'100%',overflow:'auto',display:'flex', justifyContent:'center',alignItems:'center'}} className={profilePageCss.hostelsContainer}>
                                        {totalHostelsDetailsProfilePage&&
                                         <div style={{width:'88%', height:'100%'}}>
                                             <div style={{marginTop:'10%',marginBottom:'10%'}}>Hostels:</div>
-                                                {Object.keys(totalHostelsDetailsProfilePage)
-                                                    .filter(key => key !== "count")
-                                                    .sort((a, b) => b.localeCompare(a))
-                                                    .map((key) => (
-                                                        <DisplayHostelsProfilePage edited={edited} deleted={deleted} style={{ marginBottom: '40px' }} key={key} data={totalHostelsDetailsProfilePage[key]}/>
-                                                    )
-                                                )}
+                                            {Object.keys(totalHostelsDetailsProfilePage).map(key => (
+                                                <DisplayHostelsProfilePage
+                                                    edited={edited}
+                                                    deleted={deleted}
+                                                    profile={profile}
+                                                    style={{ marginBottom: '40px' }}
+                                                    key={key}
+                                                    data={totalHostelsDetailsProfilePage[key]}
+                                                />
+                                                )).reverse()
+                                            }
                                             <div  style={{width: '100%', display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
-                                                {count>0?<Oval color="black" width={25} height={25}/>:<label>Results End</label>}
+                                                {count===1?<Oval color="black" width={33} height={33}/>:<label>Results End</label>}
                                             </div>
-                                            <br/>
+                                            <br/> 
                                         </div>
                                         }
                                     </div>
@@ -721,7 +733,7 @@ const [reachedBottom, setReachedBottom] = useState(false);
                             </main>
                                 <footer>
                                     <div className={profilePageCss.profilePicContainer} onClick={()=>{setShowProfile(!showProfile)}}>
-                                        <AiOutlineUser size={15} onClick={()=>{setShowProfile(!showProfile);setMainHeight(100)}}/>
+                                        <AiOutlineUser size={15} onClick={()=>{setShowProfile(!showProfile)}}/>
                                     </div>
                                 </footer>
                             

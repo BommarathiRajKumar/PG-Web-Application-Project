@@ -1,28 +1,32 @@
 import React, {useEffect, useState}from "react";
+import { useNavigate } from "react-router-dom";
 import axios from "axios";
+import { Oval } from "react-loader-spinner";
+
+import {AiOutlineMore,AiFillEdit,AiFillDelete} from "react-icons/ai";
+import {CiImageOn} from "react-icons/ci";
+
 import displayHostelsProfilePage from '../css/displayHostelsProfilePage.module.css';
 import { apiUrl } from "./url";
-import { Oval } from "react-loader-spinner";
-import { useNavigate } from "react-router-dom";
-
-import   {CiImageOn} from "react-icons/ci";
-import {AiOutlineMore} from "react-icons/ai";
-import {AiFillEdit} from "react-icons/ai";
-import   {AiFillDelete} from "react-icons/ai";
 
 
+const DisplayHostelsProfilePage=({data,style,edited,deleted,profile})=>{
 
-
-import profilePageCss from '../css/profilePage.module.css';
-
-const DisplayHostelsProfilePage=({data,style,edited, deleted})=>{
+    const navigate=useNavigate();
+    const [showHostelDetails, setShowHostelDetails]=useState(false);
+    const[aioutlinemore,setAiOutlineMore]=useState(false);
+    const[editPost,setEditPost]=useState(false);
+    const[deleteLoading,setDeleteLoading]=useState(false);
+    const[updateLoading, setUpdateLoading]=useState(false);
+    
+    
 
     const [showFormErr, setShowFormErr]=useState(false)
     const[err,setErr]=useState();
 
     const [hostelDetails, setHostelDetails] = useState({
         state:"updateHostelDetails",
-        id: data.hostelId,
+        id: data.hostelID,
         mobileNumber: data.mobileNumber,
         ownerName: data.ownerName,
         hostelName: data.hostelName,
@@ -82,12 +86,6 @@ const DisplayHostelsProfilePage=({data,style,edited, deleted})=>{
         }   
     }
 
-
-
-
-
-    const navigate=useNavigate();
-    const [showHostelDetails, setShowHostelDetails]=useState(false);
     const [currentImage, setCurrentImage] = useState(data.imageOne);
     const[currentImgNumber,setCurrentImageNumber]=useState(1);
     const imageOneHadler = ()=>{
@@ -100,7 +98,6 @@ const DisplayHostelsProfilePage=({data,style,edited, deleted})=>{
         setCurrentImage(data.imageThree);
     }
 
-    
     const[changedImgThree,setChangedImgThree]=useState(true);
     useEffect(()=>{
         imageThreeUpdateHadler()
@@ -117,8 +114,6 @@ const DisplayHostelsProfilePage=({data,style,edited, deleted})=>{
     },[changedImgOne])
     
     
-
-
     const[currentUpdateImage,setCurrentUpdateImage]=useState();
     const imageOneUpdateHadler = ()=>{
         setCurrentImageNumber(1);
@@ -133,6 +128,7 @@ const DisplayHostelsProfilePage=({data,style,edited, deleted})=>{
         }
         setCurrentUpdateImage(imageUrl);
     }
+
     const imageTwoUpdateHadler = ()=>{
         setCurrentImageNumber(2);
         let imageUrl;
@@ -146,6 +142,7 @@ const DisplayHostelsProfilePage=({data,style,edited, deleted})=>{
         }
         setCurrentUpdateImage(imageUrl);
     }
+
     const imageThreeUpdateHadler = ()=>{
         setCurrentImageNumber(3);
         let imageUrl;
@@ -159,16 +156,6 @@ const DisplayHostelsProfilePage=({data,style,edited, deleted})=>{
         }
         setCurrentUpdateImage(imageUrl);
     }
-
-    
-    const[aioutlinemore,setAiOutlineMore]=useState(false);
-    const[editPost,setEditPost]=useState(false);
-    
-
-    const[deleteLoading,setDeleteLoading]=useState(false);
-    const[updateLoading, setUpdateLoading]=useState(false);
-
-
 
     const HandlerToUpdatePost=(e)=>{
         e.preventDefault();
@@ -298,7 +285,7 @@ const DisplayHostelsProfilePage=({data,style,edited, deleted})=>{
                         if(response){
                             if(response.status===200){
                                 alert("updated successfully.");
-                                edited();
+                                edited(data.hostelID);
                             }else{
                                 alert("your session expired do login again and update Hostel Details.")
                                 logOut();
@@ -373,13 +360,10 @@ const DisplayHostelsProfilePage=({data,style,edited, deleted})=>{
     }
 
     const HandlerToDeletePost=()=>{
-       
-
         const confirmDelete = window.confirm('Are you sure you want to delete this post?');
-
         if (confirmDelete) {
             setDeleteLoading(true)
-            axios.post(apiUrl+"profile?state=deletePost&id="+data.hostelId, {}, {
+            axios.post(apiUrl+"profile?state=deletePost&id="+data.hostelID, {}, {
                 headers: {
                 'Authorization': `Bearer ${localStorage.getItem("token")}`
                 }
@@ -388,7 +372,7 @@ const DisplayHostelsProfilePage=({data,style,edited, deleted})=>{
                     if(response){
                         if(response.status===200){
                             alert("Post Deleted succefully");
-                            deleted(data.hostelId);
+                            deleted(data.hostelID);
                         }else{
                             alert("your session expired do login again.")
                             logOut();
@@ -419,13 +403,10 @@ const DisplayHostelsProfilePage=({data,style,edited, deleted})=>{
         }
     }
 
-
     const logOut=()=>{
         localStorage.removeItem('token');
         navigate('/login')
     }
-
-
 
     return(
 
@@ -433,7 +414,7 @@ const DisplayHostelsProfilePage=({data,style,edited, deleted})=>{
             {!editPost?
                 <div className={displayHostelsProfilePage.hostelContainer}>
                     <div style={{ position: 'relative' ,width:'95%', marginTop:'5px',marginBottom:'10px'}}>
-                        <AiOutlineMore size={'23px'} color={aioutlinemore?"red":"black"}  onClick={()=>{setAiOutlineMore(!aioutlinemore)}} style={{cursor:'pointer', position: 'absolute', top: 0, right: 0 }}/>
+                        <AiOutlineMore size={'23px'} color={aioutlinemore?"red":"black"}  onClick={()=>{setAiOutlineMore(!aioutlinemore);profile()}} style={{cursor:'pointer', position: 'absolute', top: 0, right: 0 }}/>
                         {aioutlinemore&&
                             <div style={{display:'flex',flexDirection:'column',justifyContent:'center',justifyContent:'center',borderRadius:'8px',backgroundColor:'#317773',boxShadow:'rgba(0, 0, 0, 0.6) 0px 5px 15px',height:'150px',width:'150px', position: 'absolute',top:'21px',right:'13px'}}>
                                 <button  className={displayHostelsProfilePage.editButton} onClick={()=>{setEditPost(!editPost)}}><span><AiFillEdit /><label style={{cursor:'pointer',marginLeft:'6px'}}>Edit Post</label></span></button>
@@ -450,7 +431,7 @@ const DisplayHostelsProfilePage=({data,style,edited, deleted})=>{
                         <button className={displayHostelsProfilePage.changeImagesButtons} onClick={imageThreeHadler}>3 </button>
                     </div>
                 
-                    <div className={displayHostelsProfilePage.detailsContainer} onClick={()=>setShowHostelDetails(!showHostelDetails)}>
+                    <div className={displayHostelsProfilePage.detailsContainer} onClick={()=>{setShowHostelDetails(!showHostelDetails);profile()}}>
                         <div className={displayHostelsProfilePage.detailsButton}>
                             {showHostelDetails ? 'Hide Hostel Details' : 'Show Hostel Details'}
                         </div>
@@ -460,7 +441,6 @@ const DisplayHostelsProfilePage=({data,style,edited, deleted})=>{
                     {showHostelDetails &&
                         <table className={displayHostelsProfilePage.table}>
                             <tbody>
-
                                 <tr>
                                     <th className={displayHostelsProfilePage.th1}>Mobile: </th>
                                     <td className={displayHostelsProfilePage.td} colSpan="2"><span>{data.mobileNumber}</span></td>
@@ -596,7 +576,6 @@ const DisplayHostelsProfilePage=({data,style,edited, deleted})=>{
                             <tr>
                                 <th className={displayHostelsProfilePage.th}>Room Type</th > <th className={displayHostelsProfilePage.th}>&#8377;/Month</th> <th className={displayHostelsProfilePage.th}>Available</th>
                             </tr>
-
 
                             <tr>
                                 <th className={displayHostelsProfilePage.th1}>
@@ -831,10 +810,7 @@ const DisplayHostelsProfilePage=({data,style,edited, deleted})=>{
                                 <td colSpan="3"><span><button className={displayHostelsProfilePage.updateAndCancelButton} onClick={HandlerCancel}><span>Cancel</span></button></span></td>    
                             </tr>
                         </tfoot>
-                    </table>
-                    
-                   
-                    
+                    </table>  
                 </div>
             }
         </div>
@@ -842,3 +818,4 @@ const DisplayHostelsProfilePage=({data,style,edited, deleted})=>{
 }
 
 export default DisplayHostelsProfilePage;
+

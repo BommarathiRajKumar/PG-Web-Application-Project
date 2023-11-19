@@ -25,34 +25,30 @@ public class HomePage extends HttpServlet {
 		
 		try{
 			Connection con= MysqlDataBaseConnection.getMysqlConnection();
-			PreparedStatement pStm = con.prepareStatement("SELECT * FROM hostelsDetails ORDER BY hostelID ASC LIMIT 5 OFFSET ?");
+			PreparedStatement pStm = con.prepareStatement("SELECT * FROM hostelsDetails ORDER BY hostelID DESC LIMIT 5 OFFSET ?");
 		    pStm.setInt(1, Integer.valueOf(req.getParameter("offSet")));
 			ResultSet hostelsDetailsResultSet=null;
 			
 			String state = req.getParameter("state");
 			
-			
-				 
 			if(state.equals("userSearch")) {
 				
+				 
 				String share=req.getParameter("share");
+				pStm = con.prepareStatement("select * from hostelsDetails where hostelType = ? and  "+share+"Cost != 'Not-Applicable'  and "+share+"Cost <= ? and stateName = ? and cityName = ? and areaName = ? ORDER BY hostelID DESC  limit 5 offset ?");
 				
-				
-				pStm = con.prepareStatement("select * from hostelsDetails where "+share+"Applicable = ? and hostelType = ? and "+share+"Cost <= ? and stateName = ? and cityName = ? and areaName = ? ORDER BY hostelID ASC  limit 5 offset ?");
-				
-				pStm.setBoolean(1, true);
-				pStm.setString(2, req.getParameter("hostelType"));
-			    pStm.setString(3, req.getParameter("price"));
-			    pStm.setString(4, req.getParameter("stateName"));
-			    pStm.setString(5, req.getParameter("cityName"));
-			    pStm.setString(6, req.getParameter("areaName"));
-			    pStm.setInt(7, Integer.valueOf(req.getParameter("offSet")));
+				pStm.setString(1, req.getParameter("hostelType"));
+			    pStm.setInt(2, Integer.valueOf(req.getParameter("price")));
+			    pStm.setString(3, req.getParameter("stateName"));
+			    pStm.setString(4, req.getParameter("cityName"));
+			    pStm.setString(5, req.getParameter("areaName"));
+			    pStm.setInt(6, Integer.valueOf(req.getParameter("offSet")));
 			    
 			}
-
 			hostelsDetailsResultSet = pStm.executeQuery();
 
-		    
+
+
 				JSONObject hostelsDetails = new JSONObject();
 				int i=0;
 		            while (hostelsDetailsResultSet.next()) { 
@@ -102,35 +98,35 @@ public class HomePage extends HttpServlet {
                     	singleHostelDetails.put("areaName", hostelsDetailsResultSet.getString("areaName"));
                     	singleHostelDetails.put("landMark", hostelsDetailsResultSet.getString("landMark"));
                     	i++;
-		           
+                    	
 		                hostelsDetails.put(hostelsDetailsResultSet.getInt("hostelID")+"",singleHostelDetails);        
 		            }
-		            
-				
 				if(state.equals("userSearch")) {
-					pStm = con.prepareStatement("select count(*) from (select '' from hostelsDetails where "+req.getParameter("share")+"Applicable = ? and hostelType = ? and "+req.getParameter("share")+"Cost <= ? and stateName = ? and cityName = ? and areaName = ? ORDER BY hostelID ASC  limit 5 offset ?) AS subquery" );
+
+					String share=req.getParameter("share");
+					pStm = con.prepareStatement("select hostelID from hostelsDetails where hostelType = ? and  "+share+"Cost != 'Not-Applicable' and "+share+"Cost <= ? and stateName = ? and cityName = ? and areaName = ? ORDER BY hostelID DESC limit 1 offset ?" );
 				
-					pStm.setBoolean(1, true);
-					pStm.setString(2, req.getParameter("hostelType"));
-				    pStm.setString(3, req.getParameter("price"));
-				    pStm.setString(4, req.getParameter("stateName"));
-				    pStm.setString(5, req.getParameter("cityName"));
-				    pStm.setString(6, req.getParameter("areaName"));
-				    pStm.setInt(7, Integer.valueOf(req.getParameter("offSet"))+5);
+					pStm.setString(1, req.getParameter("hostelType"));
+				    pStm.setInt(2, Integer.valueOf(req.getParameter("price")));
+				    pStm.setString(3, req.getParameter("stateName"));
+				    pStm.setString(4, req.getParameter("cityName"));
+				    pStm.setString(5, req.getParameter("areaName"));
+				    pStm.setInt(6, Integer.valueOf(req.getParameter("offSet"))+5);
+				    
+
 				}else {
-					pStm = con.prepareStatement("SELECT COUNT(*) FROM (SELECT '' FROM hostelsDetails ORDER BY hostelID ASC LIMIT 5 OFFSET ? ) AS subquery");
+					pStm = con.prepareStatement("SELECT hostelID FROM hostelsDetails ORDER BY hostelID DESC LIMIT 1 OFFSET ?");
 					pStm.setInt(1, Integer.valueOf(req.getParameter("offSet"))+5);
 				}
 				
 				hostelsDetailsResultSet= pStm.executeQuery();
                 if(hostelsDetailsResultSet.next()) {
-             	   hostelsDetails.put("count",hostelsDetailsResultSet.getInt(1));
+             	   hostelsDetails.put("count",1);
                 }else {
              	   hostelsDetails.put("count",0);
                 }
 				
 			
-				
 				if(i!=0) {
 					res.setContentType("application/json");
 				    res.getWriter().write(hostelsDetails.toString());
