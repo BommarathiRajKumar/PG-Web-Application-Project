@@ -1,0 +1,23 @@
+.mainDivWellCome{
+    background-color: rgb(52, 48, 48);
+    height: 100%;
+    width: 100%;
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.wellCome{
+    background-color: rgb(190, 224, 253);
+    height: 100%;
+    width: 100%;
+    overflow: hidden;
+    position: fixed;
+}
+
+@media screen and (min-width: 1024px) {
+    .wellCome{
+        width: 30%;
+    }    
+}

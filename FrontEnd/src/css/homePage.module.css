@@ -22,16 +22,14 @@ body {
     background-color:#36454f;
     height: 100%;
     width: 100%;
-
 }
+
 
 @media screen and (min-width: 1024px) {
     .mainContainer{
         width:30%;
-    }
-    
+    }  
 }
-
 
 .filtersIn{
     text-align: center;
@@ -88,8 +86,6 @@ body {
     background-color: #317773;
     box-shadow: rgba(0, 0, 0, 0.6) 0px 5px 15px;
     height:100px;
-
-
     
     overflow:auto;
     display:flex;

@@ -87,7 +87,6 @@ const Login = () => {
         }
     }
 
-
     return( 
 
         <div className={loginPageCss.mainDiv}>
@@ -100,7 +99,7 @@ const Login = () => {
                 :
                     <div style={{width:'80%'}}>
                         <form className={loginPageCss.form} onSubmit={userCredentialsSubmitHandler} autoComplete="of">
-                            <div style={{width:'100%'}}><AiFillHome size={"18px"} style={{cursor:'pointer',position:'relative',left:'10px',top:'10px'}} onClick={()=>{navigate('/')}}/></div>
+                            <div id="home" style={{width:'100%'}}><AiFillHome size={"15px"} style={{cursor:'pointer',position:'relative',left:'10px',top:'10px'}} onClick={()=>{navigate('/')}}/></div>
                             <h3 style={{marginTop:'50px',width:'65%'}}>Well Come Back To Best PG's.</h3>
                             {credentialsErr &&<div className={loginPageCss.error}>Invalid Credentails.</div>}
                             

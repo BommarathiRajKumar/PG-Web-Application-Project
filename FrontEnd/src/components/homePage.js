@@ -14,6 +14,8 @@ import ServerError from '../components/serverErrorPage';
 
 const Home = () =>{
     const navigate = useNavigate();
+
+
     const [totalHostelsDetailsHomePage, setTotalHostelsDetailsHomePage] = useState();
     const [totalHostelsDetailsHomePageUserSearch, setTotalHostelsDetailsHomePageUserSearch] = useState();
     const [loading, setLoading] = useState(false);
@@ -78,9 +80,13 @@ const Home = () =>{
         setOffSetUserSearch(0);
         setReset(true);
     }
+
     
     useEffect(() => {
         HandlerToLoadHostels();
+        if(!sessionStorage.getItem('displayed')){
+            navigate('/wellCome');
+        }
     }, []);
 
     const HandlerToLoadHostels=(event)=>{
@@ -358,6 +364,7 @@ const Home = () =>{
             setFirstHeight(container.scrollHeight);
         }
     }
+
 
     useEffect(() => {
         if (containerRef.current) {
