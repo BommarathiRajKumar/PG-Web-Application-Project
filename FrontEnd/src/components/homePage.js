@@ -3,6 +3,7 @@ import {useNavigate} from 'react-router-dom';
 import axios from "axios";
 import { Oval } from 'react-loader-spinner';
 import {FiPlus,FiX,FiUser,FiSearch} from "react-icons/fi";
+import WellCome from "./wellComePage.js";
 
 import {apiUrl} from './url.js';
 import DisplayHostelsHomePage from './displayHostelsHomePage.js';
@@ -80,13 +81,9 @@ const Home = () =>{
         setOffSetUserSearch(0);
         setReset(true);
     }
-
     
     useEffect(() => {
         HandlerToLoadHostels();
-        if(!sessionStorage.getItem('displayed')){
-            navigate('/wellCome');
-        }
     }, []);
 
     const HandlerToLoadHostels=(event)=>{
@@ -395,281 +392,346 @@ const Home = () =>{
         }
     };
 
+
+    const[flag1,setFlag1]=useState(true);
+    const filters=()=>{
+        setFlag1(false)
+        let headerTag=document.getElementById("filters");
+        if(headerTag.offsetWidth==0){
+            let w=0;
+            let interval=setInterval(()=>{
+                if(++w<=50){
+                    headerTag.style.width=`${w}%`;
+                }else{
+                    clearInterval(interval);
+                    setFlag1(true)
+                }
+            },15);
+        }else{
+            let w=50;
+            let interval=setInterval(()=>{
+                if(--w>=0){
+                    headerTag.style.width=`${w}%`;
+                }else{
+                    clearInterval(interval);
+                    setFlag1(true)
+                }
+            },15);
+        }
+    }
+
+    const[flag2,setFlag2]=useState(true);
+    const lsHandler=()=>{
+        setFlag2(false)
+        let lsTag=document.getElementById("ls");
+        if(lsTag.offsetHeight==0){
+            let w=0;
+            let h=0;
+            let interval=setInterval(()=>{
+                if(++w<=180){
+                    lsTag.style.height=`${++h}px`;
+                    lsTag.style.width=`${w}px`;
+                }else{
+                    clearInterval(interval);
+                    setFlag2(true)
+                }
+            },3);
+        }else{
+            let w=180;
+            let h=180;
+            let interval=setInterval(()=>{
+                if(--w>=0){
+                    lsTag.style.height=`${--h}px`;
+                    lsTag.style.width=`${w}px`;
+                }else{
+                    clearInterval(interval);
+                    setFlag2(true);
+                }
+            },3);
+        }
+    }
+
     return(
 
-        <div className={homePageCss.mainDiv}>
+        <div className={homePageCss.body}>
             <div className={homePageCss.mainContainer}>
-
-                {showFilters&&
-                    <header className={homePageCss.headerDiv}>
-                        <h2 style={{display:'flex',justifyContent:'center',alignItems:'center',marginBottom:'-10px'}}>Filters</h2>
-
-                        <h3 style={{display:'flex',justifyContent:'center',alignItems:'center'}}>Find your desired hostels.</h3>
-                        
-                        <div style={{marginLeft:'8px'}}>
-                            <div style={{marginBottom:'10px'}}>
-                                <label>Hostel Type:</label>
-                                <div style={{marginLeft:'8px',display:'flex',justifyContent:'flex-start'}}>
-                                    <input
-                                        name='hostelType'
-                                        value={'Girls Hostel'}
-                                        type='checkbox'
-                                        style={{marginLeft:'6px',height: '14px', width: '14px' ,cursor:'pointer'}}
-                                        checked={SearchDeatils.hostelType === "Girls Hostel"}
-                                        onClick={HandlerToSetDetailsForSearch}
-                                    />
-                                    &nbsp;Girls
-                                </div>
-                                <div style={{marginLeft:'10px',display:'flex',justifyContent:'flex-start'}}>
-                                    <input
-                                        name="hostelType"
-                                        value={'Boys Hostel'}
-                                        type='checkbox'
-                                        style={{height: '14px', width: '14px',cursor:'pointer'}}
-                                        checked={SearchDeatils.hostelType === "Boys Hostel"}
-                                        onClick={HandlerToSetDetailsForSearch}
-                                    />
-                                    &nbsp;Boys
-                                </div>
-                            </div>
-
-                            <div style={{marginBottom:'10px'}}>
-                                <label>Room Type:</label>
-                                <div style={{display:'flex',flexDirection:'column',justifyContent:'center',marginLeft:'10px'}}>
-
-                                            <label style={{display:'flex',justifyContent:'flex-start',alignItems:'center'}}>
-                                                <input
-                                                    name="share"
-                                                    value={'oneShare'}
-                                                    type='checkbox'
-                                                    style={{height: '14px', width: '14px' ,cursor:'pointer'}}
-                                                    checked={SearchDeatils.share === "oneShare"}
-                                                    onClick={HandlerToSetDetailsForSearch}
-                                                />
-                                                &nbsp;1-share
-                                            </label>
-
-                                            <label style={{display:'flex',justifyContent:'flex-start',alignItems:'center'}}>
-                                                <input
-                                                    name="share"
-                                                    value={'twoShare'}
-                                                    type='checkbox'
-                                                    style={{ height: '14px', width: '14px' ,cursor:'pointer'}}
-                                                    checked={SearchDeatils.share === "twoShare"}
-                                                    onClick={HandlerToSetDetailsForSearch}
-                                                />
-                                                &nbsp;2-share
-                                            </label>
-
-                                            <label style={{display:'flex',justifyContent:'flex-start',alignItems:'center'}}>
-                                                <input
-                                                    name="share"
-                                                    value={"threeShare"}
-                                                    type='checkbox'
-                                                    style={{ height: '14px', width: '14px' ,cursor:'pointer'}}
-                                                    checked={SearchDeatils.share === "threeShare"}
-                                                    onClick={HandlerToSetDetailsForSearch}
-                                                />
-                                                &nbsp;3-share
-                                            </label>
-
-                                            <label style={{display:'flex',justifyContent:'flex-start',alignItems:'center'}}>
-                                                <input
-                                                    name="share"
-                                                    value={'fourShare'}
-                                                    type='checkbox'
-                                                    style={{ height: '14px', width: '14px' ,cursor:'pointer'}}
-                                                    checked={SearchDeatils.share === "fourShare"}
-                                                    onClick={HandlerToSetDetailsForSearch}
-                                                />
-                                                &nbsp;4-share
-                                            </label>
-
-                                            <label style={{display:'flex',justifyContent:'flex-start',alignItems:'center'}}>
-                                                <input
-                                                    name="share"
-                                                    value={'fiveShare'}
-                                                    type='checkbox'
-                                                    style={{ height: '14px', width: '14px' ,cursor:'pointer'}}
-                                                    checked={SearchDeatils.share === "fiveShare"}
-                                                    onClick={HandlerToSetDetailsForSearch}
-                                                />
-                                                &nbsp;5-share
-                                            </label>
-                                    </div>
-                            
-                            </div>
-
-                            <div style={{marginBottom:'10px'}}>
-                                <div style={{display:'flex',flexDirection:'column'}}>
-                                    {SearchDeatils.share}  &#8377;/month:
-                                    <input type="number" name="price"  value={SearchDeatils.price} placeholder={'Rs.'} className={homePageCss.filtersIn} onChange={HandlerToSetDetailsForSearch} />
-                                </div>
-                            </div>
-
-                            <div style={{marginBottom:'10px',display:'flex',flexDirection:'column'}}>
-                                <label>State:&nbsp;{SearchDeatils.stateName || "--Not Selected--"}</label>
-                                    <input id="stateId" type="search" placeholder="search" className={homePageCss.filtersIn} onChange={stateInputChangeHandler} />
-
-                                {showStatesList&&
-                                    <div className={homePageCss.scaListShowTd}>
-                                        <label style={{fontSize:'small', color: '#800000',marginLeft:'10px'}}>Select State Name:</label>
-                                        <ul >
-                                            {Object.keys(stateNames).map((key) => (
-                                                <li key={stateNames[key]} className={homePageCss.scaListShowLi} onClick={()=>{if(stateNames[key]!=="No Result"){HandlerToSetDetailsForSearch(stateNames[key],"stateName")}}}>
-                                                    {stateNames[key]}
-                                                </li>
-                                            ))}
-                                        </ul>
-                                    </div>
-                                }
-                            </div>
-
-                            <div style={{marginBottom:'10px',display:'flex',flexDirection:'column'}}>
-                                <label>City:&nbsp;{showLocErr?<label style={{color:'maroon'}}>First select state</label>:SearchDeatils.cityName || "--Not Selected--"}</label>
-                                <input id="cityId" type="search" placeholder="search" className={homePageCss.filtersIn} onChange={cityInputChangeHandler} />
-                                
-                                {showCitysList&&
-                                    <div className={homePageCss.scaListShowTd}>
-                                        <label style={{fontSize:'small', color: '#800000',marginLeft:'10px'}}>Select City Name:</label>
-                                        <ul >
-                                            {Object.keys(cityNames).map((key) => (
-                                                <li key={cityNames[key]} className={homePageCss.scaListShowLi} onClick={()=>{if(cityNames[key]!=="No Result"){HandlerToSetDetailsForSearch(cityNames[key],"cityName")}}}>
-                                                    {cityNames[key]}
-                                                </li>
-                                            ))}
-                                        </ul>
-                                    </div>
-                                }
-                            </div>
-
-                            <div style={{marginBottom:'10px',display:'flex',flexDirection:'column'}}>
-                                <label>Area:&nbsp;{showAreaErr?<label style={{color:'maroon'}}>{areaErr}</label>:SearchDeatils.areaName || "--Not Selected--"}</label>
-                                <input id="areaId" type="search" placeholder="search" className={homePageCss.filtersIn} onChange={areaInputChangeHandler} />
-                                   
-                                {showAreasList&&
-                                    <div className={homePageCss.scaListShowTd}>
-                                        <label style={{fontSize:'small', color: '#800000',marginLeft:'10px'}}>Select Area Name:</label>
-                                        <ul >
-                                            {Object.keys(areaNames).map((key) => (
-                                                <li name="areaName" className={homePageCss.scaListShowLi} key={areaNames[key]} onClick={()=>{if(areaNames[key]!=="No Result"){HandlerToSetDetailsForSearch(areaNames[key],"areaName")}}}>
-                                                    {areaNames[key]}
-                                                </li>
-                                            ))}
-                                        </ul>
-                                    </div>
-                                }
-                            </div>
-
-                            <div style={{marginTop:'20px',display:'flex',flexDirection:'column',justifyContent:'center',alignItems:'center'}}>
-                                {formErr && <div  style={{color: 'maroon',marginBottom:'10px'}}>{errToPrint}</div>}
-                                <div style={{width:'100%',display:'flex',flexDirection:'column',justifyContent:'flex-start'}}>
-                                    <button style={{marginBottom:'15px'}} className={homePageCss.pgAndSearchButton} onClick={HandlerSearch} disabled={loading}>Search</button>
-                                    <button  className={homePageCss.cancelButton} onClick={searchCancelHandler}>Cancel</button>
-                                </div>
-                            </div>
-                        </div>
-                    </header>
-                }
-
-                <div style={{backgroundColor:'white',height:'94%',width:'100%' }}>
-                    {loginDisplay &&
-                        <div  className={homePageCss.loginDisplay} style={{ position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%, -50%)', }}>
-                            <label className={homePageCss.cross} onClick={()=>setLoginDisplay(!loginDisplay)}>X</label>
-                            
-                            <button className={homePageCss.loginAndSignupButton} onClick={() => navigate('/login')}>Login</button>
-                            <button style={{marginTop:'12px'}} className={homePageCss.loginAndSignupButton} onClick={() => navigate('/signup')}>Signup</button>
-                        </div>
-                    } 
-                    { serverError || connectionRefuseError ?
-                        <div style={{width:'100%',height:'100%'}}> 
-                            {serverError ? <ServerError/>:<ConnectionRefuse />}
-                        </div>
-                    :
-                        <div style={{width:'100%',height:'100%'}}>
-                            {loading && !userLoading && !userSearchLoading ?
-                                <div style={{width:'100%',height:'100%',display:'flex',flexDirection:'column',justifyContent:'center',alignItems:'center'}}>
-                                    <Oval color="#00BFFF" height={60} width={60} />
-                                    <div style={{marginTop:'8%'}}>
-                                        Please wait, Data is loading...
-                                    </div>
-                                </div>
-                            :
-                                <div style={{width:'100%',height:'100%'}}>
-                                    {noDataFound && userSearchActivated ?
-                                        <div style={{height:'100%',display:'flex',flexDirection:'column', justifyContent:'center',alignItems:'center'}}>
-                                            <img src={noDataImage} alt="noDataImg"/>
-                                            <div onClick={()=>{setShowFilters(true)}} style={{color:'blue',cursor:'pointer',marginBottom:'8px'}}>'Click'<label style={{color:'#B2BEB5',marginLeft:'8px'}}>to Change Filters Options.</label></div>
-                                            <div style={{color:'#B2BEB5',marginBottom:'8px'}}>Or</div>
-                                            <div onClick={searchCancelHandler} style={{color:'blue',cursor:'pointer',marginBottom:'8px'}}>'Click'<label style={{color:'#B2BEB5',marginLeft:'8px'}}>to go home Page.</label></div>
-                                        </div>
-                                    :
-                                        <div id="your-container-id" ref={containerRef} onScroll={()=>{userSearchActivated?countUserSearch===1&& handleScroll():count===1&& handleScroll()}} style={{scrollBehavior:'smooth',backgroundColor: ' #E2D1F9',width:'100%',height:'100%',overflow:'auto',display:'flex', justifyContent:'center',alignItems:'center'}} className={homePageCss.hostelsContainer}>
-                                            {totalHostelsDetailsHomePage&&
-                                                <div  style={{width:'88%', height:'100%'}}>
-                                                    {userSearchActivated?
-                                                        <div>
-                                                            <div style={{marginTop:'20px',marginBottom:'20px'}}>
-                                                                <label onClick={searchCancelHandler} style={{color:'blue',cursor:'pointer'}}>'Click Here'</label> <label style={{marginLeft:'10px'}}>To Exit from Search Result.</label>
-                                                                <h2 style={{marginTop:'10px'}}>Search Result:</h2>
-                                                            </div>
-                                                            {Object.keys(totalHostelsDetailsHomePageUserSearch).map(key => (
-                                                                <DisplayHostelsHomePage
-                                                                    style={{ marginBottom: '40px' }}
-                                                                    key={key}
-                                                                    data={totalHostelsDetailsHomePageUserSearch[key]}
-                                                                />
-                                                                )).reverse()
-                                                            }
-                                                            <div  style={{width: '100%', display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
-                                                                {countUserSearch===1?<Oval color="black" width={33} height={33}/>:<label>Results End</label>}
-                                                            </div>
-                                                        </div>
-                                                    :
-                                                        <div>
-                                                            <h2 style={{marginTop:'20px',marginBottom:'20px',}}>Hostels:</h2>
-                                                            {Object.keys(totalHostelsDetailsHomePage).map(key => (
-                                                                <DisplayHostelsHomePage
-                                                                    style={{ marginBottom: '40px' }}
-                                                                    key={key}
-                                                                    data={totalHostelsDetailsHomePage[key]}
-                                                                />
-                                                                )).reverse()
-                                                            }
-                                                            <div  style={{width: '100%', display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
-                                                                {count===1?<Oval color="black" width={33} height={33}/>:<label>Results End</label>}
-                                                            </div>
-                                                        </div>
-                                                    }
-                                                    <br/>
-                                                </div>
-                                            }
-                                        </div>
-                                    }
-                                </div>
-                            }
-                        </div>
-                    }
-                </div>
-                <footer className={homePageCss.footer}>
-                    {show&&
-                        <div className={homePageCss.profilePicContainer}>
-                            <FiUser size={15} onClick={()=>{setLoginDisplay(!loginDisplay)}}/>
-                        </div>
-                    }
-                    <div style={{marginLeft:'30px',marginRight:'30px'}} className={homePageCss.profilePicContainer}>
-                        {show?
-                            <FiX size={15} onClick={()=>{setShow(!show)}}/>
-                        :
-                            <FiPlus size={15} onClick={()=>{setShow(!show)}} />
-                        }
+                {serverError || connectionRefuseError ?
+                    <div style={{width:'100%',height:'100%'}}> 
+                        {serverError ? <ServerError/>:<ConnectionRefuse />}
                     </div>
-                    {show&&
-                        <div className={homePageCss.profilePicContainer}>
-                            <FiSearch size={15} onClick={()=>{setShowFilters(!showFilters)}} />
-                        </div>   
-                    }            
-                </footer> 
+                :
+                    <div style={{height:'100%',width:'100%'}}>
+                        {!sessionStorage.getItem("displayed")&&<WellCome/>}
+                        <div style={{width:'100%',height:'100%', display:'flex',flexDirection:'column', justifyContent:'center',alignItems:'center'}}>
+                            <header className={homePageCss.header}>  
+                                <div style={{backgroundColor:'white',height:'100%',width:'100%' }}>    
+                                    <div style={{width:'100%',height:'100%'}}>
+                                        {loading && !userLoading && !userSearchLoading ?
+                                            <div style={{backgroundColor:'#E2D1F9', width:'100%',height:'100%',display:'flex',flexDirection:'column',justifyContent:'center',alignItems:'center'}}>
+                                                <Oval color="#00BFFF" height={60} width={60} />
+                                                <div style={{marginTop:'8%'}}>
+                                                    Please wait, Data is loading...
+                                                </div>
+                                            </div>
+                                        :
+                                            <div style={{width:'100%',height:'100%'}}>
+                                                {noDataFound && userSearchActivated ?
+                                                    <div style={{height:'100%',display:'flex',flexDirection:'column', justifyContent:'center',alignItems:'center'}}>
+                                                        <img src={noDataImage} alt="noDataImg"/>
+                                                        <div onClick={()=>{setShowFilters(true)}} style={{color:'blue',cursor:'pointer',marginBottom:'8px'}}>'Click'<label style={{color:'#B2BEB5',marginLeft:'8px'}}>to Change Filters Options.</label></div>
+                                                        <div style={{color:'#B2BEB5',marginBottom:'8px'}}>Or</div>
+                                                        <div onClick={searchCancelHandler} style={{color:'blue',cursor:'pointer',marginBottom:'8px'}}>'Click'<label style={{color:'#B2BEB5',marginLeft:'8px'}}>to go home Page.</label></div>
+                                                    </div>
+                                                :
+                                                    <div id="your-container-id" ref={containerRef} onScroll={()=>{userSearchActivated?countUserSearch===1&& handleScroll():count===1&& handleScroll()}} style={{scrollBehavior:'smooth',backgroundColor: '#E2D1F9',width:'100%',height:'100%',overflow:'auto',display:'flex', justifyContent:'center',alignItems:'center'}} className={homePageCss.hostelsContainer}>
+                                                        {totalHostelsDetailsHomePage&&
+                                                            <div  style={{width:'88%', height:'100%'}}>
+                                                                {userSearchActivated?
+                                                                    <div>
+                                                                        <div style={{marginTop:'20px',marginBottom:'20px'}}>
+                                                                            <label onClick={searchCancelHandler} style={{color:'blue',cursor:'pointer'}}>'Click Here'</label> <label style={{marginLeft:'10px'}}>To Exit from Search Result.</label>
+                                                                            <h2 style={{marginTop:'10px'}}>Search Result:</h2>
+                                                                        </div>
+                                                                        {Object.keys(totalHostelsDetailsHomePageUserSearch).map(key => (
+                                                                            <DisplayHostelsHomePage
+                                                                                style={{ marginBottom: '40px' }}
+                                                                                key={key}
+                                                                                data={totalHostelsDetailsHomePageUserSearch[key]}
+                                                                            />
+                                                                            )).reverse()
+                                                                        }
+                                                                        <div  style={{width: '100%', display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+                                                                            {countUserSearch===1?<Oval color="black" width={33} height={33}/>:<label>Results End</label>}
+                                                                        </div>
+                                                                    </div>
+                                                                :
+                                                                    <div>
+                                                                        <h2 style={{marginTop:'20px',marginBottom:'20px',}}>Hostels:</h2>
+                                                                        {Object.keys(totalHostelsDetailsHomePage).map(key => (
+                                                                            <DisplayHostelsHomePage
+                                                                                style={{ marginBottom: '40px' }}
+                                                                                key={key}
+                                                                                data={totalHostelsDetailsHomePage[key]}
+                                                                            />
+                                                                            )).reverse()
+                                                                        }
+                                                                        <div  style={{width: '100%', display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+                                                                            {count===1?<Oval color="black" width={33} height={33}/>:<label>Results End</label>}
+                                                                        </div>
+                                                                    </div>
+                                                                }
+                                                                <br/>
+                                                            </div>
+                                                        }
+                                                    </div>
+                                                }
+                                            </div>
+                                        }
+                                    </div>
+                                    
+                                </div>
+
+                                <div id="filters" style={{height:'100%', width:'0%', borderRadius:'0px 20px 20px 0px',backgroundColor:'#317773', position:'absolute',overflow:'hidden'}}>
+                                <h2 style={{display:'flex',justifyContent:'center',alignItems:'center',marginBottom:'-10px'}}>Filters</h2>
+
+                                <h3 style={{display:'flex',justifyContent:'center',alignItems:'center'}}>Find your desired hostels.</h3>
+                                
+                                <div style={{marginLeft:'8px'}}>
+                                    <div style={{marginBottom:'10px'}}>
+                                        <label>Hostel Type:</label>
+                                        <div style={{marginLeft:'8px',display:'flex',justifyContent:'flex-start'}}>
+                                            <input
+                                                name='hostelType'
+                                                value={'Girls Hostel'}
+                                                type='checkbox'
+                                                style={{marginLeft:'6px',height: '14px', width: '14px' ,cursor:'pointer'}}
+                                                checked={SearchDeatils.hostelType === "Girls Hostel"}
+                                                onClick={HandlerToSetDetailsForSearch}
+                                            />
+                                            &nbsp;Girls
+                                        </div>
+                                        <div style={{marginLeft:'10px',display:'flex',justifyContent:'flex-start'}}>
+                                            <input
+                                                name="hostelType"
+                                                value={'Boys Hostel'}
+                                                type='checkbox'
+                                                style={{height: '14px', width: '14px',cursor:'pointer'}}
+                                                checked={SearchDeatils.hostelType === "Boys Hostel"}
+                                                onClick={HandlerToSetDetailsForSearch}
+                                            />
+                                            &nbsp;Boys
+                                        </div>
+                                    </div>
+
+                                    <div style={{marginBottom:'10px'}}>
+                                        <label>Room Type:</label>
+                                        <div style={{display:'flex',flexDirection:'column',justifyContent:'center',marginLeft:'10px'}}>
+
+                                                    <label style={{display:'flex',justifyContent:'flex-start',alignItems:'center'}}>
+                                                        <input
+                                                            name="share"
+                                                            value={'oneShare'}
+                                                            type='checkbox'
+                                                            style={{height: '14px', width: '14px' ,cursor:'pointer'}}
+                                                            checked={SearchDeatils.share === "oneShare"}
+                                                            onClick={HandlerToSetDetailsForSearch}
+                                                        />
+                                                        &nbsp;1-share
+                                                    </label>
+
+                                                    <label style={{display:'flex',justifyContent:'flex-start',alignItems:'center'}}>
+                                                        <input
+                                                            name="share"
+                                                            value={'twoShare'}
+                                                            type='checkbox'
+                                                            style={{ height: '14px', width: '14px' ,cursor:'pointer'}}
+                                                            checked={SearchDeatils.share === "twoShare"}
+                                                            onClick={HandlerToSetDetailsForSearch}
+                                                        />
+                                                        &nbsp;2-share
+                                                    </label>
+
+                                                    <label style={{display:'flex',justifyContent:'flex-start',alignItems:'center'}}>
+                                                        <input
+                                                            name="share"
+                                                            value={"threeShare"}
+                                                            type='checkbox'
+                                                            style={{ height: '14px', width: '14px' ,cursor:'pointer'}}
+                                                            checked={SearchDeatils.share === "threeShare"}
+                                                            onClick={HandlerToSetDetailsForSearch}
+                                                        />
+                                                        &nbsp;3-share
+                                                    </label>
+
+                                                    <label style={{display:'flex',justifyContent:'flex-start',alignItems:'center'}}>
+                                                        <input
+                                                            name="share"
+                                                            value={'fourShare'}
+                                                            type='checkbox'
+                                                            style={{ height: '14px', width: '14px' ,cursor:'pointer'}}
+                                                            checked={SearchDeatils.share === "fourShare"}
+                                                            onClick={HandlerToSetDetailsForSearch}
+                                                        />
+                                                        &nbsp;4-share
+                                                    </label>
+
+                                                    <label style={{display:'flex',justifyContent:'flex-start',alignItems:'center'}}>
+                                                        <input
+                                                            name="share"
+                                                            value={'fiveShare'}
+                                                            type='checkbox'
+                                                            style={{ height: '14px', width: '14px' ,cursor:'pointer'}}
+                                                            checked={SearchDeatils.share === "fiveShare"}
+                                                            onClick={HandlerToSetDetailsForSearch}
+                                                        />
+                                                        &nbsp;5-share
+                                                    </label>
+                                            </div>
+                                    
+                                    </div>
+
+                                    <div style={{marginBottom:'10px'}}>
+                                        <div style={{display:'flex',flexDirection:'column'}}>
+                                            {SearchDeatils.share}  &#8377;/month:
+                                            <input type="number" name="price"  value={SearchDeatils.price} placeholder={'Rs.'} className={homePageCss.filtersIn} onChange={HandlerToSetDetailsForSearch} />
+                                        </div>
+                                    </div>
+
+                                    <div style={{marginBottom:'10px',display:'flex',flexDirection:'column'}}>
+                                        <label>State:&nbsp;{SearchDeatils.stateName || "--Not Selected--"}</label>
+                                            <input id="stateId" type="search" placeholder="search" className={homePageCss.filtersIn} onChange={stateInputChangeHandler} />
+
+                                        {showStatesList&&
+                                            <div className={homePageCss.scaListShowTd}>
+                                                <label style={{fontSize:'small', color: '#800000',marginLeft:'10px'}}>Select State Name:</label>
+                                                <ul >
+                                                    {Object.keys(stateNames).map((key) => (
+                                                        <li key={stateNames[key]} className={homePageCss.scaListShowLi} onClick={()=>{if(stateNames[key]!=="No Result"){HandlerToSetDetailsForSearch(stateNames[key],"stateName")}}}>
+                                                            {stateNames[key]}
+                                                        </li>
+                                                    ))}
+                                                </ul>
+                                            </div>
+                                        }
+                                    </div>
+
+                                    <div style={{marginBottom:'10px',display:'flex',flexDirection:'column'}}>
+                                        <label>City:&nbsp;{showLocErr?<label style={{color:'maroon'}}>First select state</label>:SearchDeatils.cityName || "--Not Selected--"}</label>
+                                        <input id="cityId" type="search" placeholder="search" className={homePageCss.filtersIn} onChange={cityInputChangeHandler} />
+                                        
+                                        {showCitysList&&
+                                            <div className={homePageCss.scaListShowTd}>
+                                                <label style={{fontSize:'small', color: '#800000',marginLeft:'10px'}}>Select City Name:</label>
+                                                <ul >
+                                                    {Object.keys(cityNames).map((key) => (
+                                                        <li key={cityNames[key]} className={homePageCss.scaListShowLi} onClick={()=>{if(cityNames[key]!=="No Result"){HandlerToSetDetailsForSearch(cityNames[key],"cityName")}}}>
+                                                            {cityNames[key]}
+                                                        </li>
+                                                    ))}
+                                                </ul>
+                                            </div>
+                                        }
+                                    </div>
+
+                                    <div style={{marginBottom:'10px',display:'flex',flexDirection:'column'}}>
+                                        <label>Area:&nbsp;{showAreaErr?<label style={{color:'maroon'}}>{areaErr}</label>:SearchDeatils.areaName || "--Not Selected--"}</label>
+                                        <input id="areaId" type="search" placeholder="search" className={homePageCss.filtersIn} onChange={areaInputChangeHandler} />
+                                            
+                                        {showAreasList&&
+                                            <div className={homePageCss.scaListShowTd}>
+                                                <label style={{fontSize:'small', color: '#800000',marginLeft:'10px'}}>Select Area Name:</label>
+                                                <ul >
+                                                    {Object.keys(areaNames).map((key) => (
+                                                        <li name="areaName" className={homePageCss.scaListShowLi} key={areaNames[key]} onClick={()=>{if(areaNames[key]!=="No Result"){HandlerToSetDetailsForSearch(areaNames[key],"areaName")}}}>
+                                                            {areaNames[key]}
+                                                        </li>
+                                                    ))}
+                                                </ul>
+                                            </div>
+                                        }
+                                    </div>
+
+                                    <div style={{marginTop:'20px',display:'flex',flexDirection:'column',justifyContent:'center',alignItems:'center'}}>
+                                        {formErr && <div  style={{color: 'maroon',marginBottom:'10px'}}>{errToPrint}</div>}
+                                        <div style={{width:'100%',display:'flex',flexDirection:'column',justifyContent:'flex-start'}}>
+                                            <button style={{marginBottom:'15px'}} className={homePageCss.pgAndSearchButton} onClick={HandlerSearch} disabled={loading}>Search</button>
+                                            <button  className={homePageCss.cancelButton} onClick={filters}>Cancel</button>
+                                        </div>
+                                    </div>
+                                </div>
+                                </div>
+
+                                <div id="ls" style={{width:'0px',height:'0px', position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%, -50%)', overflow:'hidden'}} className={homePageCss.loginDisplay}>
+                                    <label className={homePageCss.cross} onClick={lsHandler}>X</label>
+                                    
+                                    <button className={homePageCss.loginAndSignupButton} onClick={() => navigate('/login')}>Login</button>
+                                    <button style={{marginTop:'12px'}} className={homePageCss.loginAndSignupButton} onClick={() => navigate('/signup')}>Signup</button>
+                                </div>
+                            </header>
+                            <footer style={{height:'6%',width:'100%'}}>
+                                {show&&
+                                    <div className={homePageCss.profilePicContainer}>
+                                        <FiUser size={15} onClick={()=>{if(flag2){lsHandler()}}} />
+                                    </div>
+                                }
+                                {!loading&&
+                                    <div style={{marginLeft:'30px',marginRight:'30px'}} className={homePageCss.profilePicContainer}>
+                                        {show?
+                                            <FiX size={15} onClick={()=>{setShow(!show)}}/>
+                                        :
+                                            <FiPlus size={15} onClick={()=>{setShow(!show)}} />
+                                        }
+                                    </div>
+                                }
+                                {show&&
+                                    <div className={homePageCss.profilePicContainer}>
+                                        <FiSearch size={15} onClick={()=>{if(flag1){filters()}}} />
+                                    </div>   
+                                }            
+                            </footer>
+                        </div>
+                    </div>
+                }
             </div>
         </div>
 

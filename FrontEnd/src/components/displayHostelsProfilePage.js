@@ -414,7 +414,7 @@ const DisplayHostelsProfilePage=({data,style,edited,deleted,profile})=>{
             {!editPost?
                 <div className={displayHostelsProfilePage.hostelContainer}>
                     <div style={{ position: 'relative' ,width:'95%', marginTop:'5px',marginBottom:'10px'}}>
-                        <AiOutlineMore size={'23px'} color={aioutlinemore?"red":"black"}  onClick={()=>{setAiOutlineMore(!aioutlinemore);profile()}} style={{cursor:'pointer', position: 'absolute', top: 0, right: 0 }}/>
+                        <AiOutlineMore size={'25px'} color={aioutlinemore?"red":"black"}  onClick={()=>{setAiOutlineMore(!aioutlinemore);profile()}} style={{cursor:'pointer', position: 'absolute', top: 0, right: 0 }}/>
                         {aioutlinemore&&
                             <div style={{display:'flex',flexDirection:'column',justifyContent:'center',justifyContent:'center',borderRadius:'8px',backgroundColor:'#317773',boxShadow:'rgba(0, 0, 0, 0.6) 0px 5px 15px',height:'150px',width:'150px', position: 'absolute',top:'21px',right:'13px'}}>
                                 <button  className={displayHostelsProfilePage.editButton} onClick={()=>{setEditPost(!editPost)}}><span><AiFillEdit /><label style={{cursor:'pointer',marginLeft:'6px'}}>Edit Post</label></span></button>
@@ -432,13 +432,14 @@ const DisplayHostelsProfilePage=({data,style,edited,deleted,profile})=>{
                     </div>
                 
                     <div className={displayHostelsProfilePage.detailsContainer} onClick={()=>{setShowHostelDetails(!showHostelDetails);profile()}}>
-                        <div className={displayHostelsProfilePage.detailsButton}>
+                        <div style={{color:showHostelDetails?'red':'white'}} className={displayHostelsProfilePage.detailsButton}>
                             {showHostelDetails ? 'Hide Hostel Details' : 'Show Hostel Details'}
                         </div>
                         <div style={{width:'8%'}}>{showHostelDetails ? '▲' : '▼'}</div>
                     </div>
 
                     {showHostelDetails &&
+
                         <table className={displayHostelsProfilePage.table}>
                             <tbody>
                                 <tr>

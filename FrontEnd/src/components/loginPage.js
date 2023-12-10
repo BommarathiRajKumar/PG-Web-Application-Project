@@ -36,11 +36,6 @@ const Login = () => {
     //useState ReactHook this RactHook's always use in fun level components only don't use in class level components.
     //To use useState Hook we want to use(or)assign one var&one fun. var is for to assign the value which is given by us and fun is for to change the value of first var.
     
-    useEffect(()=>{
-        if(localStorage.getItem('token') !== null) {
-            navigate('/profile');
-        }
-    },[]);
 
     const userCredentialsSubmitHandler = (e) => {
         e.preventDefault();
@@ -71,6 +66,7 @@ const Login = () => {
                 if(err.response){
                     if(err.response.status===500){
                         setServerErr(true)
+                        alert("working")
                     }else if(err.response.status===401){
                         setCredentialsErr(true)
                     }else{
