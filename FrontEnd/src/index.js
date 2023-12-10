@@ -1,10 +1,16 @@
 import ReactDOM from 'react-dom/client';
 import App from './App';
-
+import WellCome from './components/wellComePage';
+import indexPageCss from './css/indexPage.module.css'
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
-  <div style={{ height: '100vh', width: '100vw' }}>
+  <div style={{ height: '100vh', width: '100vw', display:'flex',justifyContent:'center',alignItems:'center'}}>
+    {!sessionStorage.getItem("displayed")&&
+      <div className={indexPageCss.wellComeContainer}>
+        <WellCome/>
+      </div>
+    }
     <App /> 
   </div>   
 );
