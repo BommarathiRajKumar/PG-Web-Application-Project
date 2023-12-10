@@ -36,108 +36,191 @@ const WellCome=()=>{
         let d54 = document.getElementById("d54");
         let d55 = document.getElementById("d55");
 
-        let h = 0;
-        let w = 0;
+        let wh = 0;
 
         let interval1 = setInterval(() => {
 
-            if (++h <= 100 && ++w <= 100) {
+            if (++wh <= 100) {
 
                 d00.style.boxShadow="rgba(0, 0, 0, 0.6) 0px 5px 15px";
-                d00.style.height=`${h}%`;
-                d00.style.width=`${w}%`;
-                d00.style.fontSize=`${h*2}%`;
+                d00.style.height=`${wh}%`;
+                d00.style.width=`${wh}%`;
+                d00.style.fontSize=`${wh*2}%`;
                 d00.textContent="HostelsHub.in";
                 d00.style.zIndex="1";
             
-                d11.style.width=`${w}%`;
-                d11.style.height=`${h}%`;
+                d11.style.width=`${wh}%`;
+                d11.style.height=`${wh}%`;
 
-                d12.style.height = `${h}%`;
-                d12.style.width = `${w}%`;
+                d12.style.height = `${wh}%`;
+                d12.style.width = `${wh}%`;
 
-                d13.style.height = `${h}%`;
-                d13.style.width = `${w}%`;
+                d13.style.height = `${wh}%`;
+                d13.style.width = `${wh}%`;
                 
-                d14.style.height = `${h}%`;
-                d14.style.width = `${w}%`;
+                d14.style.height = `${wh}%`;
+                d14.style.width = `${wh}%`;
                 
-                d15.style.height = `${h}%`;
-                d15.style.width = `${w}%`;
+                d15.style.height = `${wh}%`;
+                d15.style.width = `${wh}%`;
 
-                d21.style.height = `${h}%`;
-                d21.style.width = `${w}%`;
+                d21.style.height = `${wh}%`;
+                d21.style.width = `${wh}%`;
 
-                d22.style.height = `${h}%`;
-                d22.style.width = `${w}%`;
+                d22.style.height = `${wh}%`;
+                d22.style.width = `${wh}%`;
                 
-                d23.style.height = `${h}%`;
-                d23.style.width = `${w}%`;
+                d23.style.height = `${wh}%`;
+                d23.style.width = `${wh}%`;
                 
-                d24.style.height = `${h}%`;
-                d24.style.width = `${w}%`;
+                d24.style.height = `${wh}%`;
+                d24.style.width = `${wh}%`;
                 
-                d25.style.height = `${h}%`;
-                d25.style.width = `${w}%`;
+                d25.style.height = `${wh}%`;
+                d25.style.width = `${wh}%`;
                 
-                d31.style.height = `${h}%`;
-                d31.style.width = `${w}%`;
+                d31.style.height = `${wh}%`;
+                d31.style.width = `${wh}%`;
 
-                d32.style.height = `${h}%`;
-                d32.style.width = `${w}%`;
+                d32.style.height = `${wh}%`;
+                d32.style.width = `${wh}%`;
                 
-                d33.style.height = `${h}%`;
-                d33.style.width = `${w}%`;
+                d33.style.height = `${wh}%`;
+                d33.style.width = `${wh}%`;
                 
-                d34.style.height = `${h}%`;
-                d34.style.width = `${w}%`;
+                d34.style.height = `${wh}%`;
+                d34.style.width = `${wh}%`;
 
-                d35.style.height = `${h}%`;
-                d35.style.width = `${w}%`;
+                d35.style.height = `${wh}%`;
+                d35.style.width = `${wh}%`;
                                     
-                d41.style.height = `${h}%`;
-                d41.style.width = `${w}%`;
+                d41.style.height = `${wh}%`;
+                d41.style.width = `${wh}%`;
 
-                d42.style.height = `${h}%`;
-                d42.style.width = `${w}%`;
+                d42.style.height = `${wh}%`;
+                d42.style.width = `${wh}%`;
 
-                d43.style.height = `${h}%`;
-                d43.style.width = `${w}%`;
+                d43.style.height = `${wh}%`;
+                d43.style.width = `${wh}%`;
 
-                d44.style.height = `${h}%`;
-                d44.style.width = `${w}%`;
+                d44.style.height = `${wh}%`;
+                d44.style.width = `${wh}%`;
 
-                d45.style.height = `${h}%`;
-                d45.style.width = `${w}%`;
+                d45.style.height = `${wh}%`;
+                d45.style.width = `${wh}%`;
 
-                d51.style.height = `${h}%`;
-                d51.style.width = `${w}%`;
+                d51.style.height = `${wh}%`;
+                d51.style.width = `${wh}%`;
 
-                d52.style.height = `${h}%`;
-                d52.style.width = `${w}%`;
+                d52.style.height = `${wh}%`;
+                d52.style.width = `${wh}%`;
                 
-                d53.style.height = `${h}%`;
-                d53.style.width = `${w}%`;
+                d53.style.height = `${wh}%`;
+                d53.style.width = `${wh}%`;
                                     
-                d54.style.height = `${h}%`;
-                d54.style.width = `${w}%`;
+                d54.style.height = `${wh}%`;
+                d54.style.width = `${wh}%`;
             
-                d55.style.height = `${h}%`;
-                d55.style.width = `${w}%`;
+                d55.style.height = `${wh}%`;
+                d55.style.width = `${wh}%`;
             } else {
                 clearInterval(interval1);
 
                 let interval2=setTimeout(()=>{
-
+                    let m=100; 
                     let r=0;
                     let wh=100;
                     let parent=document.getElementById("parent");
                     let child=document.getElementById("child");
                     let interval3=setInterval(()=>{
+                        --m;
                         if(--wh>=0){
                             child.style.borderRadius=`${++r}%`
                             child.style.width=`${wh}%`;
                             child.style.height=`${wh}%`;
+
+                                        
+                            d00.style.boxShadow="rgba(0, 0, 0, 0.6) 0px 5px 15px";
+                            d00.style.height=`${m}%`;
+                            d00.style.width=`${m}%`;
+                            d00.style.fontSize=`${m*2}%`;
+                            d00.textContent="HostelsHub.in";
+                            d00.style.zIndex="1";
+                        
+                            d11.style.width=`${m}%`;
+                            d11.style.height=`${m}%`;
+
+                            d12.style.height = `${m}%`;
+                            d12.style.width = `${m}%`;
+
+                            d13.style.height = `${m}%`;
+                            d13.style.width = `${m}%`;
+                            
+                            d14.style.height = `${m}%`;
+                            d14.style.width = `${m}%`;
+                            
+                            d15.style.height = `${m}%`;
+                            d15.style.width = `${m}%`;
+
+                            d21.style.height = `${m}%`;
+                            d21.style.width = `${m}%`;
+
+                            d22.style.height = `${m}%`;
+                            d22.style.width = `${m}%`;
+                            
+                            d23.style.height = `${m}%`;
+                            d23.style.width = `${m}%`;
+                            
+                            d24.style.height = `${m}%`;
+                            d24.style.width = `${m}%`;
+                            
+                            d25.style.height = `${m}%`;
+                            d25.style.width = `${m}%`;
+                            
+                            d31.style.height = `${m}%`;
+                            d31.style.width = `${m}%`;
+
+                            d32.style.height = `${m}%`;
+                            d32.style.width = `${m}%`;
+                            
+                            d33.style.height = `${m}%`;
+                            d33.style.width = `${m}%`;
+                            
+                            d34.style.height = `${m}%`;
+                            d34.style.width = `${m}%`;
+
+                            d35.style.height = `${m}%`;
+                            d35.style.width = `${m}%`;
+                                                
+                            d41.style.height = `${m}%`;
+                            d41.style.width = `${m}%`;
+
+                            d42.style.height = `${m}%`;
+                            d42.style.width = `${m}%`;
+
+                            d43.style.height = `${m}%`;
+                            d43.style.width = `${m}%`;
+
+                            d44.style.height = `${m}%`;
+                            d44.style.width = `${m}%`;
+
+                            d45.style.height = `${m}%`;
+                            d45.style.width = `${m}%`;
+
+                            d51.style.height = `${m}%`;
+                            d51.style.width = `${m}%`;
+
+                            d52.style.height = `${m}%`;
+                            d52.style.width = `${m}%`;
+                            
+                            d53.style.height = `${m}%`;
+                            d53.style.width = `${m}%`;
+                                                
+                            d54.style.height = `${m}%`;
+                            d54.style.width = `${m}%`;
+                        
+                            d55.style.height = `${m}%`;
+                            d55.style.width = `${m}%`;
                         }else{
                             parent.style.width=`0%`;
                             parent.style.height=`0%`;
