@@ -26,7 +26,7 @@ const DisplayHostelsHomePage=({data,style})=>{
             </div>
         
             <div className={displayHostelsHomePage.detailsContainer} onClick={()=>setShowHostelDetails(!showHostelDetails)}>
-                <div className={displayHostelsHomePage.detailsButton}>
+                <div style={{color:showHostelDetails?'#ef5350':'white'}} className={displayHostelsHomePage.detailsButton}>
                     {showHostelDetails ? 'Hide Hostel Details' : 'Show Hostel Details'}
                 </div>
                 <div style={{width:'8%'}}>{showHostelDetails ? '▲' : '▼'}</div>

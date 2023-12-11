@@ -432,7 +432,7 @@ const DisplayHostelsProfilePage=({data,style,edited,deleted,profile})=>{
                     </div>
                 
                     <div className={displayHostelsProfilePage.detailsContainer} onClick={()=>{setShowHostelDetails(!showHostelDetails);profile()}}>
-                        <div style={{color:showHostelDetails?'red':'white'}} className={displayHostelsProfilePage.detailsButton}>
+                        <div style={{color:showHostelDetails?'#ef5350':'white'}} className={displayHostelsProfilePage.detailsButton}>
                             {showHostelDetails ? 'Hide Hostel Details' : 'Show Hostel Details'}
                         </div>
                         <div style={{width:'8%'}}>{showHostelDetails ? '▲' : '▼'}</div>

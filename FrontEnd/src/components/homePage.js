@@ -2,7 +2,8 @@ import React,{useEffect, useState, useRef} from "react";
 import {useNavigate} from 'react-router-dom';
 import axios from "axios";
 import { Oval } from 'react-loader-spinner';
-import {FiPlus,FiX,FiUser,FiSearch} from "react-icons/fi";
+import {FiPlus,FiX,FiSearch} from "react-icons/fi";
+import { AiOutlineLogin } from "react-icons/ai";
 import WellCome from "./wellComePage.js";
 
 import {apiUrl} from './url.js';
@@ -357,7 +358,7 @@ const Home = () =>{
 
     const HandlerToSetFirstHeight=()=>{
         if (containerRef.current) {
-            const container = document.getElementById('your-container-id');
+            const container = document.getElementById('hostelsContainerId');
             setFirstHeight(container.scrollHeight);
         }
     }
@@ -365,7 +366,7 @@ const Home = () =>{
 
     useEffect(() => {
         if (containerRef.current) {
-          const container = document.getElementById('your-container-id');
+          const container = document.getElementById('hostelsContainerId');
           const scrollPosition = firstHeight;
           
           container.scrollTo({
@@ -481,7 +482,7 @@ const Home = () =>{
                                                         <div onClick={searchCancelHandler} style={{color:'blue',cursor:'pointer',marginBottom:'8px'}}>'Click'<label style={{color:'#B2BEB5',marginLeft:'8px'}}>to go home Page.</label></div>
                                                     </div>
                                                 :
-                                                    <div id="your-container-id" ref={containerRef} onScroll={()=>{userSearchActivated?countUserSearch===1&& handleScroll():count===1&& handleScroll()}} style={{scrollBehavior:'smooth',backgroundColor: '#E2D1F9',width:'100%',height:'100%',overflow:'auto',display:'flex', justifyContent:'center',alignItems:'center'}} className={homePageCss.hostelsContainer}>
+                                                    <div id="hostelsContainerId" ref={containerRef} onScroll={()=>{userSearchActivated?countUserSearch===1 && handleScroll():count===1&& handleScroll()}} className={homePageCss.hostelsContainer}>
                                                         {totalHostelsDetailsHomePage&&
                                                             <div  style={{width:'88%', height:'100%'}}>
                                                                 {userSearchActivated?
@@ -529,174 +530,174 @@ const Home = () =>{
                                     
                                 </div>
 
-                                <div id="filters" style={{height:'100%', width:'0%', borderRadius:'0px 20px 20px 0px',backgroundColor:'#317773', position:'absolute',overflow:'hidden'}}>
-                                <h2 style={{display:'flex',justifyContent:'center',alignItems:'center',marginBottom:'-10px'}}>Filters</h2>
+                                <div id="filters" className={homePageCss.filters}>
+                                    <h2 style={{display:'flex',justifyContent:'center',alignItems:'center',marginBottom:'-10px'}}>Filters</h2>
 
-                                <h3 style={{display:'flex',justifyContent:'center',alignItems:'center'}}>Find your desired hostels.</h3>
-                                
-                                <div style={{marginLeft:'8px'}}>
-                                    <div style={{marginBottom:'10px'}}>
-                                        <label>Hostel Type:</label>
-                                        <div style={{marginLeft:'8px',display:'flex',justifyContent:'flex-start'}}>
-                                            <input
-                                                name='hostelType'
-                                                value={'Girls Hostel'}
-                                                type='checkbox'
-                                                style={{marginLeft:'6px',height: '14px', width: '14px' ,cursor:'pointer'}}
-                                                checked={SearchDeatils.hostelType === "Girls Hostel"}
-                                                onClick={HandlerToSetDetailsForSearch}
-                                            />
-                                            &nbsp;Girls
-                                        </div>
-                                        <div style={{marginLeft:'10px',display:'flex',justifyContent:'flex-start'}}>
-                                            <input
-                                                name="hostelType"
-                                                value={'Boys Hostel'}
-                                                type='checkbox'
-                                                style={{height: '14px', width: '14px',cursor:'pointer'}}
-                                                checked={SearchDeatils.hostelType === "Boys Hostel"}
-                                                onClick={HandlerToSetDetailsForSearch}
-                                            />
-                                            &nbsp;Boys
-                                        </div>
-                                    </div>
-
-                                    <div style={{marginBottom:'10px'}}>
-                                        <label>Room Type:</label>
-                                        <div style={{display:'flex',flexDirection:'column',justifyContent:'center',marginLeft:'10px'}}>
-
-                                                    <label style={{display:'flex',justifyContent:'flex-start',alignItems:'center'}}>
-                                                        <input
-                                                            name="share"
-                                                            value={'oneShare'}
-                                                            type='checkbox'
-                                                            style={{height: '14px', width: '14px' ,cursor:'pointer'}}
-                                                            checked={SearchDeatils.share === "oneShare"}
-                                                            onClick={HandlerToSetDetailsForSearch}
-                                                        />
-                                                        &nbsp;1-share
-                                                    </label>
-
-                                                    <label style={{display:'flex',justifyContent:'flex-start',alignItems:'center'}}>
-                                                        <input
-                                                            name="share"
-                                                            value={'twoShare'}
-                                                            type='checkbox'
-                                                            style={{ height: '14px', width: '14px' ,cursor:'pointer'}}
-                                                            checked={SearchDeatils.share === "twoShare"}
-                                                            onClick={HandlerToSetDetailsForSearch}
-                                                        />
-                                                        &nbsp;2-share
-                                                    </label>
-
-                                                    <label style={{display:'flex',justifyContent:'flex-start',alignItems:'center'}}>
-                                                        <input
-                                                            name="share"
-                                                            value={"threeShare"}
-                                                            type='checkbox'
-                                                            style={{ height: '14px', width: '14px' ,cursor:'pointer'}}
-                                                            checked={SearchDeatils.share === "threeShare"}
-                                                            onClick={HandlerToSetDetailsForSearch}
-                                                        />
-                                                        &nbsp;3-share
-                                                    </label>
-
-                                                    <label style={{display:'flex',justifyContent:'flex-start',alignItems:'center'}}>
-                                                        <input
-                                                            name="share"
-                                                            value={'fourShare'}
-                                                            type='checkbox'
-                                                            style={{ height: '14px', width: '14px' ,cursor:'pointer'}}
-                                                            checked={SearchDeatils.share === "fourShare"}
-                                                            onClick={HandlerToSetDetailsForSearch}
-                                                        />
-                                                        &nbsp;4-share
-                                                    </label>
-
-                                                    <label style={{display:'flex',justifyContent:'flex-start',alignItems:'center'}}>
-                                                        <input
-                                                            name="share"
-                                                            value={'fiveShare'}
-                                                            type='checkbox'
-                                                            style={{ height: '14px', width: '14px' ,cursor:'pointer'}}
-                                                            checked={SearchDeatils.share === "fiveShare"}
-                                                            onClick={HandlerToSetDetailsForSearch}
-                                                        />
-                                                        &nbsp;5-share
-                                                    </label>
-                                            </div>
+                                    <h3 style={{display:'flex',justifyContent:'center',alignItems:'center'}}>Find your desired hostels.</h3>
                                     
-                                    </div>
-
-                                    <div style={{marginBottom:'10px'}}>
-                                        <div style={{display:'flex',flexDirection:'column'}}>
-                                            {SearchDeatils.share}  &#8377;/month:
-                                            <input type="number" name="price"  value={SearchDeatils.price} placeholder={'Rs.'} className={homePageCss.filtersIn} onChange={HandlerToSetDetailsForSearch} />
-                                        </div>
-                                    </div>
-
-                                    <div style={{marginBottom:'10px',display:'flex',flexDirection:'column'}}>
-                                        <label>State:&nbsp;{SearchDeatils.stateName || "--Not Selected--"}</label>
-                                            <input id="stateId" type="search" placeholder="search" className={homePageCss.filtersIn} onChange={stateInputChangeHandler} />
-
-                                        {showStatesList&&
-                                            <div className={homePageCss.scaListShowTd}>
-                                                <label style={{fontSize:'small', color: '#800000',marginLeft:'10px'}}>Select State Name:</label>
-                                                <ul >
-                                                    {Object.keys(stateNames).map((key) => (
-                                                        <li key={stateNames[key]} className={homePageCss.scaListShowLi} onClick={()=>{if(stateNames[key]!=="No Result"){HandlerToSetDetailsForSearch(stateNames[key],"stateName")}}}>
-                                                            {stateNames[key]}
-                                                        </li>
-                                                    ))}
-                                                </ul>
+                                    <div style={{marginLeft:'8px'}}>
+                                        <div style={{marginBottom:'10px'}}>
+                                            <label>Hostel Type:</label>
+                                            <div style={{marginLeft:'8px',display:'flex',justifyContent:'flex-start'}}>
+                                                <input
+                                                    name='hostelType'
+                                                    value={'Girls Hostel'}
+                                                    type='checkbox'
+                                                    style={{marginLeft:'6px',height: '14px', width: '14px' ,cursor:'pointer'}}
+                                                    checked={SearchDeatils.hostelType === "Girls Hostel"}
+                                                    onClick={HandlerToSetDetailsForSearch}
+                                                />
+                                                &nbsp;Girls
                                             </div>
-                                        }
-                                    </div>
+                                            <div style={{marginLeft:'10px',display:'flex',justifyContent:'flex-start'}}>
+                                                <input
+                                                    name="hostelType"
+                                                    value={'Boys Hostel'}
+                                                    type='checkbox'
+                                                    style={{height: '14px', width: '14px',cursor:'pointer'}}
+                                                    checked={SearchDeatils.hostelType === "Boys Hostel"}
+                                                    onClick={HandlerToSetDetailsForSearch}
+                                                />
+                                                &nbsp;Boys
+                                            </div>
+                                        </div>
 
-                                    <div style={{marginBottom:'10px',display:'flex',flexDirection:'column'}}>
-                                        <label>City:&nbsp;{showLocErr?<label style={{color:'maroon'}}>First select state</label>:SearchDeatils.cityName || "--Not Selected--"}</label>
-                                        <input id="cityId" type="search" placeholder="search" className={homePageCss.filtersIn} onChange={cityInputChangeHandler} />
+                                        <div style={{marginBottom:'10px'}}>
+                                            <label>Room Type:</label>
+                                            <div style={{display:'flex',flexDirection:'column',justifyContent:'center',marginLeft:'10px'}}>
+
+                                                        <label style={{display:'flex',justifyContent:'flex-start',alignItems:'center'}}>
+                                                            <input
+                                                                name="share"
+                                                                value={'oneShare'}
+                                                                type='checkbox'
+                                                                style={{height: '14px', width: '14px' ,cursor:'pointer'}}
+                                                                checked={SearchDeatils.share === "oneShare"}
+                                                                onClick={HandlerToSetDetailsForSearch}
+                                                            />
+                                                            &nbsp;1-share
+                                                        </label>
+
+                                                        <label style={{display:'flex',justifyContent:'flex-start',alignItems:'center'}}>
+                                                            <input
+                                                                name="share"
+                                                                value={'twoShare'}
+                                                                type='checkbox'
+                                                                style={{ height: '14px', width: '14px' ,cursor:'pointer'}}
+                                                                checked={SearchDeatils.share === "twoShare"}
+                                                                onClick={HandlerToSetDetailsForSearch}
+                                                            />
+                                                            &nbsp;2-share
+                                                        </label>
+
+                                                        <label style={{display:'flex',justifyContent:'flex-start',alignItems:'center'}}>
+                                                            <input
+                                                                name="share"
+                                                                value={"threeShare"}
+                                                                type='checkbox'
+                                                                style={{ height: '14px', width: '14px' ,cursor:'pointer'}}
+                                                                checked={SearchDeatils.share === "threeShare"}
+                                                                onClick={HandlerToSetDetailsForSearch}
+                                                            />
+                                                            &nbsp;3-share
+                                                        </label>
+
+                                                        <label style={{display:'flex',justifyContent:'flex-start',alignItems:'center'}}>
+                                                            <input
+                                                                name="share"
+                                                                value={'fourShare'}
+                                                                type='checkbox'
+                                                                style={{ height: '14px', width: '14px' ,cursor:'pointer'}}
+                                                                checked={SearchDeatils.share === "fourShare"}
+                                                                onClick={HandlerToSetDetailsForSearch}
+                                                            />
+                                                            &nbsp;4-share
+                                                        </label>
+
+                                                        <label style={{display:'flex',justifyContent:'flex-start',alignItems:'center'}}>
+                                                            <input
+                                                                name="share"
+                                                                value={'fiveShare'}
+                                                                type='checkbox'
+                                                                style={{ height: '14px', width: '14px' ,cursor:'pointer'}}
+                                                                checked={SearchDeatils.share === "fiveShare"}
+                                                                onClick={HandlerToSetDetailsForSearch}
+                                                            />
+                                                            &nbsp;5-share
+                                                        </label>
+                                                </div>
                                         
-                                        {showCitysList&&
-                                            <div className={homePageCss.scaListShowTd}>
-                                                <label style={{fontSize:'small', color: '#800000',marginLeft:'10px'}}>Select City Name:</label>
-                                                <ul >
-                                                    {Object.keys(cityNames).map((key) => (
-                                                        <li key={cityNames[key]} className={homePageCss.scaListShowLi} onClick={()=>{if(cityNames[key]!=="No Result"){HandlerToSetDetailsForSearch(cityNames[key],"cityName")}}}>
-                                                            {cityNames[key]}
-                                                        </li>
-                                                    ))}
-                                                </ul>
-                                            </div>
-                                        }
-                                    </div>
+                                        </div>
 
-                                    <div style={{marginBottom:'10px',display:'flex',flexDirection:'column'}}>
-                                        <label>Area:&nbsp;{showAreaErr?<label style={{color:'maroon'}}>{areaErr}</label>:SearchDeatils.areaName || "--Not Selected--"}</label>
-                                        <input id="areaId" type="search" placeholder="search" className={homePageCss.filtersIn} onChange={areaInputChangeHandler} />
+                                        <div style={{marginBottom:'10px'}}>
+                                            <div style={{display:'flex',flexDirection:'column'}}>
+                                                {SearchDeatils.share}  &#8377;/month:
+                                                <input type="number" name="price"  value={SearchDeatils.price} placeholder={'Rs.'} className={homePageCss.filtersIn} onChange={HandlerToSetDetailsForSearch} />
+                                            </div>
+                                        </div>
+
+                                        <div style={{marginBottom:'10px',display:'flex',flexDirection:'column'}}>
+                                            <label>State:&nbsp;{SearchDeatils.stateName || "--Not Selected--"}</label>
+                                                <input id="stateId" type="search" placeholder="search" className={homePageCss.filtersIn} onChange={stateInputChangeHandler} />
+
+                                            {showStatesList&&
+                                                <div className={homePageCss.scaListShowTd}>
+                                                    <label style={{fontSize:'small', color: '#800000',marginLeft:'10px'}}>Select State Name:</label>
+                                                    <ul >
+                                                        {Object.keys(stateNames).map((key) => (
+                                                            <li key={stateNames[key]} className={homePageCss.scaListShowLi} onClick={()=>{if(stateNames[key]!=="No Result"){HandlerToSetDetailsForSearch(stateNames[key],"stateName")}}}>
+                                                                {stateNames[key]}
+                                                            </li>
+                                                        ))}
+                                                    </ul>
+                                                </div>
+                                            }
+                                        </div>
+
+                                        <div style={{marginBottom:'10px',display:'flex',flexDirection:'column'}}>
+                                            <label>City:&nbsp;{showLocErr?<label style={{color:'maroon'}}>First select state</label>:SearchDeatils.cityName || "--Not Selected--"}</label>
+                                            <input id="cityId" type="search" placeholder="search" className={homePageCss.filtersIn} onChange={cityInputChangeHandler} />
                                             
-                                        {showAreasList&&
-                                            <div className={homePageCss.scaListShowTd}>
-                                                <label style={{fontSize:'small', color: '#800000',marginLeft:'10px'}}>Select Area Name:</label>
-                                                <ul >
-                                                    {Object.keys(areaNames).map((key) => (
-                                                        <li name="areaName" className={homePageCss.scaListShowLi} key={areaNames[key]} onClick={()=>{if(areaNames[key]!=="No Result"){HandlerToSetDetailsForSearch(areaNames[key],"areaName")}}}>
-                                                            {areaNames[key]}
-                                                        </li>
-                                                    ))}
-                                                </ul>
-                                            </div>
-                                        }
-                                    </div>
+                                            {showCitysList&&
+                                                <div className={homePageCss.scaListShowTd}>
+                                                    <label style={{fontSize:'small', color: '#800000',marginLeft:'10px'}}>Select City Name:</label>
+                                                    <ul >
+                                                        {Object.keys(cityNames).map((key) => (
+                                                            <li key={cityNames[key]} className={homePageCss.scaListShowLi} onClick={()=>{if(cityNames[key]!=="No Result"){HandlerToSetDetailsForSearch(cityNames[key],"cityName")}}}>
+                                                                {cityNames[key]}
+                                                            </li>
+                                                        ))}
+                                                    </ul>
+                                                </div>
+                                            }
+                                        </div>
 
-                                    <div style={{marginTop:'20px',display:'flex',flexDirection:'column',justifyContent:'center',alignItems:'center'}}>
-                                        {formErr && <div  style={{color: 'maroon',marginBottom:'10px'}}>{errToPrint}</div>}
-                                        <div style={{width:'100%',display:'flex',flexDirection:'column',justifyContent:'flex-start'}}>
-                                            <button style={{marginBottom:'15px'}} className={homePageCss.pgAndSearchButton} onClick={HandlerSearch} disabled={loading}>Search</button>
-                                            <button  className={homePageCss.cancelButton} onClick={filters}>Cancel</button>
+                                        <div style={{marginBottom:'10px',display:'flex',flexDirection:'column'}}>
+                                            <label>Area:&nbsp;{showAreaErr?<label style={{color:'maroon'}}>{areaErr}</label>:SearchDeatils.areaName || "--Not Selected--"}</label>
+                                            <input id="areaId" type="search" placeholder="search" className={homePageCss.filtersIn} onChange={areaInputChangeHandler} />
+                                                
+                                            {showAreasList&&
+                                                <div className={homePageCss.scaListShowTd}>
+                                                    <label style={{fontSize:'small', color: '#800000',marginLeft:'10px'}}>Select Area Name:</label>
+                                                    <ul >
+                                                        {Object.keys(areaNames).map((key) => (
+                                                            <li name="areaName" className={homePageCss.scaListShowLi} key={areaNames[key]} onClick={()=>{if(areaNames[key]!=="No Result"){HandlerToSetDetailsForSearch(areaNames[key],"areaName")}}}>
+                                                                {areaNames[key]}
+                                                            </li>
+                                                        ))}
+                                                    </ul>
+                                                </div>
+                                            }
+                                        </div>
+
+                                        <div style={{marginTop:'20px',display:'flex',flexDirection:'column',justifyContent:'center',alignItems:'center'}}>
+                                            {formErr && <div  style={{color: 'maroon',marginBottom:'10px'}}>{errToPrint}</div>}
+                                            <div style={{width:'100%',display:'flex',flexDirection:'column',justifyContent:'flex-start'}}>
+                                                <button style={{marginBottom:'15px'}} className={homePageCss.pgAndSearchButton} onClick={HandlerSearch} disabled={loading}>Search</button>
+                                                <button  className={homePageCss.cancelButton} onClick={filters}>Cancel</button>
+                                            </div>
                                         </div>
                                     </div>
-                                </div>
                                 </div>
 
                                 <div id="ls" style={{width:'0px',height:'0px', position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%, -50%)', overflow:'hidden'}} className={homePageCss.loginDisplay}>
@@ -706,10 +707,10 @@ const Home = () =>{
                                     <button style={{marginTop:'12px'}} className={homePageCss.loginAndSignupButton} onClick={() => navigate('/signup')}>Signup</button>
                                 </div>
                             </header>
-                            <footer style={{height:'6%',width:'100%'}}>
+                            <footer className={homePageCss.footer}>
                                 {show&&
                                     <div className={homePageCss.profilePicContainer}>
-                                        <FiUser size={15} onClick={()=>{if(flag2){lsHandler()}}} />
+                                        <AiOutlineLogin size={15} onClick={()=>{if(flag2){lsHandler()}}} />
                                     </div>
                                 }
                                 {!loading&&

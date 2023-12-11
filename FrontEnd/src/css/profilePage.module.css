@@ -50,7 +50,7 @@ footer{
 }
 
 .profilePicContainer{
-    background-color:#36454f;
+    background-color: #E2D1F9;
     width:30px;
     height:30px;
     border-radius:50px;
@@ -60,9 +60,10 @@ footer{
     justify-content: center;
     align-items: center;
 
-    box-shadow: 1px 2px 5px rgba(147, 146, 146, 0.9);
+    box-shadow: 1px 2px 5px rgba(0, 0, 0, 0.9);
 }
 .profilePicContainer:hover{
+    background-color: lightblue;
     box-shadow: 1px 2px 3px rgba(0, 0, 0, 1);
 }
 
@@ -104,13 +105,17 @@ footer{
 
 }
 
-
-
 .addNewHostelFormDiv{
     background-color: #317773;
     height: 100%;
-    width: 100%;
+    width:0%;
+    position:absolute;
+    right:0%;
 }
+
+
+
+
 .addNewHostelForm{
     position: relative;
     top: 0.3%;
@@ -118,9 +123,13 @@ footer{
     background-color:#EEA47F;
     width: 98%;
     height: 98.8%;
-    overflow: hidden;
     border: 3px solid black;
     border-radius: 8px;
+}
+
+.addNewHostelForm::-webkit-scrollbar {
+    width: 0px;
+    height: 0px;
 }
 
 .oneShareDiv{
@@ -222,30 +231,28 @@ footer{
 
 
 
-.addNewHostelForm::-webkit-scrollbar {
-    width: 5px;
-    height: 5px;
-}
-  
-.addNewHostelForm::-webkit-scrollbar-thumb {
-background-color: #555555;
-border-radius: 8px;
-}
-
-.addNewHostelForm::-webkit-scrollbar-track {
-background-color: #9b9b9b;
+.hostelsContainer{
+    width:100%;
+    height:100%;
+    overflow:auto;
+    scroll-behavior:smooth;
+    background-color: #E2D1F9;
+    
+    display:flex;
+    justify-content:center;
+    align-items: center;
 }
 
 .hostelsContainer::-webkit-scrollbar {
-    width: 5px;
-    height: 5px;
-}
-  
-.hostelsContainer::-webkit-scrollbar-thumb {
-background-color: #555555;
-border-radius: 8px;
+    width: 0px;
+    height: 0px;
 }
 
-.hostelsContainer::-webkit-scrollbar-track {
-background-color: #9b9b9b;
+.profileDiv{
+    height:100%;
+    width:0%;
+    border-radius:0px 20px 20px 0px;
+    background-color:#317773;
+    position:absolute;
+    overflow:hidden;
 }

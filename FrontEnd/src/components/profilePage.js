@@ -158,7 +158,6 @@ const Profile = ()=>{
         })
     },[])
 
-
     function added(){
         HandlerToLoadHostels('added');
         setOffSet(0)
@@ -607,14 +606,14 @@ const Profile = ()=>{
 
     const HandlerToSetFirstHeight=()=>{
         if (containerRef.current) {
-            const container = document.getElementById('your-container-id');
+            const container = document.getElementById('hostelsContainerId');
             setFirstHeight(container.scrollHeight);
         }
     }
 
     useEffect(() => {
         if (containerRef.current) {
-          const container = document.getElementById('your-container-id');
+          const container = document.getElementById('hostelsContainerId');
           const scrollPosition = firstHeight;
           
           container.scrollTo({
@@ -742,7 +741,7 @@ const Profile = ()=>{
                                                 <div style={{color:'rgba(0, 0, 0, 0.5)'}}><label style={{color:'blue',cursor:'pointer',fontWeight:'bolder'}} onClick={()=>{setAddHostelControl(!addHostelControl)}}>'Click Here'</label> to Add hostel</div>
                                             </div>
                                         :
-                                            <div id="your-container-id" ref={containerRef} onScroll={()=>{count===1 && handleScroll()}} style={{scrollBehavior: 'smooth',backgroundColor: '#E2D1F9',width:'100%',height:'100%',overflow:'auto',display:'flex', justifyContent:'center',alignItems:'center'}} className={profilePageCss.hostelsContainer}>
+                                            <div id="hostelsContainerId" ref={containerRef} onScroll={()=>{count===1 && handleScroll()}} className={profilePageCss.hostelsContainer}>
                                             {totalHostelsDetailsProfilePage&&
                                                 <div style={{width:'88%', height:'100%'}}>
                                                     <div style={{marginTop:'10%',marginBottom:'10%'}}>Hostels:</div>
@@ -767,7 +766,7 @@ const Profile = ()=>{
                                         }
                                     </div>
                                 }
-                                <div id='idOfform'  style={{width:'0%', height:'100%',position:'absolute',right:'0%'}} className={profilePageCss.addNewHostelFormDiv}>
+                                <div id='idOfform' className={profilePageCss.addNewHostelFormDiv}>
                                     <div id='addHostelDivId' className={profilePageCss.addNewHostelForm}>
                                         <div style={{fontSize:'75%',height:'100%',width:'100%',marginLeft:'3%', marginTop:'4%'}}> 
                                             <div>Hostel Name.<label style={{color:'red'}}>*</label></div>
@@ -963,7 +962,7 @@ const Profile = ()=>{
                                         </div>
                                     </div>   
                                 </div>
-                                <div id='profileDiv' style={{height:'100%', width:'0%', borderRadius:'0px 20px 20px 0px',backgroundColor:'#317773', position:'absolute',overflow:'hidden'}}>
+                                <div id='profileDiv' className={profilePageCss.profileDiv}>
                                     {userData&&
                                         <div style={{display:'flex',flexDirection:'column',justifyContent:'center',alignItems:'center'}}>
                                             <AiFillBackward size={25} style={{cursor:'pointer',position:'absolute',top:'10px',right:'10px'}} onClick={()=>{profileDivHandler("close")}}/>
