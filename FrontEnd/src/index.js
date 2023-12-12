@@ -5,7 +5,7 @@ import indexPageCss from './css/indexPage.module.css'
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
-  <div style={{ height: '100vh', width: '100vw', display:'flex',justifyContent:'center',alignItems:'center'}}>
+  <div style={{ height: '100%', width: '100%',position:'absolute',display:'flex',justifyContent:'center',alignItems:'center'}}>
     {!sessionStorage.getItem("displayed")&&
       <div className={indexPageCss.wellComeContainer}>
         <WellCome/>

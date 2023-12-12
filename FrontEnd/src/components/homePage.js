@@ -398,8 +398,10 @@ const Home = () =>{
     const filters=()=>{
         setFlag1(false)
         let headerTag=document.getElementById("filters");
+        let footer=document.getElementById("footer");
         if(headerTag.offsetWidth==0){
             let w=0;
+            footer.style.borderRadius="0px 7px 0px 0px";
             let interval=setInterval(()=>{
                 if(++w<=50){
                     headerTag.style.width=`${w}%`;
@@ -414,6 +416,7 @@ const Home = () =>{
                 if(--w>=0){
                     headerTag.style.width=`${w}%`;
                 }else{
+                    footer.style.borderRadius="7px 7px 0px 0px";
                     clearInterval(interval);
                     setFlag1(true)
                 }
@@ -707,7 +710,7 @@ const Home = () =>{
                                     <button style={{marginTop:'12px'}} className={homePageCss.loginAndSignupButton} onClick={() => navigate('/signup')}>Signup</button>
                                 </div>
                             </header>
-                            <footer className={homePageCss.footer}>
+                            <footer id='footer' className={homePageCss.footer}>
                                 {show&&
                                     <div className={homePageCss.profilePicContainer}>
                                         <AiOutlineLogin size={15} onClick={()=>{if(flag2){lsHandler()}}} />

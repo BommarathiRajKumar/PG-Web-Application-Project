@@ -1,3 +1,8 @@
+body{
+    margin: 0%;
+    height: 100vh;
+    width: 100vw;
+}
 .body {
     height: 100%;
     width: 100%;
@@ -10,6 +15,7 @@
 .mainDiv {
     height: 100%;
     width: 100%;
+    background-color: #E2D1F9;;
 
     display: flex;
     justify-content: center;
@@ -22,9 +28,6 @@
     width: 100%;
     display: flex;
     overflow: hidden;
-}
-.footer{
-    width: 100%;
 }
 
 @media screen and (min-width: 1024px) {
@@ -46,7 +49,8 @@ footer{
     display: flex;
     justify-content: center;
     align-items: center;
-
+    
+    border-radius: 7px 7px 0px 0px;
 }
 
 .profilePicContainer{
@@ -106,11 +110,12 @@ footer{
 }
 
 .addNewHostelFormDiv{
-    background-color: #317773;
-    height: 100%;
-    width:0%;
+    background-color: #E2D1F9;
+    height: 0%;
+    width:100%;
     position:absolute;
-    right:0%;
+    bottom:0%;
+    overflow: hidden;
 }
 
 
@@ -125,6 +130,7 @@ footer{
     height: 98.8%;
     border: 3px solid black;
     border-radius: 8px;
+    overflow: auto;
 }
 
 .addNewHostelForm::-webkit-scrollbar {

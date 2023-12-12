@@ -424,6 +424,7 @@ const Profile = ()=>{
                     if (response.status === 200) {
                         alert("Hostel Uploaded successfully.");
                         added();
+                        formWidthHandler();
                         setHostelsRefresh(!hostelsRefresh);
                         HandlerToMakeDefaultHostelsDetails();
                         setAddHostelControl(!addHostelControl);
@@ -643,7 +644,10 @@ const Profile = ()=>{
     const profileDivHandler=()=>{
         setFlag(false);
         let profileDiv=document.getElementById("profileDiv");
+        let footer=document.getElementById("footer");
         if(profileDiv.offsetWidth==0){
+            
+            footer.style.borderRadius="0px 7px 0px 0px"
             let w=0;
             let interval=setInterval(()=>{
                 if(++w<=50){
@@ -659,6 +663,7 @@ const Profile = ()=>{
                 if(--w>=0){
                     profileDiv.style.width=`${w}%`;
                 }else{
+                    footer.style.borderRadius="7px 7px 0px 0px"
                     clearInterval(interval);
                     setFlag(true);
                 }
@@ -666,29 +671,34 @@ const Profile = ()=>{
         }
     }
 
+    
+    const[flag1,setFlag1]=useState(true);
     const formWidthHandler=()=>{
+        setFlag1(false);
         let idOfform=document.getElementById("idOfform");
-        if(idOfform.offsetWidth==0){
-            let w=0;
+        if(idOfform.offsetHeight==0){
+            let h=0;
+            document.getElementById("addHostelDivId").scrollTop=0;
             let interval=setInterval(()=>{
-                if(++w<=100){
-                    idOfform.style.width=`${w}%`;
+                if(++h<=100){
+                    idOfform.style.height=`${h}%`;
                 }else{
-                    document.getElementById("addHostelDivId").style.overflow="auto";
                     clearInterval(interval);
+                    setFlag1(true);
                 }
             },15);
+            if(document.getElementById("profileDiv").offsetWidth!=0)
             profileDivHandler();
         }else{
-            let w=100;
-            document.getElementById("addHostelDivId").style.overflow="hidden";
+            let h=100;
             let interval=setInterval(()=>{
-                if(--w>=0){
-                    idOfform.style.width=`${w}%`;
+                if(--h>=0){
+                    idOfform.style.height=`${h}%`;
                 }else{
                     clearInterval(interval);
+                    setFlag1(true);
                 }
-            },12);
+            },15);
         }
     }
 
@@ -738,7 +748,7 @@ const Profile = ()=>{
                                         {noDataFound?
                                             <div style={{width:'100%',height:'100%',display:'flex',flexDirection:'column',justifyContent:'center',alignItems:'center'}}>
                                                 <div style={{color:'rgba(0, 0, 0, 0.5)',marginBottom:'3%'}}>You didn't added your hostels yet.</div>
-                                                <div style={{color:'rgba(0, 0, 0, 0.5)'}}><label style={{color:'blue',cursor:'pointer',fontWeight:'bolder'}} onClick={()=>{setAddHostelControl(!addHostelControl)}}>'Click Here'</label> to Add hostel</div>
+                                                <div style={{color:'rgba(0, 0, 0, 0.5)'}}><label style={{color:'blue',cursor:'pointer',fontWeight:'bolder'}} onClick={()=>{if(flag1){formWidthHandler()}}}>'Click Here'</label> to Add hostel</div>
                                             </div>
                                         :
                                             <div id="hostelsContainerId" ref={containerRef} onScroll={()=>{count===1 && handleScroll()}} className={profilePageCss.hostelsContainer}>
@@ -969,7 +979,7 @@ const Profile = ()=>{
                                             <img className={profilePageCss.profilePhoto} src={`data:image/jpeg;base64,${userData.ownerImage}`} alt="profile" />
                                             <div style={{fontSize:'120%',marginBottom:'5px'}}>{userData.ownerName}</div>
                                             <div style={{fontSize:'120%'}}><span><AiOutlineMobile/>{userData.mobileNumber}</span></div>
-                                            <button style={{marginTop:'25px',marginBottom:'16px'}} className={profilePageCss.headerButtons} onClick={()=>{formWidthHandler("addHostel");setShowFormErr(false)}}><label style={{display:'flex',justifyContent:'center',alignItems:'center'}}><AiOutlinePlusCircle/>&nbsp;Add Hostle</label></button>
+                                            <button style={{marginTop:'25px',marginBottom:'16px'}} className={profilePageCss.headerButtons} onClick={()=>{if(flag1){formWidthHandler()};setShowFormErr(false)}}><label style={{display:'flex',justifyContent:'center',alignItems:'center'}}><AiOutlinePlusCircle/>&nbsp;Add Hostle</label></button>
                                             <button className={profilePageCss.headerButtons} onClick={logOut}><AiOutlineLogout/>&nbsp;Log Out</button>
                                             <button style={{backgroundColor:'#ef5350',marginTop:'30px'}}className={profilePageCss.headerButtons} onClick={HandlerToGenOtpToDeleteAccount} disabled={deleteLoading}>{deleteLoading?<Oval color={"black"} width={20} height={20}/>:<span style={{display:'flex',justifyContent:'center',alignItems:'center'}}><AiOutlineDelete /><label style={{cursor:'pointer',marginLeft:'6px'}}>Account</label></span>}</button>
                                             
@@ -987,7 +997,7 @@ const Profile = ()=>{
                                 </div>
                             </header>
                 
-                            <footer className={profilePageCss.footer}>
+                            <footer id='footer'>
                                 {!loading &&
                                     <div className={profilePageCss.profilePicContainer} onClick={()=>{if(flag){profileDivHandler()}}}>
                                         <AiOutlineUser size={15} onClick={()=>{if(flag){profileDivHandler()}}}/>
