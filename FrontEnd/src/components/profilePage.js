@@ -424,7 +424,7 @@ const Profile = ()=>{
                     if (response.status === 200) {
                         alert("Hostel Uploaded successfully.");
                         added();
-                        formWidthHandler();
+                        formHeightHandler();
                         setHostelsRefresh(!hostelsRefresh);
                         HandlerToMakeDefaultHostelsDetails();
                         setAddHostelControl(!addHostelControl);
@@ -673,7 +673,7 @@ const Profile = ()=>{
 
     
     const[flag1,setFlag1]=useState(true);
-    const formWidthHandler=()=>{
+    const formHeightHandler=()=>{
         setFlag1(false);
         let idOfform=document.getElementById("idOfform");
         if(idOfform.offsetHeight==0){
@@ -727,286 +727,291 @@ const Profile = ()=>{
 
     return(
  
-        <div className={profilePageCss.body}>
-            <div className={profilePageCss.mainDiv}>
-                { serverError || connectionRefuseError ?
-                    <div style={{width:'100%',height:'100%'}}> 
-                        {serverError ? <ServerError/>:<ConnectionRefuse />}
-                    </div>
-                : 
-                    <div style={{width:'100%',height:'100%', display:'flex',flexDirection:'column', justifyContent:'center',alignItems:'center'}}>
-                            <header className={profilePageCss.header}>
-                                {loading && !userLoading ?
-                                    <div style={{backgroundColor:'#E2D1F9', width:'100%',height:'100%',display:'flex',flexDirection:'column',justifyContent:'center',alignItems:'center'}}>
-                                        <Oval color="#00BFFF" height={60} width={60} />
-                                        <div style={{marginTop:'8%'}}>
-                                            Please wait, Data is loading...
+        <div className={profilePageCss.mainDiv}>
+            { serverError || connectionRefuseError ?
+                <div style={{width:'100%',height:'100%',position:'relative'}}> 
+                    {serverError ? <ServerError/>:<ConnectionRefuse />}
+                </div>
+            : 
+                <div className={profilePageCss.mainContainer}>
+                    <header>
+                        <div id='profileDiv' className={profilePageCss.profileDiv}>
+                            {userData&&
+                                <div style={{display:'flex',flexDirection:'column',justifyContent:'center',alignItems:'center'}}>
+                                    <AiFillBackward size={25} style={{cursor:'pointer',position:'absolute',top:'10px',right:'10px'}} onClick={()=>{profileDivHandler("close")}}/>
+                                    <img className={profilePageCss.profilePhoto} src={`data:image/jpeg;base64,${userData.ownerImage}`} alt="profile" />
+                                    <div style={{fontSize:'120%',marginBottom:'5px'}}>{userData.ownerName}</div>
+                                    <div style={{fontSize:'120%'}}><span><AiOutlineMobile/>{userData.mobileNumber}</span></div>
+                                    <button style={{marginTop:'25px',marginBottom:'16px'}} className={profilePageCss.headerButtons} onClick={()=>{if(flag1){formHeightHandler()};setShowFormErr(false)}}><label style={{display:'flex',justifyContent:'center',alignItems:'center'}}><AiOutlinePlusCircle/>&nbsp;Add Hostle</label></button>
+                                    <button className={profilePageCss.headerButtons} onClick={logOut}><AiOutlineLogout/>&nbsp;Log Out</button>
+                                    <button style={{backgroundColor:'#ef5350',marginTop:'30px'}}className={profilePageCss.headerButtons} onClick={HandlerToGenOtpToDeleteAccount} disabled={deleteLoading}>{deleteLoading?<Oval color={"black"} width={20} height={20}/>:<span style={{display:'flex',justifyContent:'center',alignItems:'center'}}><AiOutlineDelete /><label style={{cursor:'pointer',marginLeft:'6px'}}>Account</label></span>}</button>
+                                    
+                                    <div id='deleteForm' style={{width:'0%',marginTop:'50px',textAlign:'center',overflow:'hidden'}}>
+                                        <label>Enter 6-Digit OTP:</label>
+                                        {showOtpError && <div style={{color:'#9b122d'}}>Invalid Otp.</div>}
+                                        <input onChange={(e)=>{setOtp(e.target.value)}} placeholder='OTP' style={{width:'130px',height:'25px', borderRadius:'8px',border:'1px solid black',backgroundColor:'rgb(177, 216, 216)',textAlign:'center',marginTop:'10px',marginBottom:'10px'}}/>
+                                        <div style={{marginBottom:'8px',display:'flex',justifyContent:'center',alignItems:'center'}}>
+                                            <button style={{ width: '60px' }} className={profilePageCss.headerButtons} onClick={()=>{HandlerToOtpValidateToDeleteAccount('cancel')}}>Cancel</button>
+                                            <button style={{width:'60px',backgroundColor:'#ef5350',marginLeft:'12px'}} onClick={()=>{HandlerToOtpValidateToDeleteAccount('submit')}} className={profilePageCss.headerButtons} disabled={submitLoading}>{submitLoading?<label style={{display:'flex',justifyContent:'center'}}><Oval width={16} height={16} color='black'/></label>:"Submit"}</button>
                                         </div>
+                                    </div>   
+                                </div>
+                            }
+                        </div>
+                        {loading && !userLoading ?
+                            <div className={profilePageCss.loaderDiv}>
+                                <Oval color="#00BFFF" height={60} width={60} />
+                                <label style={{marginTop:'8%'}}>
+                                    Please wait, Data is loading...
+                                </label>
+                            </div>
+                        :
+                            <div style={{width:'100%',height:'100%'}}>
+                                {noDataFound?
+                                    <div className={profilePageCss.noDataDiv}>
+                                        <label style={{color:'rgba(0, 0, 0, 0.5)',marginBottom:'3%'}}>
+                                            You didn't added your hostels yet.
+                                        </label>
+                                        <label style={{color:'rgba(0, 0, 0, 0.5)'}}>
+                                            <label style={{color:'blue',cursor:'pointer',fontWeight:'bolder'}} onClick={()=>{if(flag1){formHeightHandler()}}}>
+                                                'Click Here'
+                                            </label> 
+                                            &nbsp;to Add hostel.
+                                        </label>
                                     </div>
                                 :
-                                    <div style={{width:'100%',height:'100%'}}>
-                                        {noDataFound?
-                                            <div style={{width:'100%',height:'100%',display:'flex',flexDirection:'column',justifyContent:'center',alignItems:'center'}}>
-                                                <div style={{color:'rgba(0, 0, 0, 0.5)',marginBottom:'3%'}}>You didn't added your hostels yet.</div>
-                                                <div style={{color:'rgba(0, 0, 0, 0.5)'}}><label style={{color:'blue',cursor:'pointer',fontWeight:'bolder'}} onClick={()=>{if(flag1){formWidthHandler()}}}>'Click Here'</label> to Add hostel</div>
-                                            </div>
-                                        :
-                                            <div id="hostelsContainerId" ref={containerRef} onScroll={()=>{count===1 && handleScroll()}} className={profilePageCss.hostelsContainer}>
-                                            {totalHostelsDetailsProfilePage&&
-                                                <div style={{width:'88%', height:'100%'}}>
-                                                    <div style={{marginTop:'10%',marginBottom:'10%'}}>Hostels:</div>
-                                                    {Object.keys(totalHostelsDetailsProfilePage).map(key => (
-                                                        <DisplayHostelsProfilePage
-                                                            edited={edited}
-                                                            deleted={deleted}
-                                                            profile={profile}
-                                                            style={{ marginBottom: '40px' }}
-                                                            key={key}
-                                                            data={totalHostelsDetailsProfilePage[key]}
-                                                        />
-                                                        )).reverse()
-                                                    }
-                                                    <div  style={{width: '100%', display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
-                                                        {count===1?<Oval color="black" width={33} height={33}/>:<label>Results End</label>}
-                                                    </div>
-                                                    <br/> 
-                                                </div>
+                                    <div id="hostelsContainerId"  className={profilePageCss.hostelsContainer} ref={containerRef} onScroll={()=>{count===1 && handleScroll()}}>
+                                        {totalHostelsDetailsProfilePage&&
+                                            <div style={{width:'85%', height:'100%'}}>
+                                                <div style={{marginTop:'6%',marginBottom:'6%'}}>Hostels:</div>
+                                                {Object.keys(totalHostelsDetailsProfilePage).map(key => (
+                                                    <DisplayHostelsProfilePage
+                                                        edited={edited}
+                                                        deleted={deleted}
+                                                        profile={profile}
+                                                        style={{ marginBottom: '40px' }}
+                                                        key={key}
+                                                        data={totalHostelsDetailsProfilePage[key]}
+                                                    />
+                                                    )).reverse()
                                                 }
+                                                <div className={profilePageCss.endAndSpinnerDiv}>
+                                                    {count===1?<Oval color="black" width={33} height={33}/>:<label>End</label>}
+                                                </div>
                                             </div>
                                         }
                                     </div>
                                 }
-                                <div id='idOfform' className={profilePageCss.addNewHostelFormDiv}>
-                                    <div id='addHostelDivId' className={profilePageCss.addNewHostelForm}>
-                                        <div style={{fontSize:'75%',height:'100%',width:'100%',marginLeft:'3%', marginTop:'4%'}}> 
-                                            <div>Hostel Name.<label style={{color:'red'}}>*</label></div>
-                                            <input className={profilePageCss.input} type='text' name="hostelName" value={hostelDetails.hostelName} onChange={hostelDetailsUpdateHandler}/>
+                            </div>
+                        }
+                        <div id='idOfform' className={profilePageCss.addNewHostelParentDiv}>
+                            <div id='addHostelDivId' className={profilePageCss.addNewHostelChildDiv}>
+                                <div style={{fontSize:'75%',height:'100%',width:'100%',marginLeft:'3%', marginTop:'4%'}}> 
+                                    <div>Hostel Name.<label style={{color:'red'}}>*</label></div>
+                                    <input className={profilePageCss.input} type='text' name="hostelName" value={hostelDetails.hostelName} onChange={hostelDetailsUpdateHandler}/>
 
-                                            <div style={{marginBottom:'15px' ,marginTop:'30px'}}>
-                                                <div className={profilePageCss.oneShareDiv}>
-                                                    <label>1-Share rooms:</label>
-                                                    <input type="checkbox" name="oneShareApplicable" onClick={hostelDetailsUpdateHandler} checked={hostelDetails.oneShareApplicable===true}  style={{ width: '5%', height: '5%',cursor:'pointer'}} />
-                                                    <label>Applicable</label>
-                                                </div>
-
-                                                {hostelDetails.oneShareApplicable&&
-                                                    <div className={profilePageCss.secShareDiv}>
-                                                        <label> &#8377;/month :
-                                                            <input style={{height:'25px',width:'20%',textAlign:'center',borderRadius:'8px',border:'1px solid black', backgroundColor:'rgb(177, 216, 216)'}} placeholder='RS.'  type='text' name="oneShareCost" value={hostelDetails.oneShareCost} onChange={hostelDetailsUpdateHandler}/>
-                                                        </label>
-
-                                                        <div style={{display:'flex',justifyContent:'flex-start',alignItems:'center'}}>
-                                                            <label >Rooms Available:<label style={{color:'red'}}>*</label></label>
-                                                            
-                                                            <input type='checkbox' style={{marginLeft:'6px', height:'14px', width: '14px' ,cursor:'pointer'}} name="oneShareRoomsAvailable" value={"Yes"}  checked={hostelDetails.oneShareRoomsAvailable === "Yes"} onChange={hostelDetailsUpdateHandler}/>
-                                                            Yes
-                                                            
-                                                            <input type='checkbox' style={{marginLeft:'10px',  height:'14px', width: '14px',cursor:'pointer' }} name="oneShareRoomsAvailable" value={"No"} checked={hostelDetails.oneShareRoomsAvailable === "No"} onChange={hostelDetailsUpdateHandler}/>
-                                                            No
-                                                        </div>
-                                                    </div>
-                                                }
-                                            </div>
-
-
-
-                                            <div style={{marginBottom:'4%'}}>
-                                                <div className={profilePageCss.oneShareDiv}>
-                                                    <label>2-Share rooms:</label>
-                                                    <input type="checkbox" name="twoShareApplicable" onClick={hostelDetailsUpdateHandler} checked={hostelDetails.twoShareApplicable===true} style={{ width: '5%', height: '5%' ,cursor:'pointer'}}/>
-                                                    <label>Applicable</label>
-                                                </div>
-
-                                                {hostelDetails.twoShareApplicable&&
-                                                    <div className={profilePageCss.secShareDiv}>
-                                                        <label> &#8377;/month :
-                                                            <input style={{height:'25px',width:'20%',textAlign:'center',borderRadius:'8px',border:'1px solid black', backgroundColor:'rgb(177, 216, 216)'}} placeholder='RS.'  type='text' name="twoShareCost" value={hostelDetails.twoShareCost} onChange={hostelDetailsUpdateHandler}/>
-                                                        </label>
-                                                        
-                                                        <div style={{display:'flex',justifyContent:'flex-start',alignItems:'center'}}>
-                                                            <label>Rooms Available:<label style={{color:'red'}}>*</label></label>
-                                                            <input type='checkbox' style={{marginLeft:'6px', height:'14px', width: '14px' ,cursor:'pointer'}} name="twoShareRoomsAvailable" value={"Yes"}  checked={hostelDetails.twoShareRoomsAvailable === "Yes"} onChange={hostelDetailsUpdateHandler}/>
-                                                            Yes
-                                                            <input type='checkbox' style={{marginLeft:'10px', height:'14px', width: '14px' ,cursor:'pointer'}} name="twoShareRoomsAvailable" value={"No"} checked={hostelDetails.twoShareRoomsAvailable === "No"} onChange={hostelDetailsUpdateHandler}/>
-                                                            No
-                                                        </div>
-                                                    </div>
-                                                }
-                                            </div>
-
-                                            <div style={{marginBottom:'4%'}}>
-                                                <div className={profilePageCss.oneShareDiv}>
-                                                    <label>3-Share rooms:</label>
-                                                    <input type="checkbox" name="threeShareApplicable" onClick={hostelDetailsUpdateHandler} style={{ width: '5%', height: '5%',cursor:'pointer' }} checked={hostelDetails.threeShareApplicable===true} />
-                                                    <label>Applicable</label>
-                                                </div>
-                                            
-                                                {hostelDetails.threeShareApplicable&&
-                                                    <div className={profilePageCss.secShareDiv}>
-                                                        <label> &#8377;/month :
-                                                            <input style={{height:'25px',width:'20%',textAlign:'center',borderRadius:'8px',border:'1px solid black', backgroundColor:'rgb(177, 216, 216)'}} placeholder='RS.'  type='text' name="threeShareCost" value={hostelDetails.threeShareCost} onChange={hostelDetailsUpdateHandler}/>
-                                                        </label>
-                                                        <div style={{display:'flex',justifyContent:'flex-start',alignItems:'center'}}>
-                                                            <label>Rooms Available:<label style={{color:'red'}}>*</label></label>
-                                                            <input type='checkbox' style={{marginLeft:'6px', height:'14px', width: '14px' ,cursor:'pointer'}} name="threeShareRoomsAvailable" value={"Yes"}  checked={hostelDetails.threeShareRoomsAvailable === "Yes"} onChange={hostelDetailsUpdateHandler}/>
-                                                            Yes
-                                                            <input type='checkbox' style={{marginLeft:'10px', height:'14px', width: '14px' ,cursor:'pointer'}} name="threeShareRoomsAvailable" value={"No"} checked={hostelDetails.threeShareRoomsAvailable === "No"} onChange={hostelDetailsUpdateHandler}/>
-                                                            No
-                                                        </div>
-                                                    </div>
-                                                }
-                                            </div>
-
-                                            <div style={{marginBottom:'4%'}}>
-                                                <div className={profilePageCss.oneShareDiv}>
-                                                    <label>4-Share rooms:</label>
-                                                    <input type="checkbox" name="fourShareApplicable" onClick={hostelDetailsUpdateHandler} style={{ width: '5%', height: '5%',cursor:'pointer' }} checked={hostelDetails.fourShareApplicable===true}/>
-                                                    <label>Applicable</label>
-                                                </div>
-                                            
-                                                {hostelDetails.fourShareApplicable&&
-                                                    <div className={profilePageCss.secShareDiv}>
-                                                        <label> &#8377;/month :
-                                                            <input style={{height:'25px',width:'20%',textAlign:'center',borderRadius:'8px',border:'1px solid black', backgroundColor:'rgb(177, 216, 216)'}} placeholder='RS.'  type='text' name="fourShareCost" value={hostelDetails.fourShareCost} onChange={hostelDetailsUpdateHandler}/>
-                                                        </label>
-                                                        <div style={{display:'flex',justifyContent:'flex-start',alignItems:'center'}}>
-                                                            <label>Rooms Available:<label style={{color:'red'}}>*</label></label>
-                                                            <input type='checkbox' style={{marginLeft:'6px', height:'14px', width: '14px' ,cursor:'pointer'}} name="fourShareRoomsAvailable" value={"Yes"}  checked={hostelDetails.fourShareRoomsAvailable === "Yes"} onChange={hostelDetailsUpdateHandler}/>
-                                                            Yes
-                                                            <input type='checkbox' style={{marginLeft:'10px', height:'14px', width: '14px' ,cursor:'pointer'}} name="fourShareRoomsAvailable" value={"No"} checked={hostelDetails.fourShareRoomsAvailable === "No"} onChange={hostelDetailsUpdateHandler}/>
-                                                            No
-                                                        </div>
-                                                    </div>
-                                                }
-                                            </div>
-
-                                            <div style={{marginBottom:'4%'}}>
-                                                <div className={profilePageCss.oneShareDiv}>
-                                                    <label>5-Share rooms:</label>
-                                                    <input type="checkbox" name="fiveShareApplicable" onClick={hostelDetailsUpdateHandler} style={{ width: '5%', height: '5%',cursor:'pointer'}} checked={hostelDetails.fiveShareApplicable===true} />
-                                                    <label>Applicable</label>
-                                                </div>
-
-                                                {hostelDetails.fiveShareApplicable&&
-                                                    <div className={profilePageCss.secShareDiv}>
-                                                        <label> &#8377;/month :
-                                                            <input style={{height:'25px',width:'20%',textAlign:'center',borderRadius:'8px',border:'1px solid black', backgroundColor:'rgb(177, 216, 216)'}} placeholder='RS.'  type='text' name="fiveShareCost" value={hostelDetails.fiveShareCost} onChange={hostelDetailsUpdateHandler}/>
-                                                        </label>
-                                                        <div style={{display:'flex',justifyContent:'flex-start',alignItems:'center'}}>
-                                                            <label>Rooms Available:<label style={{color:'red'}}>*</label></label>
-                                                            <input type='checkbox' style={{marginLeft:'6px', height:'14px', width: '14px' ,cursor:'pointer'}} name="fiveShareRoomsAvailable" value={"Yes"}  checked={hostelDetails.fiveShareRoomsAvailable === "Yes"} onChange={hostelDetailsUpdateHandler}/>
-                                                            Yes
-                                                            <input type='checkbox' style={{marginLeft:'10px', height:'14px', width: '14px' ,cursor:'pointer'}} name="fiveShareRoomsAvailable" value={"No"} checked={hostelDetails.fiveShareRoomsAvailable === "No"} onChange={hostelDetailsUpdateHandler}/>
-                                                            No
-                                                        </div>
-                                                    </div>
-                                                }
-                                            </div>
-
-                                            <div style={{marginTop:'30px',marginBottom:'5px'}}>Upload any 3 Rooms Images.<label style={{color:'red'}}>*</label></div>
-
-                                            <input  id="imageOne" name='imageOne' type='file' style={{display:'none'}}   accept="image/*" onChange={hostelDetailsUpdateHandler}/>
-                                            <label for="imageOne"  className={profilePageCss.label}><CiImageOn/>&nbsp;&nbsp;&nbsp;{hostelDetails.imageOne.name || "Choose Image One"}</label><br/>
-
-                                            
-                                            <input  id="imageTwo" name='imageTwo' type='file' style={{display:'none'}}  accept="image/*" onChange={hostelDetailsUpdateHandler}/>
-                                            <label for="imageTwo"  className={profilePageCss.label}><CiImageOn/>&nbsp;&nbsp;&nbsp;{hostelDetails.imageTwo.name || "Choose Image Two"}</label><br/>
-
-                                            
-                                            <input  id="imageThree" name='imageThree' type='file' style={{display:'none'}}  accept="image/*" onChange={hostelDetailsUpdateHandler}/>
-                                            <label for="imageThree"  className={profilePageCss.label}><CiImageOn style={{marginLeft:'5px'}}/>&nbsp;&nbsp;&nbsp;{hostelDetails.imageThree.name || "Choose Image Three"}</label><br/>
-
-
-                                            <div style={{marginTop:'30px',marginBottom:'5px'}}>Hostel Address:</div>
-                                            <div>State Name.<label style={{color:'red'}}>*</label></div>
-                                            <input className={profilePageCss.input} style={{marginBottom:'3%',width: '50%',}} type='text' name="stateName" value={hostelDetails.stateName} onChange={hostelDetailsUpdateHandler}/>
-                                            <div>City Name.<label style={{color:'red'}}>*</label></div>
-                                            <input className={profilePageCss.input} style={{marginBottom:'3%',width: '50%'}} type='text' name="cityName" value={hostelDetails.cityName} onChange={hostelDetailsUpdateHandler}/>
-                                            <div>Area Name.<label style={{color:'red'}}>*</label></div>
-                                            <input className={profilePageCss.input} style={{marginBottom:'3%',width: '50%'}} type='text' name="areaName" value={hostelDetails.areaName} onChange={hostelDetailsUpdateHandler}/>
-                                            <div>Land Mark.<label style={{color:'red'}}>*</label></div>
-                                            <textarea style={{width: '50%', height: '80px', overflow: 'auto',resize: 'none',borderRadius:'8px',backgroundColor:'rgb(177, 216, 216)',border:'1px solid black'}} type='text' name="landMark" value={hostelDetails.landMark} onChange={hostelDetailsUpdateHandler}/><br/><br/>
-                                                
-                                            <div style={{marginTop:'30px'}}>Hostel type.<label style={{color:'red'}}>*</label></div>
-                                            <div className={profilePageCss.facilitiesDivs}>
-                                                <input style={{ width: '14px', height: '14px' }} type="checkbox" name="hostelType" value={"Girls Hostel"} checked={hostelDetails.hostelType === 'Girls Hostel'} onChange={hostelDetailsUpdateHandler}/>
-                                                Girls
-                                                <input style={{marginLeft:'15px', width: '14px', height: '14px' }} type="checkbox" name="hostelType" value={"Boys Hostel"} checked={hostelDetails.hostelType === 'Boys Hostel'} onChange={hostelDetailsUpdateHandler}/>
-                                                Boys
-                                            </div>
-
-
-                                            <div>wifi Available.<label style={{color:'red'}}>*</label></div>
-                                            <div className={profilePageCss.facilitiesDivs}>
-                                                <input style={{ width: '14px', height: '14px' }} type="checkbox" name="wifi" value={"Yes"} checked={hostelDetails.wifi === "Yes"} onChange={hostelDetailsUpdateHandler}/>
-                                                Yes
-                                                <input style={{ marginLeft:'15px',width: '14px', height: '14px' }} type="checkbox" name="wifi" value={"No"} checked={hostelDetails.wifi === "No"} onChange={hostelDetailsUpdateHandler}/>
-                                                No
-                                            </div>
-
-                                            <div>laundry Available.<label style={{color:'red'}}>*</label></div>
-                                            <div className={profilePageCss.facilitiesDivs}>
-                                                <input style={{ width: '14px', height: '14px' }} type="checkbox" name="laundry" value={"Yes"} checked={hostelDetails.laundry === "Yes"} onChange={hostelDetailsUpdateHandler}/>
-                                                Yes
-                                                <input style={{ marginLeft:'15px',width: '14px', height: '14px' }} type="checkbox" name="laundry" value={"No"} checked={hostelDetails.laundry === "No"} onChange={hostelDetailsUpdateHandler}/>
-                                                No
-                                            </div>
-
-                                            <div>HotWater Available.<label style={{color:'red'}}>*</label></div>
-                                            <div className={profilePageCss.facilitiesDivs}>
-                                                <input style={{ width: '14px', height: '14px' }} type="checkbox" name="hotWater" value={"Yes"} checked={hostelDetails.hotWater === "Yes"} onChange={hostelDetailsUpdateHandler}/>
-                                                Yes
-                                                <input style={{ marginLeft:'15px',width: '14px', height: '14px' }} type="checkbox" name="hotWater" value={"No"} checked={hostelDetails.hotWater === "No"} onChange={hostelDetailsUpdateHandler}/>
-                                                No
-                                            </div>
-
-                                            
-                                            <div style={{display:'flex',justifyContent:'center',alignItems:'center'}}>
-                                                {showFormErr&&<label style={{color: 'red',marginBottom:'3%',fontSize:'105%'}}>{err}</label>}
-                                            </div> 
-
-                                            <div style={{display:'flex',flexDirection:'column',justifyContent:'center',alignItems:'center'}}>
-                                                <button className={profilePageCss.formButtons} onClick={handlerToUploadNewHostel} disabled={hostelSubmitLoading}>{hostelSubmitLoading?<Oval color='black' width={20} height={20}/>:<span style={{height:'100%',display:'flex',justifyContent:'center',justifyItems:'center'}}>Add Hostel</span>}</button>
-                                                <button className={profilePageCss.profileCancelButton} style={{marginTop:'15px', marginBottom:'30px'}} onClick={()=>{formWidthHandler("close")}}><span style={{height:'100%',display:'flex',justifyContent:'center',justifyItems:'center'}}>Cancel</span></button>
-                                            </div>
+                                    <div style={{marginBottom:'15px' ,marginTop:'30px'}}>
+                                        <div className={profilePageCss.oneShareDiv}>
+                                            <label>1-Share rooms:</label>
+                                            <input type="checkbox" name="oneShareApplicable" onClick={hostelDetailsUpdateHandler} checked={hostelDetails.oneShareApplicable===true}  style={{ width: '5%', height: '5%',cursor:'pointer'}} />
+                                            <label>Applicable</label>
                                         </div>
-                                    </div>   
-                                </div>
-                                <div id='profileDiv' className={profilePageCss.profileDiv}>
-                                    {userData&&
-                                        <div style={{display:'flex',flexDirection:'column',justifyContent:'center',alignItems:'center'}}>
-                                            <AiFillBackward size={25} style={{cursor:'pointer',position:'absolute',top:'10px',right:'10px'}} onClick={()=>{profileDivHandler("close")}}/>
-                                            <img className={profilePageCss.profilePhoto} src={`data:image/jpeg;base64,${userData.ownerImage}`} alt="profile" />
-                                            <div style={{fontSize:'120%',marginBottom:'5px'}}>{userData.ownerName}</div>
-                                            <div style={{fontSize:'120%'}}><span><AiOutlineMobile/>{userData.mobileNumber}</span></div>
-                                            <button style={{marginTop:'25px',marginBottom:'16px'}} className={profilePageCss.headerButtons} onClick={()=>{if(flag1){formWidthHandler()};setShowFormErr(false)}}><label style={{display:'flex',justifyContent:'center',alignItems:'center'}}><AiOutlinePlusCircle/>&nbsp;Add Hostle</label></button>
-                                            <button className={profilePageCss.headerButtons} onClick={logOut}><AiOutlineLogout/>&nbsp;Log Out</button>
-                                            <button style={{backgroundColor:'#ef5350',marginTop:'30px'}}className={profilePageCss.headerButtons} onClick={HandlerToGenOtpToDeleteAccount} disabled={deleteLoading}>{deleteLoading?<Oval color={"black"} width={20} height={20}/>:<span style={{display:'flex',justifyContent:'center',alignItems:'center'}}><AiOutlineDelete /><label style={{cursor:'pointer',marginLeft:'6px'}}>Account</label></span>}</button>
-                                            
-                                            <div id='deleteForm' style={{width:'0%',marginTop:'50px',textAlign:'center',overflow:'hidden'}}>
-                                                <label>Enter 6-Digit OTP:</label>
-                                                {showOtpError && <div style={{color:'#9b122d'}}>Invalid Otp.</div>}
-                                                <input onChange={(e)=>{setOtp(e.target.value)}} placeholder='OTP' style={{width:'130px',height:'25px', borderRadius:'8px',border:'1px solid black',backgroundColor:'rgb(177, 216, 216)',textAlign:'center',marginTop:'10px',marginBottom:'10px'}}/>
-                                                <div style={{marginBottom:'8px',display:'flex',justifyContent:'center',alignItems:'center'}}>
-                                                    <button style={{ width: '60px' }} className={profilePageCss.headerButtons} onClick={()=>{HandlerToOtpValidateToDeleteAccount('cancel')}}>Cancel</button>
-                                                    <button style={{width:'60px',backgroundColor:'#ef5350',marginLeft:'12px'}} onClick={()=>{HandlerToOtpValidateToDeleteAccount('submit')}} className={profilePageCss.headerButtons} disabled={submitLoading}>{submitLoading?<label style={{display:'flex',justifyContent:'center'}}><Oval width={16} height={16} color='black'/></label>:"Submit"}</button>
+
+                                        {hostelDetails.oneShareApplicable&&
+                                            <div className={profilePageCss.secShareDiv}>
+                                                <label> &#8377;/month :
+                                                    <input style={{height:'25px',width:'20%',textAlign:'center',borderRadius:'8px',border:'1px solid black', backgroundColor:'rgb(177, 216, 216)'}} placeholder='RS.'  type='text' name="oneShareCost" value={hostelDetails.oneShareCost} onChange={hostelDetailsUpdateHandler}/>
+                                                </label>
+
+                                                <div style={{display:'flex',justifyContent:'flex-start',alignItems:'center'}}>
+                                                    <label >Rooms Available:<label style={{color:'red'}}>*</label></label>
+                                                    
+                                                    <input type='checkbox' style={{marginLeft:'6px', height:'14px', width: '14px' ,cursor:'pointer'}} name="oneShareRoomsAvailable" value={"Yes"}  checked={hostelDetails.oneShareRoomsAvailable === "Yes"} onChange={hostelDetailsUpdateHandler}/>
+                                                    Yes
+                                                    
+                                                    <input type='checkbox' style={{marginLeft:'10px',  height:'14px', width: '14px',cursor:'pointer' }} name="oneShareRoomsAvailable" value={"No"} checked={hostelDetails.oneShareRoomsAvailable === "No"} onChange={hostelDetailsUpdateHandler}/>
+                                                    No
                                                 </div>
-                                            </div>   
-                                        </div>
-                                    }
-                                </div>
-                            </header>
-                
-                            <footer id='footer'>
-                                {!loading &&
-                                    <div className={profilePageCss.profilePicContainer} onClick={()=>{if(flag){profileDivHandler()}}}>
-                                        <AiOutlineUser size={15} onClick={()=>{if(flag){profileDivHandler()}}}/>
+                                            </div>
+                                        }
                                     </div>
-                                }
-                            </footer>
-                    </div> 
-                }
-            </div>
+
+
+
+                                    <div style={{marginBottom:'4%'}}>
+                                        <div className={profilePageCss.oneShareDiv}>
+                                            <label>2-Share rooms:</label>
+                                            <input type="checkbox" name="twoShareApplicable" onClick={hostelDetailsUpdateHandler} checked={hostelDetails.twoShareApplicable===true} style={{ width: '5%', height: '5%' ,cursor:'pointer'}}/>
+                                            <label>Applicable</label>
+                                        </div>
+
+                                        {hostelDetails.twoShareApplicable&&
+                                            <div className={profilePageCss.secShareDiv}>
+                                                <label> &#8377;/month :
+                                                    <input style={{height:'25px',width:'20%',textAlign:'center',borderRadius:'8px',border:'1px solid black', backgroundColor:'rgb(177, 216, 216)'}} placeholder='RS.'  type='text' name="twoShareCost" value={hostelDetails.twoShareCost} onChange={hostelDetailsUpdateHandler}/>
+                                                </label>
+                                                
+                                                <div style={{display:'flex',justifyContent:'flex-start',alignItems:'center'}}>
+                                                    <label>Rooms Available:<label style={{color:'red'}}>*</label></label>
+                                                    <input type='checkbox' style={{marginLeft:'6px', height:'14px', width: '14px' ,cursor:'pointer'}} name="twoShareRoomsAvailable" value={"Yes"}  checked={hostelDetails.twoShareRoomsAvailable === "Yes"} onChange={hostelDetailsUpdateHandler}/>
+                                                    Yes
+                                                    <input type='checkbox' style={{marginLeft:'10px', height:'14px', width: '14px' ,cursor:'pointer'}} name="twoShareRoomsAvailable" value={"No"} checked={hostelDetails.twoShareRoomsAvailable === "No"} onChange={hostelDetailsUpdateHandler}/>
+                                                    No
+                                                </div>
+                                            </div>
+                                        }
+                                    </div>
+
+                                    <div style={{marginBottom:'4%'}}>
+                                        <div className={profilePageCss.oneShareDiv}>
+                                            <label>3-Share rooms:</label>
+                                            <input type="checkbox" name="threeShareApplicable" onClick={hostelDetailsUpdateHandler} style={{ width: '5%', height: '5%',cursor:'pointer' }} checked={hostelDetails.threeShareApplicable===true} />
+                                            <label>Applicable</label>
+                                        </div>
+                                    
+                                        {hostelDetails.threeShareApplicable&&
+                                            <div className={profilePageCss.secShareDiv}>
+                                                <label> &#8377;/month :
+                                                    <input style={{height:'25px',width:'20%',textAlign:'center',borderRadius:'8px',border:'1px solid black', backgroundColor:'rgb(177, 216, 216)'}} placeholder='RS.'  type='text' name="threeShareCost" value={hostelDetails.threeShareCost} onChange={hostelDetailsUpdateHandler}/>
+                                                </label>
+                                                <div style={{display:'flex',justifyContent:'flex-start',alignItems:'center'}}>
+                                                    <label>Rooms Available:<label style={{color:'red'}}>*</label></label>
+                                                    <input type='checkbox' style={{marginLeft:'6px', height:'14px', width: '14px' ,cursor:'pointer'}} name="threeShareRoomsAvailable" value={"Yes"}  checked={hostelDetails.threeShareRoomsAvailable === "Yes"} onChange={hostelDetailsUpdateHandler}/>
+                                                    Yes
+                                                    <input type='checkbox' style={{marginLeft:'10px', height:'14px', width: '14px' ,cursor:'pointer'}} name="threeShareRoomsAvailable" value={"No"} checked={hostelDetails.threeShareRoomsAvailable === "No"} onChange={hostelDetailsUpdateHandler}/>
+                                                    No
+                                                </div>
+                                            </div>
+                                        }
+                                    </div>
+
+                                    <div style={{marginBottom:'4%'}}>
+                                        <div className={profilePageCss.oneShareDiv}>
+                                            <label>4-Share rooms:</label>
+                                            <input type="checkbox" name="fourShareApplicable" onClick={hostelDetailsUpdateHandler} style={{ width: '5%', height: '5%',cursor:'pointer' }} checked={hostelDetails.fourShareApplicable===true}/>
+                                            <label>Applicable</label>
+                                        </div>
+                                    
+                                        {hostelDetails.fourShareApplicable&&
+                                            <div className={profilePageCss.secShareDiv}>
+                                                <label> &#8377;/month :
+                                                    <input style={{height:'25px',width:'20%',textAlign:'center',borderRadius:'8px',border:'1px solid black', backgroundColor:'rgb(177, 216, 216)'}} placeholder='RS.'  type='text' name="fourShareCost" value={hostelDetails.fourShareCost} onChange={hostelDetailsUpdateHandler}/>
+                                                </label>
+                                                <div style={{display:'flex',justifyContent:'flex-start',alignItems:'center'}}>
+                                                    <label>Rooms Available:<label style={{color:'red'}}>*</label></label>
+                                                    <input type='checkbox' style={{marginLeft:'6px', height:'14px', width: '14px' ,cursor:'pointer'}} name="fourShareRoomsAvailable" value={"Yes"}  checked={hostelDetails.fourShareRoomsAvailable === "Yes"} onChange={hostelDetailsUpdateHandler}/>
+                                                    Yes
+                                                    <input type='checkbox' style={{marginLeft:'10px', height:'14px', width: '14px' ,cursor:'pointer'}} name="fourShareRoomsAvailable" value={"No"} checked={hostelDetails.fourShareRoomsAvailable === "No"} onChange={hostelDetailsUpdateHandler}/>
+                                                    No
+                                                </div>
+                                            </div>
+                                        }
+                                    </div>
+
+                                    <div style={{marginBottom:'4%'}}>
+                                        <div className={profilePageCss.oneShareDiv}>
+                                            <label>5-Share rooms:</label>
+                                            <input type="checkbox" name="fiveShareApplicable" onClick={hostelDetailsUpdateHandler} style={{ width: '5%', height: '5%',cursor:'pointer'}} checked={hostelDetails.fiveShareApplicable===true} />
+                                            <label>Applicable</label>
+                                        </div>
+
+                                        {hostelDetails.fiveShareApplicable&&
+                                            <div className={profilePageCss.secShareDiv}>
+                                                <label> &#8377;/month :
+                                                    <input style={{height:'25px',width:'20%',textAlign:'center',borderRadius:'8px',border:'1px solid black', backgroundColor:'rgb(177, 216, 216)'}} placeholder='RS.'  type='text' name="fiveShareCost" value={hostelDetails.fiveShareCost} onChange={hostelDetailsUpdateHandler}/>
+                                                </label>
+                                                <div style={{display:'flex',justifyContent:'flex-start',alignItems:'center'}}>
+                                                    <label>Rooms Available:<label style={{color:'red'}}>*</label></label>
+                                                    <input type='checkbox' style={{marginLeft:'6px', height:'14px', width: '14px' ,cursor:'pointer'}} name="fiveShareRoomsAvailable" value={"Yes"}  checked={hostelDetails.fiveShareRoomsAvailable === "Yes"} onChange={hostelDetailsUpdateHandler}/>
+                                                    Yes
+                                                    <input type='checkbox' style={{marginLeft:'10px', height:'14px', width: '14px' ,cursor:'pointer'}} name="fiveShareRoomsAvailable" value={"No"} checked={hostelDetails.fiveShareRoomsAvailable === "No"} onChange={hostelDetailsUpdateHandler}/>
+                                                    No
+                                                </div>
+                                            </div>
+                                        }
+                                    </div>
+
+                                    <div style={{marginTop:'30px',marginBottom:'5px'}}>Upload any 3 Rooms Images.<label style={{color:'red'}}>*</label></div>
+
+                                    <input  id="imageOne" name='imageOne' type='file' style={{display:'none'}}   accept="image/*" onChange={hostelDetailsUpdateHandler}/>
+                                    <label for="imageOne"  className={profilePageCss.label}><CiImageOn/>&nbsp;&nbsp;&nbsp;{hostelDetails.imageOne.name || "Choose Image One"}</label><br/>
+
+                                    
+                                    <input  id="imageTwo" name='imageTwo' type='file' style={{display:'none'}}  accept="image/*" onChange={hostelDetailsUpdateHandler}/>
+                                    <label for="imageTwo"  className={profilePageCss.label}><CiImageOn/>&nbsp;&nbsp;&nbsp;{hostelDetails.imageTwo.name || "Choose Image Two"}</label><br/>
+
+                                    
+                                    <input  id="imageThree" name='imageThree' type='file' style={{display:'none'}}  accept="image/*" onChange={hostelDetailsUpdateHandler}/>
+                                    <label for="imageThree"  className={profilePageCss.label}><CiImageOn style={{marginLeft:'5px'}}/>&nbsp;&nbsp;&nbsp;{hostelDetails.imageThree.name || "Choose Image Three"}</label><br/>
+
+
+                                    <div style={{marginTop:'30px',marginBottom:'5px'}}>Hostel Address:</div>
+                                    <div>State Name.<label style={{color:'red'}}>*</label></div>
+                                    <input className={profilePageCss.input} style={{marginBottom:'3%',width: '50%',}} type='text' name="stateName" value={hostelDetails.stateName} onChange={hostelDetailsUpdateHandler}/>
+                                    <div>City Name.<label style={{color:'red'}}>*</label></div>
+                                    <input className={profilePageCss.input} style={{marginBottom:'3%',width: '50%'}} type='text' name="cityName" value={hostelDetails.cityName} onChange={hostelDetailsUpdateHandler}/>
+                                    <div>Area Name.<label style={{color:'red'}}>*</label></div>
+                                    <input className={profilePageCss.input} style={{marginBottom:'3%',width: '50%'}} type='text' name="areaName" value={hostelDetails.areaName} onChange={hostelDetailsUpdateHandler}/>
+                                    <div>Land Mark.<label style={{color:'red'}}>*</label></div>
+                                    <textarea style={{width: '50%', height: '80px', overflow: 'auto',resize: 'none',borderRadius:'8px',backgroundColor:'rgb(177, 216, 216)',border:'1px solid black'}} type='text' name="landMark" value={hostelDetails.landMark} onChange={hostelDetailsUpdateHandler}/><br/><br/>
+                                        
+                                    <div style={{marginTop:'30px'}}>Hostel type.<label style={{color:'red'}}>*</label></div>
+                                    <div className={profilePageCss.facilitiesDivs}>
+                                        <input style={{ width: '14px', height: '14px' }} type="checkbox" name="hostelType" value={"Girls Hostel"} checked={hostelDetails.hostelType === 'Girls Hostel'} onChange={hostelDetailsUpdateHandler}/>
+                                        Girls
+                                        <input style={{marginLeft:'15px', width: '14px', height: '14px' }} type="checkbox" name="hostelType" value={"Boys Hostel"} checked={hostelDetails.hostelType === 'Boys Hostel'} onChange={hostelDetailsUpdateHandler}/>
+                                        Boys
+                                    </div>
+
+
+                                    <div>wifi Available.<label style={{color:'red'}}>*</label></div>
+                                    <div className={profilePageCss.facilitiesDivs}>
+                                        <input style={{ width: '14px', height: '14px' }} type="checkbox" name="wifi" value={"Yes"} checked={hostelDetails.wifi === "Yes"} onChange={hostelDetailsUpdateHandler}/>
+                                        Yes
+                                        <input style={{ marginLeft:'15px',width: '14px', height: '14px' }} type="checkbox" name="wifi" value={"No"} checked={hostelDetails.wifi === "No"} onChange={hostelDetailsUpdateHandler}/>
+                                        No
+                                    </div>
+
+                                    <div>laundry Available.<label style={{color:'red'}}>*</label></div>
+                                    <div className={profilePageCss.facilitiesDivs}>
+                                        <input style={{ width: '14px', height: '14px' }} type="checkbox" name="laundry" value={"Yes"} checked={hostelDetails.laundry === "Yes"} onChange={hostelDetailsUpdateHandler}/>
+                                        Yes
+                                        <input style={{ marginLeft:'15px',width: '14px', height: '14px' }} type="checkbox" name="laundry" value={"No"} checked={hostelDetails.laundry === "No"} onChange={hostelDetailsUpdateHandler}/>
+                                        No
+                                    </div>
+
+                                    <div>HotWater Available.<label style={{color:'red'}}>*</label></div>
+                                    <div className={profilePageCss.facilitiesDivs}>
+                                        <input style={{ width: '14px', height: '14px' }} type="checkbox" name="hotWater" value={"Yes"} checked={hostelDetails.hotWater === "Yes"} onChange={hostelDetailsUpdateHandler}/>
+                                        Yes
+                                        <input style={{ marginLeft:'15px',width: '14px', height: '14px' }} type="checkbox" name="hotWater" value={"No"} checked={hostelDetails.hotWater === "No"} onChange={hostelDetailsUpdateHandler}/>
+                                        No
+                                    </div>
+
+                                    
+                                    <div style={{display:'flex',justifyContent:'center',alignItems:'center'}}>
+                                        {showFormErr&&<label style={{color: 'red',marginBottom:'3%',fontSize:'105%'}}>{err}</label>}
+                                    </div> 
+
+                                    <div style={{display:'flex',flexDirection:'column',justifyContent:'center',alignItems:'center'}}>
+                                        <button className={profilePageCss.formButtons} onClick={handlerToUploadNewHostel} disabled={hostelSubmitLoading}>{hostelSubmitLoading?<Oval color='black' width={20} height={20}/>:<span style={{height:'100%',display:'flex',justifyContent:'center',justifyItems:'center'}}>Add Hostel</span>}</button>
+                                        <button className={profilePageCss.profileCancelButton} style={{marginTop:'15px', marginBottom:'30px'}} onClick={()=>{formHeightHandler("close")}}><span style={{height:'100%',display:'flex',justifyContent:'center',justifyItems:'center'}}>Cancel</span></button>
+                                    </div>
+                                </div>
+                            </div>   
+                        </div>
+
+                    </header>
+
+                    <footer id='footer'>
+                        {!loading &&
+                            <div className={profilePageCss.AiOutlineUserDiv} onClick={()=>{if(flag){profileDivHandler()}}}>
+                                <AiOutlineUser/>
+                            </div>
+                        }
+                    </footer>
+                </div>
+            }
         </div>
     )
 }

@@ -86,8 +86,6 @@ const Login = () => {
     return( 
 
         <div className={loginPageCss.mainDiv}>
-            <div className={loginPageCss.mainContainer}>
-
                 {serverErr || connectionRefused ?
                     <div style={{height:'100%',width:'100%'}}>
                         {serverErr ? <ServerError/>:<ConnectionRefuse />}
@@ -128,7 +126,7 @@ const Login = () => {
                         </form>
                     </div>
                 }
-            </div>
+            
         </div>
         
     )

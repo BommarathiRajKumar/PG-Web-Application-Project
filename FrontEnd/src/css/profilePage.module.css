@@ -1,50 +1,139 @@
-body{
-    margin: 0%;
-    height: 100vh;
-    width: 100vw;
-}
-.body {
+.mainDiv{
     height: 100%;
     width: 100%;
-    background-color: rgb(52, 48, 48);
-    display: flex;
-    justify-content: center;
-    align-items: center;
-}
 
-.mainDiv {
-    height: 100%;
-    width: 100%;
-    background-color: #E2D1F9;;
+    position: fixed;
+    top: 0%;
 
     display: flex;
     justify-content: center;
     align-items: center;
+
+    background-color: #E2D1F9;
+
+    @media screen and (min-width: 1024px) {
+        width:30%;
+    }
+    @media screen and (min-width: 550px) {
+        width:30%;
+    } 
 }
-.header{
+
+.mainContainer{
+    width:100%;
+    height:100%;
+
+    display:flex;
+    flex-direction:column;
+}
+
+header{
     position: relative;
-    background-color: white;
     height: 94%;
     width: 100%;
     display: flex;
-    overflow: hidden;
 }
 
-@media screen and (min-width: 1024px) {
-    .mainDiv{
-        width:30%;
-    }
+
+.profileDiv{
+    position: absolute;
+    width:0%;
+    height:100%;
+    top: 0%;
+    z-index: 1;
+    overflow: auto;
+    background-color:#317773;
+    border-radius:0px 20px 20px 0px;
 }
-@media screen and (min-width: 550px) {
-    .mainDiv{
-        width:30%;
-    }
-} 
+.profileDiv::-webkit-scrollbar {
+    width: 0px;
+    height: 0px;
+}
+
+.profilePhoto{
+    width: 35%;
+    height: 35%;
+    border: 1px solid black;
+    border-radius: 50%;
+    margin-top: 30px;
+    margin-bottom: 10px;
+}
+
+.loaderDiv{
+    width:100%;
+    height:100%;
+
+    display:flex;
+    flex-direction:column;
+    justify-content:center;
+    align-items:center
+}
+
+.noDataDiv{
+    width:100%;
+    height:100%;
+
+    display:flex;
+    flex-direction:column;
+    justify-content:center;
+    align-items:center;
+}
+
+
+.hostelsContainer{
+    width:100%;
+    height:100%;
+    overflow:auto;
+    scroll-behavior:smooth;
+    
+    display:flex;
+    flex-direction: column;
+    justify-content:center;
+    align-items: center;
+}
+
+.hostelsContainer::-webkit-scrollbar {
+    width: 0px;
+    height: 0px;
+}
+
+.endAndSpinnerDiv{
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.addNewHostelParentDiv{
+    position:absolute;
+    bottom:0%;
+    height: 0%;
+    width:100%;
+    overflow: hidden;
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+}
+
+.addNewHostelChildDiv{
+    background-color:#EEA47F;
+    width: 98%;
+    height: 99%;
+    border: 3px solid black;
+    border-radius: 8px;
+    overflow: auto;
+}
+.addNewHostelChildDiv::-webkit-scrollbar {
+    width: 0px;
+    height: 0px;
+}
 
 footer{
-    background-color:#36454f;
     height:6%;
     width:100%;
+    background-color:#36454f;
 
     display: flex;
     justify-content: center;
@@ -52,35 +141,68 @@ footer{
     
     border-radius: 7px 7px 0px 0px;
 }
-
-.profilePicContainer{
-    background-color: #E2D1F9;
+.AiOutlineUserDiv{
     width:30px;
     height:30px;
-    border-radius:50px;
+    border-radius:50%;
     cursor: pointer;
 
     display: flex;
     justify-content: center;
     align-items: center;
 
+    background-color: #E2D1F9;
     box-shadow: 1px 2px 5px rgba(0, 0, 0, 0.9);
 }
-.profilePicContainer:hover{
+.AiOutlineUserDiv:hover{
     background-color: lightblue;
     box-shadow: 1px 2px 3px rgba(0, 0, 0, 1);
 }
 
-.profilePhoto{
-    width: 80px;
-    height: 80px;
-    border: 1px solid black;
-    border-radius: 50%;
-    margin-top: 2%;
-    margin-bottom: 2%;
-    margin-top: 30px;
-    margin-bottom: 10px;
-}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 .headerButtons{
     background-color:#25D366;
@@ -109,29 +231,6 @@ footer{
 
 }
 
-.addNewHostelFormDiv{
-    background-color: #E2D1F9;
-    height: 0%;
-    width:100%;
-    position:absolute;
-    bottom:0%;
-    overflow: hidden;
-}
-
-
-
-
-.addNewHostelForm{
-    position: relative;
-    top: 0.3%;
-    left: 0.5%;
-    background-color:#EEA47F;
-    width: 98%;
-    height: 98.8%;
-    border: 3px solid black;
-    border-radius: 8px;
-    overflow: auto;
-}
 
 .addNewHostelForm::-webkit-scrollbar {
     width: 0px;
@@ -231,34 +330,6 @@ footer{
     background-color: rgb(177, 216, 216);
     border-radius: 8px;
     width:55%;
-    height:30px;
+    height:3.5%;
     border: 1px solid black;
-}
-
-
-
-.hostelsContainer{
-    width:100%;
-    height:100%;
-    overflow:auto;
-    scroll-behavior:smooth;
-    background-color: #E2D1F9;
-    
-    display:flex;
-    justify-content:center;
-    align-items: center;
-}
-
-.hostelsContainer::-webkit-scrollbar {
-    width: 0px;
-    height: 0px;
-}
-
-.profileDiv{
-    height:100%;
-    width:0%;
-    border-radius:0px 20px 20px 0px;
-    background-color:#317773;
-    position:absolute;
-    overflow:hidden;
 }

@@ -144,58 +144,55 @@ const Signup = () => {
     return(
 
         <div className={signupPageCss.mainDiv}>
-            <div className={signupPageCss.mainContainer}>
+            {serverErr || connectionErr ?
+                <div style={{width:'100%',height:'100%'}}>
+                    {serverErr ? <ServerError/>:<ConnectionRefuse />}
+                </div>
+            :
+                <div style={{width:'80%'}}>
+                    {otpReq ?
+                        <form className={signupPageCss.form} onSubmit={otpValidateAndSignupHandler} autoComplete="of">
+                            <div style={{width:'100%'}}><IoArrowUndo size={"18px"} style={{cursor:'pointer',position:'relative',left:'10px',top:'10px'}} onClick={()=>{let result=window.confirm("You are redirect to signup page. Do you want to proceed?");if(result){setOtpReq(false)}}}/></div>
+                            <h3 style={{marginTop:'50px'}}>Enter 6-Digit OTP.</h3>
+                            {showOtpError && <div className={signupPageCss.error}>Invalid Otp.</div>}
+                            <input className={signupPageCss.input} style={{textAlign:'center',fontSize:'15px'}} type="text" placeholder="OTP" name="otp" value={otp} onChange={userDetailsUpdateHandler}/>
+                            <button className={signupPageCss.buttonValidate} disabled={loading}>{loading?<Oval color="black" height={30} width={30}/>:<span>Validate</span>}</button>
+                        </form>
+                    : 
+                        <form className={signupPageCss.form} onSubmit={userDeatilsSubmitAndOtpGenHandler} autoComplete="of">
+                            <div style={{width:'100%'}}><AiFillHome size={"18px"} style={{cursor:'pointer',position:'relative',left:'10px',top:'10px'}} onClick={()=>{navigate('/')}}/></div>
+                            <h1 style={{marginTop:'50px',width:'65%'}}>Signup.</h1>
+                            {showSignupError && <div className={signupPageCss.error}>{signupError}</div>}
+                    
+                            <div style={{width:'65%'}}>Owner Name</div>
+                            <input  type="text" name="ownerName" value={ownerName} className={signupPageCss.input} onChange={userDetailsUpdateHandler}/>
 
-                {serverErr || connectionErr ?
-                    <div style={{width:'100%',height:'100%'}}>
-                        {serverErr ? <ServerError/>:<ConnectionRefuse />}
-                    </div>
-                :
-                    <div style={{width:'80%'}}>
-                        {otpReq ?
-                            <form className={signupPageCss.form} onSubmit={otpValidateAndSignupHandler} autoComplete="of">
-                                <div style={{width:'100%'}}><IoArrowUndo size={"18px"} style={{cursor:'pointer',position:'relative',left:'10px',top:'10px'}} onClick={()=>{let result=window.confirm("You are redirect to signup page. Do you want to proceed?");if(result){setOtpReq(false)}}}/></div>
-                                <h3 style={{marginTop:'50px'}}>Enter 6-Digit OTP.</h3>
-                                {showOtpError && <div className={signupPageCss.error}>Invalid Otp.</div>}
-                                <input className={signupPageCss.input} style={{textAlign:'center',fontSize:'15px'}} type="text" placeholder="OTP" name="otp" value={otp} onChange={userDetailsUpdateHandler}/>
-                                <button className={signupPageCss.buttonValidate} disabled={loading}>{loading?<Oval color="black" height={30} width={30}/>:<span>Validate</span>}</button>
-                            </form>
-                        : 
-                            <form className={signupPageCss.form} onSubmit={userDeatilsSubmitAndOtpGenHandler} autoComplete="of">
-                                <div style={{width:'100%'}}><AiFillHome size={"18px"} style={{cursor:'pointer',position:'relative',left:'10px',top:'10px'}} onClick={()=>{navigate('/')}}/></div>
-                                <h1 style={{marginTop:'50px',width:'65%'}}>Signup.</h1>
-                                {showSignupError && <div className={signupPageCss.error}>{signupError}</div>}
-                        
-                                <div style={{width:'65%'}}>Owner Name</div>
-                                <input  type="text" name="ownerName" value={ownerName} className={signupPageCss.input} onChange={userDetailsUpdateHandler}/>
+                            <div style={{width:'65%'}}>MobileNumber</div>
+                            <input type="text" name="mobileNumber" value={mobileNumber} className={signupPageCss.input} onChange={userDetailsUpdateHandler}/>
 
-                                <div style={{width:'65%'}}>MobileNumber</div>
-                                <input type="text" name="mobileNumber" value={mobileNumber} className={signupPageCss.input} onChange={userDetailsUpdateHandler}/>
+                            <div style={{width:'65%'}}>Password</div>
+                            <input type="password" name="password" value={password} className={signupPageCss.input} onChange={userDetailsUpdateHandler}/>
 
-                                <div style={{width:'65%'}}>Password</div>
-                                <input type="password" name="password" value={password} className={signupPageCss.input} onChange={userDetailsUpdateHandler}/>
+                            <div style={{width:'65%'}}>ConfirmPassword</div>
+                            <input type="password" name="confirmPassword" value={confirmPassword} className={signupPageCss.input} onChange={userDetailsUpdateHandler}/>
 
-                                <div style={{width:'65%'}}>ConfirmPassword</div>
-                                <input type="password" name="confirmPassword" value={confirmPassword} className={signupPageCss.input} onChange={userDetailsUpdateHandler}/>
+                            <input type='file' name='ownerImage' id="imgInput"  accept="image/*" style={{display:'none'}} onChange={userDetailsUpdateHandler}/>
+                            <label  for="imgInput"  className={signupPageCss.label}>
+                                <CiImageOn/>&nbsp;&nbsp;&nbsp;{ownerImage.name || "Choose Owner Photo"}
+                            </label>
 
-                                <input type='file' name='ownerImage' id="imgInput"  accept="image/*" style={{display:'none'}} onChange={userDetailsUpdateHandler}/>
-                                <label  for="imgInput"  className={signupPageCss.label}>
-                                    <CiImageOn/>&nbsp;&nbsp;&nbsp;{ownerImage.name || "Choose Owner Photo"}
-                                </label>
+                            <button className={signupPageCss.submitBut} disabled={loading}>
+                                {loading?
+                                    <Oval color="black" height={30} width={30}/>
+                                :
+                                    <span>Submit</span>
+                                }
+                            </button>
 
-                                <button className={signupPageCss.submitBut} disabled={loading}>
-                                    {loading?
-                                        <Oval color="black" height={30} width={30}/>
-                                    :
-                                        <span>Submit</span>
-                                    }
-                                </button>
-
-                            </form>
-                        }
-                    </div>
-                }
-            </div>
+                        </form>
+                    }
+                </div>
+            }
         </div>
     )
 }

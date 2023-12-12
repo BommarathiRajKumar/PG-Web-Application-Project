@@ -1,11 +1,3 @@
-body {
-    margin: 0;
-    padding: 0;
-    height: 100vh;
-    width: 100vw;
-    
-}
-
 .mainDiv {
     background-color:#53ad7a;
     box-shadow: rgba(0, 0, 0, 5) 0px 5px 15px;
